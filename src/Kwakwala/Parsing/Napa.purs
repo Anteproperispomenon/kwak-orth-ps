@@ -463,11 +463,10 @@ parseNapaCharNew :: Parser String CasedChar
 parseNapaCharNew = (Kwak <$> parseNapaLetter) <|> parsePipe <|> parsePuncts <|> (Punct <$> singleton <$> anyCodePoint)
 
 -- | `Parser` for the Southern/NAPA orthography.
---
--- Use this function together with functions
--- like `AT.parseOnly` if you want error messages
--- or with `AT.parse` if you want incremental
--- input. Otherwise, just use `encodeFromNapa`.
+-- |
+-- | Use this function together with functions
+-- | like `runParser` if you want error messages.
+-- | Otherwise, just use `encodeFromNapa`.
 parseNapa :: Parser String (List CasedChar)
 parseNapa = toList <$> many1 parseNapaCharNew
 
@@ -476,11 +475,11 @@ parseNapaOld :: Parser String (List CasedChar)
 parseNapaOld = toList <$> many1 parseNapaChar
 
 -- | Direct encoder for the Southern/NAPA orthography.
---
--- Note that if the parser runs into any errors,
--- this just returns an empty list. If you want
--- error messages, use `parseNapa` together
--- with `AT.parseOnly` or other `Parser` runners.
+-- | 
+-- | Note that if the parser runs into any errors,
+-- | this just returns an empty list. If you want
+-- | error messages, use `parseNapa` together
+-- | with `runParser` or other `Parser` runners.
 encodeFromNapa :: String -> (List CasedChar)
 encodeFromNapa txt = fromRight Nil $ runParser txt parseNapa
 

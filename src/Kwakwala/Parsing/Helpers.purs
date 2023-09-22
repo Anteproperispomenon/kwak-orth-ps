@@ -11,12 +11,14 @@ module Kwakwala.Parsing.Helpers
   ( codePoint
   , codePoint'
   , codePointC
+  , eqCP
   , isUpperC
   , liftP
   , parsePipe
   , peek
   , peekChar
   , peekCode
+  , satisfyC
   , satisfyMaybe
   )
   where
@@ -88,9 +90,14 @@ codePoint' c = satisfyCodePoint (\x -> eq (codePointFromChar c) x)
 codePointC :: forall m. Char -> ParserT String m CodePoint
 codePointC c = satisfyCodePoint (\x -> eq (codePointFromChar c) x)
 
+satisfyC :: forall m. (Char -> Boolean) -> ParserT String m CodePoint
+satisfyC p = codePointFromChar <$> satisfy p
 
 consC :: CodePoint -> String -> String
 consC c str = (singleton c) <> str
 
 snocC :: String -> CodePoint -> String
 snocC str c = str <> (singleton c)
+
+eqCP :: Char -> CodePoint -> Boolean
+eqCP chr cp = (codePointFromChar chr) == cp

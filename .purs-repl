@@ -2,6 +2,7 @@
 import Prelude
 import Kwakwala.Types
 import Kwakwala.Parsing.Napa
+import Kwakwala.Parsing.Grubb
 
 import Kwakwala.Output.Napa
 import Kwakwala.Output.Grubb
