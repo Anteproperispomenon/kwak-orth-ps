@@ -7,11 +7,12 @@ License     : BSD-3
 Some helper functions for Parsing in PureScript.
 -}
 
-
 module Kwakwala.Parsing.Helpers
   ( codePoint
   , codePoint'
+  , codePointC
   , isUpperC
+  , liftP
   , parsePipe
   , peek
   , peekChar
@@ -53,7 +54,7 @@ isUpperC c = Uni.isUpper (codePointFromChar c)
 
 -- | For Parsing 'Escaped' Text
 parsePipe :: Parser String CasedChar
-parsePipe = Punct <$> ((codePoint' '|') `comb1` (Basic.takeWhile1 (\x -> notEq x pip)) `comb2` (codePoint' '|'))
+parsePipe = Punct <$> ((codePointC '|') `comb1` (Basic.takeWhile1 (\x -> notEq x pip)) `comb2` (codePointC '|'))
     where comb1 = lift2 (consC)
           comb2 = lift2 (snocC)
           pip = codePointFromChar '|'
@@ -71,11 +72,22 @@ liftP :: forall a. (a -> Boolean) -> (Maybe a) -> Boolean
 liftP _ Nothing  = false
 liftP p (Just x) = p x
 
+-- | Like `char`, but for `CodePoint`s.
 codePoint :: forall m. CodePoint -> ParserT String m CodePoint
 codePoint cp = satisfyCodePoint (eq cp)
 
+-- | Like `codePoint`, but uses a `Char` as input,
+-- | which is much easier when using literals.
 codePoint' :: forall m. Char -> ParserT String m CodePoint
 codePoint' c = satisfyCodePoint (\x -> eq (codePointFromChar c) x)
+
+-- | Like `codePoint`, but uses a `Char` as input,
+-- | which is much easier when using literals.
+-- | This is the same as `codePoint'`, but won't
+-- | cause parse errors.
+codePointC :: forall m. Char -> ParserT String m CodePoint
+codePointC c = satisfyCodePoint (\x -> eq (codePointFromChar c) x)
+
 
 consC :: CodePoint -> String -> String
 consC c str = (singleton c) <> str
