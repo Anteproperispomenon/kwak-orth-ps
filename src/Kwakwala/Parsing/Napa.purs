@@ -212,7 +212,6 @@ parseD :: Parser String CasedLetter
 parseD = do
   b <- isUpperC <$> satisfy (\x -> x == 'd' || x == 'D')
   peekChar >>= parseD' b
-  
 
 -- ᶻ
 parseD' :: Boolean -> Maybe Char -> Parser String CasedLetter
@@ -229,7 +228,6 @@ parseZ = do
   c <- satisfy (\x -> x == 'z' || x == 'Z' || x == 'ǳ' || x == 'Ǳ' || x == 'ǲ')
   b <- pure $ isUpper (codePointFromChar c)
   pure $ makeCase b DZ
-  
 
 ---------------------------------------------------------------
 -- Parsing B, P, T, C, and S
@@ -240,7 +238,6 @@ parseB :: Parser String CasedLetter
 parseB = do
   b <- isUpperC <$> satisfy (\x -> x == 'b' || x == 'B')
   pure $ makeCase b B
-  
 
 -----------------------
 -- Entry Point
@@ -248,7 +245,6 @@ parseP :: Parser String CasedLetter
 parseP = do
   b <- isUpperC <$> satisfy (\x -> x == 'p' || x == 'P')
   peekChar >>= parseP' b
-  
 
 parseP' :: Boolean -> Maybe Char -> Parser String CasedLetter
 parseP' b Nothing = pure $ makeCase b P
