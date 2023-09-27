@@ -1,0 +1,12 @@
+package:
+  dependencies:
+    - console
+    - effect
+    - prelude
+    - lists
+    - parsing
+    - tailrec
+  name: kwak-orth-ps-lib
+  test:
+    dependencies: []
+    main: Test.Main
