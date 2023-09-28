@@ -1,0 +1,14 @@
+package:
+  dependencies:
+    - console
+    - effect
+    - prelude
+    - lists
+    - parsing
+    - tailrec
+    - halogen
+    - halogen-formless
+  name: kwak-orth-ps-gui
+  #test:
+  #  dependencies: []
+  #  main: Test.Main
