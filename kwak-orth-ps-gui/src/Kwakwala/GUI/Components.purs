@@ -2,12 +2,17 @@ module Kwakwala.GUI.Components
   ( inputComp
   , outputComp
   , grubbComp
+
+  -- * Components in Slots
+  -- , childGrubbComp
+  , GrubbQuery
   )
   where
 
 import Kwakwala.GUI.Types
 import Prelude
 
+import Control.Monad.Trans.Class (lift)
 import Control.Monad.State.Class (class MonadState)
 import Halogen (ComponentHTML)
 import Halogen as Hal
@@ -17,12 +22,48 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Kwakwala.Output.Grubb (GrubbOptions(..), GrubbOptions, defGrubbOptions)
 import Type.Proxy (Proxy(..))
+import Type.Row
+
+-- Explanations:
+-- 
+-- The monad for child and parent components must be
+-- the same, therefore the constraints on all child
+-- components must be unifiable. i.e. we can't have
+-- one child component that uses a Monad with constraint
+-- (MonadState KwakInputType m) and another with
+-- constraint (MonadState KwakOutputType m). Those two
+-- would not be unifiable. However, if we lift these
+-- states into an extensible row/record type, we CAN
+-- unify the two; unifying
+--
+-- >>> {inputSelect :: KwakInputType | r}
+--
+-- and
+--
+-- >>> {outputSelect :: KwakOutputType | r}
+--
+-- yields
+--
+-- >>> {inputSelect :: KwakInputType, outputSelect :: KwakOutputType | r}
+--
+-- Which is exactly what we would want the parent
+-- component's state to be.
+--
+-- Note that we don't have to unify the internal states
+-- of the child components; those are handled when
+-- connecting them to the parents.
 
 --------------------------------
 -- Re-usable Functions
 
 -- handleOrthIn :: _
-handleOrthIn x = Hal.put x
+handleOrthIn_ x = Hal.put x
+
+handleOrthIn  :: forall m r. (MonadState {inputSelect  :: KwakInputType  | r} m) => KwakInputType  -> m Unit
+handleOrthIn  kit = Hal.modify_ $ \x -> x {inputSelect = kit}
+
+handleOrthOut :: forall m r. (MonadState {outputSelect :: KwakOutputType | r} m) => KwakOutputType -> m Unit
+handleOrthOut kot = Hal.modify_ $ \x -> x {outputSelect = kot}
 
 --------------------------------
 -- Input Select Component
@@ -30,12 +71,12 @@ handleOrthIn x = Hal.put x
 _inputSelect :: Proxy "inputSelect"
 _inputSelect = Proxy
 
-inputComp :: _
+inputComp :: forall m r. (MonadState {inputSelect :: KwakInputType | r} m) => HC.Component _ _ _ m
 inputComp 
   = Hal.mkComponent
      { initialState : (\_ -> InGrubb)
      , render : radioButtonsI
-     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleOrthIn}
+     , eval : HC.mkEval $ HC.defaultEval {handleAction = lift <<< handleOrthIn}
      }
 
 radioButtonsI :: KwakInputType -> _
@@ -58,12 +99,12 @@ radioButtonsI kwk
 _outputSelect :: Proxy "outputSelect"
 _outputSelect = Proxy
 
-outputComp :: _
+outputComp :: forall m r. (MonadState {outputSelect :: KwakOutputType | r} m) => HC.Component _ _ _ m
 outputComp 
   = Hal.mkComponent
      { initialState : (\_ -> OutGrubb)
      , render : radioButtonsO
-     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleOrthIn}
+     , eval : HC.mkEval $ HC.defaultEval {handleAction = lift <<< handleOrthOut}
      }
 
 radioButtonsO :: KwakOutputType -> _
@@ -85,27 +126,67 @@ radioButtonsO kwk
 --------------------------------
 -- Grubb Options Select
 
-_grubbSelect :: Proxy "grubbSelect"
+_grubbSelect :: Proxy "grubbOptions"
 _grubbSelect = Proxy
 
-handleGrubbChange  :: forall m r. MonadState {grubbOptions :: GrubbOptions | r} m => GrubbToggle -> m {grubbOptions :: GrubbOptions | r}
+_grubbOptions :: Proxy "grubbOptions"
+_grubbOptions = Proxy
+
+-- | eXtensible record with `grubbOptions` as a field.
+type GrubbOptionsX r = {grubbOptions :: GrubbOptions | r}
+
+-- type GrubbOptionsS r = {grubbOptions :: Hal.Slot _ GrubbOptions _}
+type GrubbSlot x = Hal.Slot GrubbQuery GrubbOptions x
+
+-- type GrubbSlotX :: Type -> Row Type -> Row Type
+-- type GrubbSlotX x r = {grubbOptions :: GrubbSlot x | r}
+
+data GrubbQuery a
+  = GetGrubb (GrubbOptions -> a)
+  | SetGrubb GrubbOptions a
+
+handleGrubbChange  :: forall m r. MonadState (GrubbOptionsX r) m => GrubbToggle -> m (GrubbOptionsX r)
 handleGrubbChange  tog = Hal.modify  (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
 
 handleGrubbChange_ :: forall m r. MonadState {grubbOptions :: GrubbOptions | r} m => GrubbToggle -> m Unit
 handleGrubbChange_ tog = Hal.modify_ (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
 
-childGrubbComp :: forall m r. (MonadState {grubbOptions :: GrubbOptions | r} m) => {grubbOptions :: GrubbOptions | r} -> _ -> ComponentHTML _ _ m
-childGrubbComp ops qry = Html.slot _grubbSelect 0 grubbComp ops qry
+-- childGrubbComp :: forall m r. (MonadState {grubbOptions :: GrubbOptions | r} m) => {grubbOptions :: GrubbOptions | r} -> _ -> ComponentHTML _ _ m
+{-
+childGrubbComp 
+  :: forall m r s x a parentAction (fullRow :: Row Type). (Ord x) 
+  => (MonadState {grubbOptions :: GrubbOptions | r} m)
+  => Cons "grubbOptions" (GrubbSlot x) s fullRow
+  => GrubbOptions
+  -> (GrubbOptions -> parentAction)
+  -> x 
+  -> ComponentHTML parentAction fullRow m
+childGrubbComp ops qry x = Html.slot _grubbOptions x grubbComp ops qry
+-}
 
-grubbComp :: forall m r. (MonadState {grubbOptions :: GrubbOptions | r} m) => HC.Component _ _ _ m
+-- We have to lift `handleGrubbChange` since both m and
+-- HalogenM ... are instances of MonadState, but with
+-- different state types. `m` is the same Monad as the
+-- parent's monad, so it has to have an extensible state
+-- type. HalogenM, on the other hand, is specific to this
+-- component, so its state type should be `GrubbOptions`,
+-- rather than an extensible type.
+
+grubbComp :: forall m r. (MonadState {grubbOptions :: GrubbOptions | r} m) => HC.Component _ GrubbOptions GrubbOptions m
 grubbComp
   = Hal.mkComponent
+    { initialState : \x -> x -- \_ -> defGrubbOptions
+    , render : \st -> grubbOptionsGUI st
+    , eval : HC.mkEval $ HC.defaultEval {handleAction = \tog -> lift $ handleGrubbChange_ tog}
+    }
+    {-
     { initialState : \x -> x -- \_ -> defGrubbOptions
     , render : \st -> grubbOptionsGUI st.grubbOptions
     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleGrubbChange_}
     }
+    -}
 
-grubbOptionsGUI :: GrubbOptions -> _
+grubbOptionsGUI :: forall m r. MonadState (GrubbOptionsX r) m => GrubbOptions -> Hal.ComponentHTML GrubbToggle _ m
 grubbOptionsGUI grb
   = Html.div_
       [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-j", HP.name "CGrubb", HP.value "grb1", HE.onClick (\_ -> GrbTogJ), HP.checked grb.grbUseJ]
