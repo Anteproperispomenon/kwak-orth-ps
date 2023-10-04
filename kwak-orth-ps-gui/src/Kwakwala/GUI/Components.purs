@@ -11,18 +11,23 @@ module Kwakwala.GUI.Components
 
 import Kwakwala.GUI.Types
 import Prelude
+import Type.Row
 
+import Effect (Effect)
+import Effect.Class (class MonadEffect, liftEffect)
+
+import Control.Monad.State.Class (class MonadState, get)
 import Control.Monad.Trans.Class (lift)
-import Control.Monad.State.Class (class MonadState)
+import Data.Maybe (Maybe(..))
 import Halogen (ComponentHTML)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
+import Halogen.HTML.Core (PropName(..))
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Kwakwala.Output.Grubb (GrubbOptions(..), GrubbOptions, defGrubbOptions)
 import Type.Proxy (Proxy(..))
-import Type.Row
 
 -- Explanations:
 -- 
@@ -54,16 +59,72 @@ import Type.Row
 -- connecting them to the parents.
 
 --------------------------------
+-- Parent Component
+
+type ParentSlots
+  = ( inputSelect  :: InputSlot  Unit
+    , outputSelect :: OutputSlot Unit
+    , grubbOptions :: GrubbSlot  Unit
+    , inputText    :: InputTextSlot  Unit
+    , outputText   :: OutputTextSlot Unit
+    ) 
+
+type ParentStateX r
+  = { inputSelect  :: KwakInputType
+    , outputSelect :: KwakOutputType
+    , grubbOptions :: GrubbOptions
+    , inputText  :: String
+    , outputText :: String
+    | r
+    }
+
+type ParentState
+  = { inputSelect  :: KwakInputType
+    , outputSelect :: KwakOutputType
+    , grubbOptions :: GrubbOptions
+    , inputText  :: String
+    , outputText :: String
+    }
+
+defParentState :: ParentState
+defParentState = 
+  { inputSelect  : InGrubb
+  , outputSelect : OutGrubb
+  , grubbOptions : defGrubbOptions
+  , inputText  : ""
+  , outputText : ""
+  }
+
+-- convertComp :: forall m r. (MonadState (ParentStateX r) m) => HC.Component _ _ _ m
+convertComp :: forall m r. (MonadEffect m) => HC.Component _ _ _ m
+convertComp 
+  = Hal.mkComponent
+     { initialState : (\_ -> defParentState)
+     , render : renderConverter
+     , eval : HC.mkEval $ HC.defaultEval
+     }
+
+renderConverter :: forall m r. MonadEffect m => ParentState -> Hal.ComponentHTML _ ParentSlots m
+renderConverter st
+  = Html.div_
+    [ Html.p_ [Html.text "Individual Orthograph Options"]
+    , Html.p_ [Html.slot_ _grubbOptions unit  grubbComp st.grubbOptions]
+    , Html.p_ [Html.text "Input Orthography"]
+    , Html.p_ [Html.slot_ _inputSelect  unit  inputComp st.inputSelect]
+    , Html.p_ [Html.text "Output Orthography"]
+    , Html.p_ [Html.slot_ _outputSelect unit outputComp st.outputSelect]
+    , Html.p_ [Html.text "Input Text"]
+    , Html.p_ [Html.slot_ _inputText  unit  inputTextComp  st.inputText]
+    , Html.p_ [Html.text "Output Text"]
+    , Html.p_ [Html.slot_ _outputText unit outputTextComp st.outputText]
+    ]
+
+
+--------------------------------
 -- Re-usable Functions
 
 -- handleOrthIn :: _
 handleOrthIn_ x = Hal.put x
-
-handleOrthIn  :: forall m r. (MonadState {inputSelect  :: KwakInputType  | r} m) => KwakInputType  -> m Unit
-handleOrthIn  kit = Hal.modify_ $ \x -> x {inputSelect = kit}
-
-handleOrthOut :: forall m r. (MonadState {outputSelect :: KwakOutputType | r} m) => KwakOutputType -> m Unit
-handleOrthOut kot = Hal.modify_ $ \x -> x {outputSelect = kot}
 
 --------------------------------
 -- Input Select Component
@@ -71,12 +132,15 @@ handleOrthOut kot = Hal.modify_ $ \x -> x {outputSelect = kot}
 _inputSelect :: Proxy "inputSelect"
 _inputSelect = Proxy
 
-inputComp :: forall m r. (MonadState {inputSelect :: KwakInputType | r} m) => HC.Component _ _ _ m
+type InputSlot x = forall q. Hal.Slot q KwakInputType x
+
+-- inputComp :: forall m r. (MonadState {inputSelect :: KwakInputType | r} m) => HC.Component _ _ _ m
+inputComp :: forall m r. (MonadEffect m) => HC.Component _ _ _ m
 inputComp 
   = Hal.mkComponent
      { initialState : (\_ -> InGrubb)
      , render : radioButtonsI
-     , eval : HC.mkEval $ HC.defaultEval {handleAction = lift <<< handleOrthIn}
+     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleOrthIn}
      }
 
 radioButtonsI :: KwakInputType -> _
@@ -94,17 +158,22 @@ radioButtonsI kwk
       , Html.label [HP.for "island-in"] [Html.text "Island"]
       ]
 
+handleOrthIn :: forall m . MonadState KwakInputType m => KwakInputType -> m Unit
+handleOrthIn kit = Hal.put kit
+
 --------------------------------
 
 _outputSelect :: Proxy "outputSelect"
 _outputSelect = Proxy
 
-outputComp :: forall m r. (MonadState {outputSelect :: KwakOutputType | r} m) => HC.Component _ _ _ m
+type OutputSlot x = forall q. Hal.Slot q KwakOutputType x
+
+outputComp :: forall m r. (MonadEffect m) => HC.Component _ _ _ m
 outputComp 
   = Hal.mkComponent
      { initialState : (\_ -> OutGrubb)
      , render : radioButtonsO
-     , eval : HC.mkEval $ HC.defaultEval {handleAction = lift <<< handleOrthOut}
+     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleOrthOut}
      }
 
 radioButtonsO :: KwakOutputType -> _
@@ -117,6 +186,10 @@ radioButtonsO kwk
       , Html.input [HP.type_ HP.InputRadio, HP.id "napa-out"  , HP.name "ROutput", HP.value "guh3", HE.onClick (\_ -> OutNapa)  , HP.checked (kwk == OutNapa)]
       , Html.label [HP.for "napa-out"] [Html.text "NAPA"]
       ]
+
+handleOrthOut :: forall m . (MonadState KwakOutputType m) => KwakOutputType -> m _
+handleOrthOut kot = Hal.put kot
+
 
 -- type Node r p i = Array (IProp r i) -> Array (HTML p i) -> HTML p i
 
@@ -145,11 +218,15 @@ data GrubbQuery a
   = GetGrubb (GrubbOptions -> a)
   | SetGrubb GrubbOptions a
 
-handleGrubbChange  :: forall m r. MonadState (GrubbOptionsX r) m => GrubbToggle -> m (GrubbOptionsX r)
-handleGrubbChange  tog = Hal.modify  (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
+-- handleGrubbChange  :: forall m r. MonadState (GrubbOptionsX r) m => GrubbToggle -> m (GrubbOptionsX r)
+-- handleGrubbChange  tog = Hal.modify  (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
+handleGrubbChange  :: forall m r. MonadState GrubbOptions m => GrubbToggle -> m GrubbOptions
+handleGrubbChange  tog = Hal.modify  (toggleGrubb tog)
 
-handleGrubbChange_ :: forall m r. MonadState {grubbOptions :: GrubbOptions | r} m => GrubbToggle -> m Unit
-handleGrubbChange_ tog = Hal.modify_ (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
+-- handleGrubbChange_ :: forall m r. MonadState {grubbOptions :: GrubbOptions | r} m => GrubbToggle -> m Unit
+-- handleGrubbChange_ tog = Hal.modify_ (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
+handleGrubbChange_ :: forall m r. MonadState GrubbOptions m => GrubbToggle -> m Unit
+handleGrubbChange_ tog = Hal.modify_ (toggleGrubb tog)
 
 -- childGrubbComp :: forall m r. (MonadState {grubbOptions :: GrubbOptions | r} m) => {grubbOptions :: GrubbOptions | r} -> _ -> ComponentHTML _ _ m
 {-
@@ -172,12 +249,12 @@ childGrubbComp ops qry x = Html.slot _grubbOptions x grubbComp ops qry
 -- component, so its state type should be `GrubbOptions`,
 -- rather than an extensible type.
 
-grubbComp :: forall m r. (MonadState {grubbOptions :: GrubbOptions | r} m) => HC.Component _ GrubbOptions GrubbOptions m
+grubbComp :: forall m r. (MonadEffect m) => HC.Component _ GrubbOptions GrubbOptions m
 grubbComp
   = Hal.mkComponent
     { initialState : \x -> x -- \_ -> defGrubbOptions
     , render : \st -> grubbOptionsGUI st
-    , eval : HC.mkEval $ HC.defaultEval {handleAction = \tog -> lift $ handleGrubbChange_ tog}
+    , eval : HC.mkEval $ HC.defaultEval {handleAction = handleGrubbChange_}
     }
     {-
     { initialState : \x -> x -- \_ -> defGrubbOptions
@@ -186,7 +263,9 @@ grubbComp
     }
     -}
 
-grubbOptionsGUI :: forall m r. MonadState (GrubbOptionsX r) m => GrubbOptions -> Hal.ComponentHTML GrubbToggle _ m
+
+-- grubbOptionsGUI :: forall m r. MonadState (GrubbOptionsX r) m => GrubbOptions -> Hal.ComponentHTML GrubbToggle _ m
+grubbOptionsGUI :: GrubbOptions -> _ -- Hal.ComponentHTML GrubbToggle _ m
 grubbOptionsGUI grb
   = Html.div_
       [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-j", HP.name "CGrubb", HP.value "grb1", HE.onClick (\_ -> GrbTogJ), HP.checked grb.grbUseJ]
@@ -210,7 +289,100 @@ toggleGrubb GrbTogJ grb = grb {grbUseJ = not grb.grbUseJ}
 toggleGrubb GrbTog' grb = grb {grbUse' = not grb.grbUse'}
 toggleGrubb GrbTog7 grb = grb {grbUse7 = not grb.grbUse7}
 
+--------------------------------
+-- Input Text Box
 
+_inputText :: Proxy "inputText"
+_inputText = Proxy
+
+type InputTextX r = {inputText :: String | r}
+
+type InputTextSlot x = Hal.Slot InputTextQuery String x
+
+data InputTextQuery a
+  = InputString (String -> a)
+
+data InputTextAction
+  = ChangeInput String
+  | SendInput
+
+-- inputTextComp :: forall m r. (MonadState {inputText :: String | r} m) => HC.Component _ String String m
+inputTextComp :: forall m r. (Monad m) => HC.Component _ String String m
+inputTextComp
+  = Hal.mkComponent
+    { initialState : \x -> x -- \_ -> defGrubbOptions
+    , render : inputTextGUI
+    , eval : HC.mkEval $ HC.defaultEval 
+      { handleQuery = handleInputTextQuery
+      , handleAction = handleInputTextAction
+      }
+    }
+
+inputTextGUI :: forall m. Monad m => String -> Hal.ComponentHTML InputTextAction _ m
+inputTextGUI str
+  = Html.div_
+      [ Html.p_ [Html.text "Input"]
+      , Html.p_ [Html.textarea [HP.autofocus true, HP.rows 12, HP.cols 100, HP.id "input-box", HP.name "input-box", HP.placeholder "Input Text", HE.onValueInput (\x -> ChangeInput x)]]
+      , Html.p_ [Html.button [HP.id "convert-button", HP.name "convert-button", HE.onClick (\_ -> SendInput)] [Html.text "Convert"] ]
+      -- , Html.p_ [Html.input [HP.type_ HP.InputButton, HP.id "input-button", HP.name "input-button"]] -- , HE.onClick (\_ -> GrbTogJ)]
+      -- , Html.label [HP.for "input-button"] [Html.text "Convert"]
+      ]
+
+handleInputTextQuery :: forall a s m. Monad m => InputTextQuery a -> Hal.HalogenM String InputTextAction s String m (Maybe a)
+handleInputTextQuery (InputString reply) = do
+  str <- get
+  pure $ Just (reply str)
+
+handleInputTextAction :: InputTextAction -> _
+handleInputTextAction (ChangeInput str) = Hal.put str
+handleInputTextAction SendInput = do
+  str <- Hal.get
+  Hal.raise str
+
+--------------------------------
+-- Output Text Box
+
+_outputText :: Proxy "outputText"
+_outputText = Proxy
+
+type OutputTextX r = {outputText :: String | r}
+
+type OutputTextSlot x = Hal.Slot OutputTextQuery String x
+
+data OutputTextQuery a
+  = OutputString String a
+
+-- outputTextComp :: forall m r. (MonadState (OutputTextX r) m) => HC.Component OutputTextQuery String String m
+outputTextComp :: forall m. (Monad m) => HC.Component OutputTextQuery String String m
+outputTextComp
+  = Hal.mkComponent
+    { initialState : \x -> x -- \_ -> defGrubbOptions
+    , render : outputTextGUI
+    , eval : HC.mkEval $ HC.defaultEval 
+       { receive = (\str -> Just str)
+       , handleAction = handleOutputAction
+       , handleQuery = handleOutputTextQuery
+       } -- {handleAction = lift <<< }
+    }
+
+handleOutputAction :: forall (m :: Type -> Type) s q. Monad m => String -> Hal.HalogenM String String s q m Unit
+handleOutputAction str = Hal.put str
+
+-- handleOutputTextQuery :: forall m r s a. (MonadState (OutputTextX r) m) => OutputTextQuery a -> Hal.HalogenM String _ s _ m (Maybe a)
+handleOutputTextQuery :: forall m s a. (Monad m) => OutputTextQuery a -> Hal.HalogenM String _ s _ m (Maybe a)
+handleOutputTextQuery (OutputString str x) = do
+  Hal.put str
+  pure (Just x)
+
+-- outputTextGUI :: forall m r. MonadState (OutputTextX r) m => String -> Hal.ComponentHTML String _ m
+outputTextGUI :: forall m. Monad m => String -> Hal.ComponentHTML String _ m
+outputTextGUI str
+  = Html.div_
+      [ Html.p_ [Html.text "Input"]
+      , Html.p_ [Html.textarea [HP.rows 12, HP.cols 100, HP.id "output-box", HP.name "output-box", HP.readOnly true, HP.value str]]
+      -- , Html.p_ [Html.input [HP.type_ HP.InputButton, HP.id "input-button", HP.name "input-button"]] -- , HE.onClick (\_ -> GrbTogJ)]
+      -- , Html.label [HP.for "input-button"] [Html.text "Convert"]
+      ]
 
 
 {-
