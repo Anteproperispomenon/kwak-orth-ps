@@ -2,7 +2,11 @@ module Kwakwala.GUI.Components
   ( inputComp
   , outputComp
   , grubbComp
+  , convertComp
 
+  , OrthInQuery
+  , OrthOutQuery
+  , ParentAction(..)
   -- * Components in Slots
   -- , childGrubbComp
   , GrubbQuery
@@ -16,6 +20,8 @@ import Type.Row
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
 
+import Kwakwala.GUI.Convert
+
 import Control.Monad.State.Class (class MonadState, get)
 import Control.Monad.Trans.Class (lift)
 import Data.Maybe (Maybe(..))
@@ -26,6 +32,8 @@ import Halogen.HTML as Html
 import Halogen.HTML.Core (PropName(..))
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Query as HQ
+import Halogen.Query.HalogenM as HM
 import Kwakwala.Output.Grubb (GrubbOptions(..), GrubbOptions, defGrubbOptions)
 import Type.Proxy (Proxy(..))
 
@@ -86,6 +94,12 @@ type ParentState
     , outputText :: String
     }
 
+data ParentAction
+  = ChangeOrthIn  KwakInputType
+  | ChangeOrthOut KwakOutputType
+  | ChangeGrubb   GrubbOptions
+  | ConvertText   String
+
 defParentState :: ParentState
 defParentState = 
   { inputSelect  : InGrubb
@@ -96,28 +110,49 @@ defParentState =
   }
 
 -- convertComp :: forall m r. (MonadState (ParentStateX r) m) => HC.Component _ _ _ m
-convertComp :: forall m r. (MonadEffect m) => HC.Component _ _ _ m
+convertComp :: forall m. (MonadEffect m) => HC.Component _ _ _ m
 convertComp 
   = Hal.mkComponent
      { initialState : (\_ -> defParentState)
      , render : renderConverter
      , eval : HC.mkEval $ HC.defaultEval
+       { receive = Just
+       , handleAction = handleConvertAction
+       }
      }
 
-renderConverter :: forall m r. MonadEffect m => ParentState -> Hal.ComponentHTML _ ParentSlots m
+renderConverter :: forall m. MonadEffect m => ParentState -> Hal.ComponentHTML ParentAction ParentSlots m
 renderConverter st
   = Html.div_
     [ Html.p_ [Html.text "Individual Orthograph Options"]
-    , Html.p_ [Html.slot_ _grubbOptions unit  grubbComp st.grubbOptions]
+    , Html.p_ [Html.slot  _grubbOptions unit grubbComp  st.grubbOptions ChangeGrubb]
     , Html.p_ [Html.text "Input Orthography"]
-    , Html.p_ [Html.slot_ _inputSelect  unit  inputComp st.inputSelect]
+    , Html.p_ [Html.slot  _inputSelect  unit inputComp  st.inputSelect  ChangeOrthIn]
     , Html.p_ [Html.text "Output Orthography"]
-    , Html.p_ [Html.slot_ _outputSelect unit outputComp st.outputSelect]
+    , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut]
     , Html.p_ [Html.text "Input Text"]
-    , Html.p_ [Html.slot_ _inputText  unit  inputTextComp  st.inputText]
+    , Html.p_ [Html.slot  _inputText    unit inputTextComp  st.inputText ConvertText]
     , Html.p_ [Html.text "Output Text"]
-    , Html.p_ [Html.slot_ _outputText unit outputTextComp st.outputText]
+    , Html.p_ [Html.slot_ _outputText   unit outputTextComp st.outputText]
     ]
+
+-- handleConvertAction :: _
+handleConvertAction x = case x of
+  (ChangeOrthIn  kit) -> do
+    Hal.modify_ (\st -> st {inputSelect  = kit })
+  (ChangeOrthOut kot) -> do
+    Hal.modify_ (\st -> st {outputSelect = kot})
+  (ChangeGrubb gbo) -> do
+    Hal.modify_ (\st -> st {grubbOptions = gbo})
+  (ConvertText str) -> do
+    stt <- Hal.modify (\st -> st {inputText = str})
+    -- stt.inputSelect
+    -- stt.outputSelect
+    -- stt.grubbOptions
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.grubbOptions str
+    void $ HQ.query _outputText unit (OutputString newStr unit)
+    Hal.modify_ (\st -> st {outputText = newStr})
+
 
 
 --------------------------------
@@ -132,18 +167,21 @@ handleOrthIn_ x = Hal.put x
 _inputSelect :: Proxy "inputSelect"
 _inputSelect = Proxy
 
-type InputSlot x = forall q. Hal.Slot q KwakInputType x
+type InputSlot x = Hal.Slot OrthInQuery KwakInputType x
 
 -- inputComp :: forall m r. (MonadState {inputSelect :: KwakInputType | r} m) => HC.Component _ _ _ m
-inputComp :: forall m r. (MonadEffect m) => HC.Component _ _ _ m
+inputComp :: forall m. (MonadEffect m) => HC.Component OrthInQuery _ KwakInputType m
 inputComp 
   = Hal.mkComponent
      { initialState : (\_ -> InGrubb)
      , render : radioButtonsI
-     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleOrthIn}
+     , eval : HC.mkEval $ HC.defaultEval 
+       { handleAction = handleOrthIn
+       , handleQuery  = handleOrthInQuery
+       }
      }
 
-radioButtonsI :: KwakInputType -> _
+radioButtonsI :: KwakInputType -> Html.HTML _ KwakInputType
 radioButtonsI kwk
   = Html.div_
       [ Html.input [HP.type_ HP.InputRadio, HP.id "grubb-in",  HP.name "RInput", HP.value "uh1", HE.onClick (\_ -> InGrubb),  HP.checked (kwk == InGrubb)]
@@ -158,22 +196,36 @@ radioButtonsI kwk
       , Html.label [HP.for "island-in"] [Html.text "Island"]
       ]
 
-handleOrthIn :: forall m . MonadState KwakInputType m => KwakInputType -> m Unit
-handleOrthIn kit = Hal.put kit
+handleOrthIn :: KwakInputType -> _ -- forall m . MonadState KwakInputType m => KwakInputType -> m Unit
+handleOrthIn kit = do 
+  Hal.put kit
+  HM.raise kit
+
+data OrthInQuery a
+  = GetInputOrth (KwakInputType -> a)
+
+handleOrthInQuery :: forall a s m. Monad m => OrthInQuery a -> Hal.HalogenM KwakInputType _ s _ m (Maybe a)
+handleOrthInQuery (GetInputOrth reply) = do
+  kit <- get
+  pure $ Just (reply kit)
 
 --------------------------------
+-- Output Select Component
 
 _outputSelect :: Proxy "outputSelect"
 _outputSelect = Proxy
 
-type OutputSlot x = forall q. Hal.Slot q KwakOutputType x
+type OutputSlot x = Hal.Slot OrthOutQuery KwakOutputType x
 
-outputComp :: forall m r. (MonadEffect m) => HC.Component _ _ _ m
+outputComp :: forall m. (MonadEffect m) => HC.Component OrthOutQuery _ _ m
 outputComp 
   = Hal.mkComponent
      { initialState : (\_ -> OutGrubb)
      , render : radioButtonsO
-     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleOrthOut}
+     , eval : HC.mkEval $ HC.defaultEval 
+       { handleAction = handleOrthOut
+       , handleQuery  = handleOrthOutQuery
+       }
      }
 
 radioButtonsO :: KwakOutputType -> _
@@ -187,9 +239,18 @@ radioButtonsO kwk
       , Html.label [HP.for "napa-out"] [Html.text "NAPA"]
       ]
 
-handleOrthOut :: forall m . (MonadState KwakOutputType m) => KwakOutputType -> m _
-handleOrthOut kot = Hal.put kot
+handleOrthOut :: KwakOutputType -> _ -- forall m . (MonadState KwakOutputType m) => KwakOutputType -> m _
+handleOrthOut kot = do 
+  Hal.put kot
+  HM.raise kot
 
+data OrthOutQuery a
+  = GetOutputOrth (KwakOutputType -> a)
+
+handleOrthOutQuery :: forall a s m. Monad m => OrthOutQuery a -> Hal.HalogenM KwakOutputType _ s _ m (Maybe a)
+handleOrthOutQuery (GetOutputOrth reply) = do
+  kit <- get
+  pure $ Just (reply kit)
 
 -- type Node r p i = Array (IProp r i) -> Array (HTML p i) -> HTML p i
 
@@ -220,34 +281,18 @@ data GrubbQuery a
 
 -- handleGrubbChange  :: forall m r. MonadState (GrubbOptionsX r) m => GrubbToggle -> m (GrubbOptionsX r)
 -- handleGrubbChange  tog = Hal.modify  (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
-handleGrubbChange  :: forall m r. MonadState GrubbOptions m => GrubbToggle -> m GrubbOptions
-handleGrubbChange  tog = Hal.modify  (toggleGrubb tog)
+handleGrubbChange :: GrubbToggle -> _ --  forall m. MonadState GrubbOptions m => GrubbToggle -> m GrubbOptions
+handleGrubbChange tog = do
+  x <- Hal.modify  (toggleGrubb tog)
+  HM.raise x
+  pure x
 
 -- handleGrubbChange_ :: forall m r. MonadState {grubbOptions :: GrubbOptions | r} m => GrubbToggle -> m Unit
 -- handleGrubbChange_ tog = Hal.modify_ (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
-handleGrubbChange_ :: forall m r. MonadState GrubbOptions m => GrubbToggle -> m Unit
-handleGrubbChange_ tog = Hal.modify_ (toggleGrubb tog)
-
--- childGrubbComp :: forall m r. (MonadState {grubbOptions :: GrubbOptions | r} m) => {grubbOptions :: GrubbOptions | r} -> _ -> ComponentHTML _ _ m
-{-
-childGrubbComp 
-  :: forall m r s x a parentAction (fullRow :: Row Type). (Ord x) 
-  => (MonadState {grubbOptions :: GrubbOptions | r} m)
-  => Cons "grubbOptions" (GrubbSlot x) s fullRow
-  => GrubbOptions
-  -> (GrubbOptions -> parentAction)
-  -> x 
-  -> ComponentHTML parentAction fullRow m
-childGrubbComp ops qry x = Html.slot _grubbOptions x grubbComp ops qry
--}
-
--- We have to lift `handleGrubbChange` since both m and
--- HalogenM ... are instances of MonadState, but with
--- different state types. `m` is the same Monad as the
--- parent's monad, so it has to have an extensible state
--- type. HalogenM, on the other hand, is specific to this
--- component, so its state type should be `GrubbOptions`,
--- rather than an extensible type.
+handleGrubbChange_ :: GrubbToggle -> _ -- forall m. MonadState GrubbOptions m => GrubbToggle -> m Unit
+handleGrubbChange_ tog = do 
+  x <- Hal.modify (toggleGrubb tog)
+  HM.raise x
 
 grubbComp :: forall m r. (MonadEffect m) => HC.Component _ GrubbOptions GrubbOptions m
 grubbComp
@@ -256,13 +301,6 @@ grubbComp
     , render : \st -> grubbOptionsGUI st
     , eval : HC.mkEval $ HC.defaultEval {handleAction = handleGrubbChange_}
     }
-    {-
-    { initialState : \x -> x -- \_ -> defGrubbOptions
-    , render : \st -> grubbOptionsGUI st.grubbOptions
-    , eval : HC.mkEval $ HC.defaultEval {handleAction = handleGrubbChange_}
-    }
-    -}
-
 
 -- grubbOptionsGUI :: forall m r. MonadState (GrubbOptionsX r) m => GrubbOptions -> Hal.ComponentHTML GrubbToggle _ m
 grubbOptionsGUI :: GrubbOptions -> _ -- Hal.ComponentHTML GrubbToggle _ m
@@ -307,7 +345,7 @@ data InputTextAction
   | SendInput
 
 -- inputTextComp :: forall m r. (MonadState {inputText :: String | r} m) => HC.Component _ String String m
-inputTextComp :: forall m r. (Monad m) => HC.Component _ String String m
+inputTextComp :: forall m. (Monad m) => HC.Component InputTextQuery String String m
 inputTextComp
   = Hal.mkComponent
     { initialState : \x -> x -- \_ -> defGrubbOptions
@@ -347,13 +385,13 @@ _outputText = Proxy
 
 type OutputTextX r = {outputText :: String | r}
 
-type OutputTextSlot x = Hal.Slot OutputTextQuery String x
+type OutputTextSlot x = Hal.Slot OutputTextQuery Void x
 
 data OutputTextQuery a
   = OutputString String a
 
 -- outputTextComp :: forall m r. (MonadState (OutputTextX r) m) => HC.Component OutputTextQuery String String m
-outputTextComp :: forall m. (Monad m) => HC.Component OutputTextQuery String String m
+outputTextComp :: forall m. (Monad m) => HC.Component OutputTextQuery String Void m
 outputTextComp
   = Hal.mkComponent
     { initialState : \x -> x -- \_ -> defGrubbOptions
@@ -384,26 +422,4 @@ outputTextGUI str
       -- , Html.label [HP.for "input-button"] [Html.text "Convert"]
       ]
 
-
-{-
-
-<form>
-  <fieldset>
-    <legend>Please select your preferred contact method:</legend>
-    <div>
-      <input type="radio" id="contactChoice1" name="contact" value="email" />
-      <label for="contactChoice1">Email</label>
-      <input type="radio" id="contactChoice2" name="contact" value="phone" />
-      <label for="contactChoice2">Phone</label>
-      <input type="radio" id="contactChoice3" name="contact" value="mail" />
-      <label for="contactChoice3">Mail</label>
-    </div>
-    <div>
-      <button type="submit">Submit</button>
-    </div>
-  </fieldset>
-</form>
-<pre id="log"></pre>
-
--}
 

@@ -13,7 +13,12 @@ on this orthography, see
 Based on the Haskell version of kwak-orth.
 -}
 
-module Kwakwala.Parsing.Napa where
+module Kwakwala.Parsing.Napa 
+  ( encodeFromNapa
+  , encodeFromNapaOld
+  , parseNapa
+  , parseNapaOld
+  ) where
 
 import Prelude
 import Parsing (Parser, runParser, fail)
