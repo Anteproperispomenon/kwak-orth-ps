@@ -7,18 +7,16 @@ module Kwakwala.GUI.Components.OutSelect
 
 import Prelude
 
-import Kwakwala.GUI.Types (KwakOutputType(..))
-
 import Control.Monad.State.Class (get)
 import Data.Maybe (Maybe(..))
 import Effect.Class (class MonadEffect)
--- import Halogen (ComponentHTML)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Query.HalogenM as HM
+import Kwakwala.GUI.Types (KwakOutputType(..))
 import Type.Proxy (Proxy(..))
 
 --------------------------------
@@ -29,7 +27,7 @@ _outputSelect = Proxy
 
 type OutputSlot x = Hal.Slot OrthOutQuery KwakOutputType x
 
-outputComp :: forall m. (MonadEffect m) => HC.Component OrthOutQuery _ _ m
+outputComp :: forall m inp. (MonadEffect m) => HC.Component OrthOutQuery inp KwakOutputType m
 outputComp 
   = Hal.mkComponent
      { initialState : (\_ -> OutGrubb)
@@ -40,7 +38,7 @@ outputComp
        }
      }
 
-radioButtonsO :: KwakOutputType -> _
+radioButtonsO :: forall m slots. KwakOutputType -> Hal.ComponentHTML KwakOutputType slots m
 radioButtonsO kwk
   = Html.div_
       [ Html.input [HP.type_ HP.InputRadio, HP.id "grubb-out" , HP.name "ROutput", HP.value "guh1", HE.onClick (\_ -> OutGrubb) , HP.checked (kwk == OutGrubb)]
@@ -51,7 +49,7 @@ radioButtonsO kwk
       , Html.label [HP.for "napa-out"] [Html.text "NAPA"]
       ]
 
-handleOrthOut :: KwakOutputType -> _ -- forall m . (MonadState KwakOutputType m) => KwakOutputType -> m _
+handleOrthOut :: forall m act slots. KwakOutputType -> Hal.HalogenM KwakOutputType act slots KwakOutputType m Unit -- forall m . (MonadState KwakOutputType m) => KwakOutputType -> m _
 handleOrthOut kot = do 
   Hal.put kot
   HM.raise kot
@@ -59,7 +57,7 @@ handleOrthOut kot = do
 data OrthOutQuery a
   = GetOutputOrth (KwakOutputType -> a)
 
-handleOrthOutQuery :: forall a s m. Monad m => OrthOutQuery a -> Hal.HalogenM KwakOutputType _ s _ m (Maybe a)
+handleOrthOutQuery :: forall a slots m out act. Monad m => OrthOutQuery a -> Hal.HalogenM KwakOutputType act slots out m (Maybe a)
 handleOrthOutQuery (GetOutputOrth reply) = do
   kit <- get
   pure $ Just (reply kit)

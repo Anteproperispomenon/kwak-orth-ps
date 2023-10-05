@@ -10,8 +10,9 @@ module Kwakwala.GUI.Components
   )
   where
 
-import Kwakwala.GUI.Types
+
 import Prelude
+import Kwakwala.GUI.Types
 import Type.Row
 
 import Kwakwala.GUI.Components.InSelect
