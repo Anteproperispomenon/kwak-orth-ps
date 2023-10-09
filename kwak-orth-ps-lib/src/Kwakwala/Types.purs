@@ -20,6 +20,9 @@ module Kwakwala.Types
     , CasedLetter(..)
     , CasedChar(..)
     , CasedWord(..)
+    -- ** Extra Types
+    , KwakConsonant(..)
+    , KwakVowel(..)
     -- * Functions
     -- ** Capitalisation Helpers
     , makeCase
@@ -317,4 +320,155 @@ isKwakWord :: CasedWord -> Boolean
 isKwakWord (KwakW _) = true
 isKwakWord _         = false
 
+---------------------------------------------------------------
+-- Separate Vowels/Consonants
+
+data KwakVowel
+   = Av  -- ^ Open Front Unrounded Vowel
+   | Ev  -- ^ Close-Mid Front Unrounded Vowel
+   | Iv  -- ^ Close Front Unrounded Vowel
+   | Ov  -- ^ Close-Mid Back Rounded Vowel
+   | Uv  -- ^ Close Back Rounded Vowel
+   | AUv -- ^ Mid Central Vowel / Schwa
+
+instance showKwakVowel :: Show KwakVowel where
+  show Av   = "A"
+  show Ev   = "E"
+  show Iv   = "I"
+  show Ov   = "O"
+  show Uv   = "U"
+  show AUv  = "AU"
+
+derive instance  eqKwakVowel :: Eq  KwakVowel
+derive instance ordKwakVowel :: Ord KwakVowel
+
+data KwakConsonant
+
+   -- Nasal Sounds
+   = Mc  -- ^ Voiced Bilabial Nasal
+   | MYc -- ^ Glottalized Voiced Bilabial Nasal
+   | Nc  -- ^ Voiced Alveolar Nasal
+   | NYc -- ^ Glottalized Voiced Alveolar Nasal
+              
+   -- Simple Plosives
+   | Pc  -- ^ Voiceless Bilabial Plosive
+   | Tc  -- ^ Voiceless Alveolar Plosive
+   | Bc  -- ^ Voiced Bilabial Plosive
+   | Dc  -- ^ Voiced Alveolar Plosive
+   | PYc -- ^ Ejective Bilabial Plosive
+   | TYc -- ^ Ejective Alveolar Plosive
+              
+   -- Affricates
+   | TSc  -- ^ Voiceless Alveolar Affricate
+   | TLc  -- ^ Voiceless Alveolar Lateral Affricate
+   | DZc  -- ^ Voiced Alveolar Affricate
+   | DLc  -- ^ Voiced Alveolar Lateral Affricate
+   | TSYc -- ^ Ejective Alveolar Affricate
+   | TLYc -- ^ Ejective Alveolar Lateral Affricate
+              
+   -- Voiceless Fricatives
+   | Sc  -- ^ Voiceless Alveolar (Sibilant) Fricative
+   | LHc -- ^ Voiceless Alveolar Lateral Fricative
+              
+   -- Approximants
+   | Lc  -- ^ Voiced Alveolar Approximant
+   | LYc -- ^ Glottalized Voiced Alveolar Approximant
+   | Jc  -- ^ Voiced Palatal Approximant
+   | JYc -- ^ Glottalized Voiced Palatal Approximant
+              
+   -- Velar Plosives
+   | Kc   -- ^ Voiceless (Palatalized) Velar Plosive
+   | KWc  -- ^ Voiceless Labialized Velar Plosive
+   | Gc   -- ^ Voiced (Palatalized) Velar Plosive
+   | GWc  -- ^ Voiced Labialized Velar Plosive
+   | KYc  -- ^ Ejective (Palatalized) Velar Plosive
+   | KWYc -- ^ Ejective Labialized Velar Plosive
+              
+   -- Uvular Plosives
+   | Qc   -- ^ Voiceless Uvular Plosive
+   | QWc  -- ^ Voiveless Labialized Uvular Plosive
+   | GUc  -- ^ Voiced Uvular Plosive
+   | GUWc -- ^ Voiced Labialized Uvular Plosive
+   | QYc  -- ^ Ejective Uvular Plosive
+   | QWYc -- ^ Ejective Labialized Uvular Plosive
+              
+   -- Velar/Uvular Fricatives
+   | Xc   -- ^ Voiceless (Palatalized) Velar Fricative
+   | XWc  -- ^ Voiceless Labialized Velar Fricative
+   | XUc  -- ^ Voiceless Uvular Fricative
+   | XUWc -- ^ Voiceless Labialized Uvular Fricative
+              
+   -- Labial Sounds
+   | Wc  -- ^ Voiced Labial-Velar Approximant
+   | WYc -- ^ Glottalized Voiced Labial-Velar Approximant
+              
+   -- Glottal Sounds
+   | Yc -- ^ Voiceless Glottal Plosive
+   | Hc -- ^ Voiceless Glottal Fricative
+
+derive instance  eqKwakConsonant :: Eq  KwakConsonant
+derive instance ordKwakConsonant :: Ord KwakConsonant
+
+instance showKwakConsonant :: Show KwakConsonant where
+  -- Nasal Sounds
+  show Mc   = "M"
+  show MYc  = "M'"
+  show Nc   = "N"
+  show NYc  = "N'"
+
+  -- Simple Plosives
+  show Pc   = "P"
+  show Tc   = "T"
+  show Bc   = "B"
+  show Dc   = "D"
+  show PYc  = "P'"
+  show TYc  = "T'"
+  
+  -- 
+  show TSc  = "TS"
+  show TLc  = "TL"
+  show DZc  = "DZ"
+  show DLc  = "DL"
+  show TSYc = "TS'"
+  show TLYc = "TL'"
+  
+  -- 
+  show Sc   = "S"
+  show LHc  = "LH"
+  
+  --
+  show Lc   = "L"
+  show LYc  = "L'"
+  show Jc   = "J"
+  show JYc  = "J'"
+  
+  -- Velars
+  show Kc   = "K"
+  show KWc  = "KW"
+  show Gc   = "G"
+  show GWc  = "GW"
+  show KYc  = "K'"
+  show KWYc = "KW'"
+  
+  -- Uvulars
+  show Qc   = "Q" 
+  show QWc  = "QW"
+  show GUc  = "Gu"
+  show GUWc = "GuW"
+  show QYc  = "Q'"
+  show QWYc = "QW'"
+   
+  -- Velar Fricatives
+  show Xc   = "X"
+  show XWc  = "XW"
+  show XUc  = "Xu"
+  show XUWc = "XuW"
+ 
+  -- Labials
+  show Wc   = "W"
+  show WYc  = "W'"
+  
+  -- Glottals
+  show Yc   = "'"
+  show Hc   = "H"
 
