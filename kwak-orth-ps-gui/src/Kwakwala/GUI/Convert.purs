@@ -11,9 +11,10 @@ import Kwakwala.GUI.Types
 
 import Data.List (List)
 
-import Kwakwala.Output.Grubb  (outputGrubbAsciiChars, GrubbOptions)
-import Kwakwala.Output.Napa   (outputNapaChars)
-import Kwakwala.Output.Umista (outputUmistaChars)
+import Kwakwala.Output.Grubb    (outputGrubbAsciiChars, GrubbOptions)
+import Kwakwala.Output.Napa     (outputNapaChars)
+import Kwakwala.Output.Umista   (outputUmistaChars)
+import Kwakwala.Output.Syllabic (outputSyllabics)
 
 import Kwakwala.Parsing.Boas   (encodeFromBoas)
 import Kwakwala.Parsing.Grubb  (encodeFromGrubbAscii)
@@ -36,6 +37,7 @@ encodeByType kit str = case kit of
 
 outputByType :: KwakOutputType -> GrubbOptions -> List CasedChar -> String
 outputByType kot gbo lst = case kot of
-  OutGrubb  -> outputGrubbAsciiChars gbo lst
-  OutNapa   -> outputNapaChars   lst
-  OutUmista -> outputUmistaChars lst
+  OutGrubb    -> outputGrubbAsciiChars gbo lst
+  OutNapa     -> outputNapaChars   lst
+  OutUmista   -> outputUmistaChars lst
+  OutSyllabic -> outputSyllabics lst

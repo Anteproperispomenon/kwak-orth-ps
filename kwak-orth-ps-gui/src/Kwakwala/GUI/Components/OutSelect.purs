@@ -41,12 +41,14 @@ outputComp
 radioButtonsO :: forall m slots. KwakOutputType -> Hal.ComponentHTML KwakOutputType slots m
 radioButtonsO kwk
   = Html.div_
-      [ Html.input [HP.type_ HP.InputRadio, HP.id "grubb-out" , HP.name "ROutput", HP.value "guh1", HE.onClick (\_ -> OutGrubb) , HP.checked (kwk == OutGrubb)]
+      [ Html.input [HP.type_ HP.InputRadio, HP.id "grubb-out" , HP.name "ROutput", HP.value "guh1", HE.onClick (\_ -> OutGrubb)   , HP.checked (kwk == OutGrubb)]
       , Html.label [HP.for "grubb-out"] [Html.text "Grubb"]
-      , Html.input [HP.type_ HP.InputRadio, HP.id "umista-out", HP.name "ROutput", HP.value "guh2", HE.onClick (\_ -> OutUmista), HP.checked (kwk == OutUmista)]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "umista-out", HP.name "ROutput", HP.value "guh2", HE.onClick (\_ -> OutUmista)  , HP.checked (kwk == OutUmista)]
       , Html.label [HP.for "Umista-out"] [Html.text "Umista"]
-      , Html.input [HP.type_ HP.InputRadio, HP.id "napa-out"  , HP.name "ROutput", HP.value "guh3", HE.onClick (\_ -> OutNapa)  , HP.checked (kwk == OutNapa)]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "napa-out"  , HP.name "ROutput", HP.value "guh3", HE.onClick (\_ -> OutNapa)    , HP.checked (kwk == OutNapa)]
       , Html.label [HP.for "napa-out"] [Html.text "NAPA"]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "syll-out"  , HP.name "ROutput", HP.value "guh4", HE.onClick (\_ -> OutSyllabic), HP.checked (kwk == OutSyllabic)]
+      , Html.label [HP.for "syll-out"] [Html.text "Syllabic (Carrier)"]
       ]
 
 handleOrthOut :: forall m act slots. KwakOutputType -> Hal.HalogenM KwakOutputType act slots KwakOutputType m Unit -- forall m . (MonadState KwakOutputType m) => KwakOutputType -> m _

@@ -13,14 +13,16 @@ data KwakOutputType
   = OutGrubb -- GrubbOptions
   | OutNapa
   | OutUmista
+  | OutSyllabic
 
 derive instance  eqKwakOutType :: Eq  KwakOutputType
 derive instance ordKwakOutType :: Ord KwakOutputType
 
 instance showKwakOut :: Show KwakOutputType where
-  show OutGrubb  = "Grubb"
-  show OutNapa   = "NAPA"
-  show OutUmista = "U'mista"
+  show OutGrubb    = "Grubb"
+  show OutNapa     = "NAPA"
+  show OutUmista   = "U'mista"
+  show OutSyllabic = "Syllabic"
 
 data KwakInputType
   = InGrubb

@@ -51,12 +51,12 @@ mergeLetters cns vwl = case cns of
               
    -- Simple Plosives
    Pc  -> case vwl of  -- ^ Voiceless Bilabial Plosive
-     Av  -> "ᙙ" -- "ᙅ"
-     Ev  -> "ᙗ" -- "ᙃ"
-     Iv  -> "ᙘ" -- "ᙄ"
-     Ov  -> "ᙕ" -- "ᙁ"
-     Uv  -> "ᙔ" -- "ᙀ"
-     AUv -> "ᙖ" -- "ᙂ"
+     Av  -> "ᙅ" -- "ᙙ" -- "ᙅ"
+     Ev  -> "ᙃ" -- "ᙗ" -- "ᙃ"
+     Iv  -> "ᙄ" -- "ᙘ" -- "ᙄ"
+     Ov  -> "ᙁ" -- "ᙕ" -- "ᙁ"
+     Uv  -> "ᙀ" -- "ᙔ" -- "ᙀ"
+     AUv -> "ᙂ" -- "ᙖ" -- "ᙂ"
    Tc  -> case vwl of  -- ^ Voiceless Alveolar Plosive
      Av  -> "ᗡ"
      Ev  -> "ᗟ"
@@ -79,12 +79,12 @@ mergeLetters cns vwl = case cns of
      Uv  -> "ᑌ"
      AUv -> "ᑐ"
    PYc -> case vwl of  -- ^ Ejective Bilabial Plosive
-     Av  -> "ᙠ"
-     Ev  -> "ᙞ"
-     Iv  -> "ᙟ"
-     Ov  -> "ᙜ"
-     Uv  -> "ᙛ"
-     AUv -> "ᙝ"
+     Av  -> "ᙍ" -- "ᙠ"
+     Ev  -> "ᙋ" -- "ᙞ"
+     Iv  -> "ᙌ" -- "ᙟ"
+     Ov  -> "ᙉ" -- "ᙜ"
+     Uv  -> "ᙈ" -- "ᙛ"
+     AUv -> "ᙊ" -- "ᙝ"
    TYc -> case vwl of  -- ^ Ejective Alveolar Plosive
      Av  -> "ᗧ"
      Ev  -> "ᗥ"
@@ -109,12 +109,12 @@ mergeLetters cns vwl = case cns of
      Uv  -> "ᘴ"
      AUv -> "ᘶ"
    DZc  -> case vwl of -- ^ Voiced Alveolar Affricate
-     Av  -> "ᙍ"
-     Ev  -> "ᙋ"
-     Iv  -> "ᙌ"
-     Ov  -> "ᙉ"
-     Uv  -> "ᙈ"
-     AUv -> "ᙊ"
+     Av  -> "ᙙ" -- "ᙍ"
+     Ev  -> "ᙗ" -- "ᙋ"
+     Iv  -> "ᙘ" -- "ᙌ"
+     Ov  -> "ᙕ" -- "ᙉ"
+     Uv  -> "ᙔ" -- "ᙈ"
+     AUv -> "ᙖ" -- "ᙊ"
    DLc  -> case vwl of -- ^ Voiced Alveolar Lateral Affricate
      Av  -> "ᘭ"
      Ev  -> "ᘫ"
@@ -344,19 +344,19 @@ letterCoda kwc = case kwc of
               
    -- Simple Plosives
    Pc   -> "ᗮᗮ"  -- Voiceless Bilabial Plosive
-   Tc   -> "?"  -- Voiceless Alveolar Plosive
+   Tc   -> "ᐪᐪ"  -- Voiceless Alveolar Plosive
    Bc   -> "ᗮ"  -- Voiced Bilabial Plosive
    Dc   -> "ᐪ"  -- Voiced Alveolar Plosive
    PYc  -> "ᐩ" -- Ejective Bilabial Plosive
-   TYc  -> "??" -- Ejective Alveolar Plosive
+   TYc  -> "ᙾ" -- Ejective Alveolar Plosive
               
    -- Affricates
-   TSc   -> "??"  -- Voiceless Alveolar Affricate
+   TSc   -> "ᙆᙆ"  -- Voiceless Alveolar Affricate
    TLc   -> "ᔾ"  -- Voiceless Alveolar Lateral Affricate
    DZc   -> "ᙆ"  -- Voiced Alveolar Affricate
    DLc   -> "ᕐ"  -- Voiced Alveolar Lateral Affricate
-   TSYc  -> "??" -- Ejective Alveolar Affricate
-   TLYc  -> "??" -- Ejective Alveolar Lateral Affricate
+   TSYc  -> "ᙇ" -- Ejective Alveolar Affricate
+   TLYc  -> "ᓫ" -- Ejective Alveolar Lateral Affricate
               
    -- Voiceless Fricatives
    Sc   -> "ᔆ"  -- Voiceless Alveolar (Sibilant) Fricative
@@ -371,8 +371,8 @@ letterCoda kwc = case kwc of
    -- Velar Plosives
    Kc    -> "ᐠ"   -- Voiceless (Palatalized) Velar Plosive
    KWc   -> "ᐠᐤ"  -- Voiceless Labialized Velar Plosive
-   Gc    -> "ᐜ"   -- Voiced (Palatalized) Velar Plosive
-   GWc   -> "ᐜᐤ"  -- Voiced Labialized Velar Plosive
+   Gc    -> "ᐜ"  -- Voiced (Palatalized) Velar Plosive
+   GWc   -> "ᐜᐤ" -- Voiced Labialized Velar Plosive
    KYc   -> "ᘁ"  -- Ejective (Palatalized) Velar Plosive
    KWYc  -> "ᘁᐤ" -- Ejective Labialized Velar Plosive
               
