@@ -18,4 +18,4 @@ import Kwakwala.GUI.Components (convertComp2, ParentAction2(..))
 main :: Effect Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
-  runUI convertComp2 (ConvertText2 "") body
+  runUI convertComp2 (ConvertText2 { fileStr : "" , fileTyp : Nothing} ) body

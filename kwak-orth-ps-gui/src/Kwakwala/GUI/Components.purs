@@ -24,16 +24,21 @@ import Kwakwala.GUI.Components.GrubbOptions
 import Kwakwala.GUI.Components.InputText
 import Kwakwala.GUI.Components.OutputText
 import Kwakwala.GUI.Components.InputFile
+import Kwakwala.GUI.Components.OutputFile
+
 
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Aff.Class (class MonadAff)
 
 import Kwakwala.GUI.Convert
+import Kwakwala.GUI.Types (FileData)
 
 import Control.Monad.State.Class (class MonadState, get)
 import Control.Monad.Trans.Class (lift)
 import Data.Maybe (Maybe(..))
+import Data.MediaType (MediaType)
+import Data.MediaType.Common (textPlain)
 import Halogen (ComponentHTML)
 import Halogen as Hal
 import Halogen.Component as HC
@@ -152,6 +157,7 @@ type ParentSlots2
     , grubbOptions :: GrubbSlot  Unit
     , inputFile    :: InputFileSlot  Unit
     , outputText   :: OutputTextSlot Unit
+    , outputFile   :: OutputFileSlot Unit
     )
 
 type ParentState2X r
@@ -167,7 +173,7 @@ type ParentState2
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
     , grubbOptions :: GrubbOptions
-    , inputFile  :: String
+    , inputFile  :: FileData
     , outputText :: String
     }
 
@@ -176,7 +182,7 @@ defParentState2 =
   { inputSelect  : InGrubb
   , outputSelect : OutGrubb
   , grubbOptions : defGrubbOptions
-  , inputFile  : ""
+  , inputFile  : { fileStr : "", fileTyp : Nothing}
   , outputText : ""
   }
 
@@ -184,7 +190,7 @@ data ParentAction2
   = ChangeOrthIn2  KwakInputType
   | ChangeOrthOut2 KwakOutputType
   | ChangeGrubb2   GrubbOptions
-  | ConvertText2   String
+  | ConvertText2   FileData
 
 convertComp2 :: forall m. (MonadAff m) => HC.Component _ ParentAction2 _ m
 convertComp2 
@@ -208,9 +214,10 @@ renderConverter2 st
     , Html.p_ [Html.text "Output Orthography"]
     , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut2]
     , Html.p_ [Html.text "Input File"]
-    , Html.p_ [Html.slot  _inputFile unit inputFileComp st.inputFile ConvertText2]
+    , Html.p_ [Html.slot  _inputFile unit inputFileComp st.inputFile.fileStr ConvertText2]
     , Html.p_ [Html.text "Output Text"]
-    , Html.p_ [Html.slot_ _outputText   unit outputTextComp st.outputText]
+    , Html.p_ [Html.slot_ _outputText unit outputTextComp st.outputText]
+    , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : st.outputText , fileTyp : st.inputFile.fileTyp} ]
     ]
 
 handleConvertAction2 :: forall m. ParentAction2 -> Hal.HalogenM ParentState2 _ ParentSlots2 _ m Unit
@@ -221,13 +228,14 @@ handleConvertAction2 x = case x of
     Hal.modify_ (\st -> st {outputSelect = kot})
   (ChangeGrubb2 gbo) -> do
     Hal.modify_ (\st -> st {grubbOptions = gbo})
-  (ConvertText2 str) -> do
-    stt <- Hal.modify (\st -> st {inputFile = str})
+  (ConvertText2 fdt) -> do
+    stt <- Hal.modify (\st -> st {inputFile = fdt})
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.grubbOptions str
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.grubbOptions fdt.fileStr
     void $ HQ.query _outputText unit (OutputString newStr unit)
+    void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
     Hal.modify_ (\st -> st {outputText = newStr})
 
 
