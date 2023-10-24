@@ -3,6 +3,7 @@ package:
     - console
     - effect
     - prelude
+    - dom-filereader
     - lists
     - parsing
     - tailrec
@@ -11,6 +12,11 @@ package:
     - kwak-orth-ps-lib
     - web-html
   name: kwak-orth-ps-gui
+  bundle:
+    module: Main # MainFile
+    outfile: "convert-text.js" # "convert-file.js"
+    platform: browser
+    type: "app"
   #test:
   #  dependencies: []
   #  main: Test.Main
