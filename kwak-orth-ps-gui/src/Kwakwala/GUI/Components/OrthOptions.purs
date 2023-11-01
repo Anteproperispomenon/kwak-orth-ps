@@ -114,8 +114,10 @@ orthOptionsGUI orst
 
 blockStyle :: OrthState -> String
 blockStyle orst
-  | orst.orthOpen = "display : open"
-  | otherwise     = "display : block"
+  | orst.orthOpen = "display : block"
+  | otherwise     = "display : none"
+  -- | orst.orthOpen = "display : none"
+  -- | otherwise     = "display : block"
 
 buttonText :: OrthState -> String
 buttonText orst
