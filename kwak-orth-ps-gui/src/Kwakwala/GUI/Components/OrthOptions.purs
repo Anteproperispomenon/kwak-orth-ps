@@ -4,14 +4,15 @@ module Kwakwala.GUI.Components.OrthOptions
   , OrthOptions(..)
   , OrthSlot
   , OrthQuery(..)
+  , AllOrthOptions
+  , defAllOrthOptions
   ) where
 
 
+import Kwakwala.GUI.Components.GrubbOptions
 import Prelude
 
-import Kwakwala.GUI.Components.GrubbOptions
-
-import Data.Maybe(Maybe(..))
+import Data.Maybe (Maybe(..))
 import Effect.Class (class MonadEffect)
 import Halogen as Hal
 import Halogen.Component as HC
@@ -27,7 +28,7 @@ import Web.HTML.Common (ClassName(..))
 --------------------------------
 -- Orthography Options Select
 
-_orthOptions :: Proxy "grubbOptions"
+_orthOptions :: Proxy "orthOptions"
 _orthOptions = Proxy
 
 -- | eXtensible record with `grubbOptions` as a field.
@@ -61,6 +62,18 @@ data OrthOptions
   -- | OrthIPAOptions IPAOptions
   -- | OrthGeorgianOptions GeorgianOptions
 
+type AllOrthOptions
+  = { grubbOrthOptions :: GrubbOptions
+    -- , ipaOrthOptions :: IPAOptions
+    -- , georgianOrthOptions :: GeorgianOptions
+    }
+
+defAllOrthOptions :: AllOrthOptions
+defAllOrthOptions
+  = { grubbOrthOptions : defGrubbOptions
+    -- , ipaOrthOptions : defIPAOrthOptions
+    -- , georgianOrthOptions : defGeorgianOrthOptions
+    }
 
 type OrthState
   = { orthOpen :: Boolean
@@ -90,7 +103,7 @@ orthComp
 orthOptionsGUI :: forall m. MonadEffect m => OrthState -> Hal.ComponentHTML OrthAction OrthSlots m
 orthOptionsGUI orst
   = Html.div_
-      [ Html.button [HP.class_ (ClassName "collapsible")] [Html.text $ buttonText orst ]
+      [ Html.button [HP.class_ (ClassName "collapsible"), HE.onClick (\_ -> OrthToggleBox) ] [Html.text $ buttonText orst ]
       , Html.div [HP.class_ (ClassName "hid-content"), HP.style (blockStyle orst)]
         [ Html.p_ [Html.text "Grubb Options"]
         , Html.p_ [Html.slot  _grubbOptions unit grubbComp {-orst.orthGrubb-} defGrubbOptions orthRaiseGrubb]

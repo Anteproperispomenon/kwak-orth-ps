@@ -25,6 +25,7 @@ import Kwakwala.GUI.Components.InputText
 import Kwakwala.GUI.Components.OutputText
 import Kwakwala.GUI.Components.InputFile
 import Kwakwala.GUI.Components.OutputFile
+import Kwakwala.GUI.Components.OrthOptions
 
 
 import Effect (Effect)
@@ -57,7 +58,7 @@ import Type.Proxy (Proxy(..))
 type ParentSlots
   = ( inputSelect  :: InputSlot  Unit
     , outputSelect :: OutputSlot Unit
-    , grubbOptions :: GrubbSlot  Unit
+    , orthOptions  :: OrthSlot   Unit
     , inputText    :: InputTextSlot  Unit
     , outputText   :: OutputTextSlot Unit
     ) 
@@ -65,7 +66,7 @@ type ParentSlots
 type ParentStateX r
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
-    , grubbOptions :: GrubbOptions
+    , orthOptions  :: AllOrthOptions
     , inputText  :: String
     , outputText :: String
     -- , inputFile :: String
@@ -75,23 +76,23 @@ type ParentStateX r
 type ParentState
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
-    , grubbOptions :: GrubbOptions
+    , orthOptions  :: AllOrthOptions
     , inputText  :: String
     , outputText :: String
     -- , inputFile :: String
     }
 
 data ParentAction
-  = ChangeOrthIn  KwakInputType
-  | ChangeOrthOut KwakOutputType
-  | ChangeGrubb   GrubbOptions
-  | ConvertText   String
+  = ChangeOrthIn   KwakInputType
+  | ChangeOrthOut  KwakOutputType
+  | ChangeOrthOpts OrthOptions
+  | ConvertText    String
 
 defParentState :: ParentState
 defParentState = 
   { inputSelect  : InGrubb
   , outputSelect : OutGrubb
-  , grubbOptions : defGrubbOptions
+  , orthOptions : defAllOrthOptions
   , inputText  : ""
   , outputText : ""
   -- , inputFile : ""
@@ -113,7 +114,7 @@ renderConverter st
   = Html.div_
     [ Html.p_ [Html.text "Individual Orthography Options"]
     , Html.p_ [Html.text "Grubb Options"]
-    , Html.p_ [Html.slot  _grubbOptions unit grubbComp  st.grubbOptions ChangeGrubb]
+    , Html.p_ [Html.slot  _orthOptions  unit orthComp  unit ChangeOrthOpts]
     , Html.p_ [Html.text "Input Orthography"]
     , Html.p_ [Html.slot  _inputSelect  unit inputComp  st.inputSelect  ChangeOrthIn]
     , Html.p_ [Html.text "Output Orthography"]
@@ -132,14 +133,14 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {inputSelect  = kit })
   (ChangeOrthOut kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
-  (ChangeGrubb gbo) -> do
-    Hal.modify_ (\st -> st {grubbOptions = gbo})
+  (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
+    Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ConvertText str) -> do
     stt <- Hal.modify (\st -> st {inputText = str})
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.grubbOptions str
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions.grubbOrthOptions str
     void $ HQ.query _outputText unit (OutputString newStr unit)
     Hal.modify_ (\st -> st {outputText = newStr})
 
