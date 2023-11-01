@@ -11,15 +11,18 @@ import Prelude
 
 import Kwakwala.GUI.Components.GrubbOptions
 
+import Data.Maybe(Maybe(..))
 import Effect.Class (class MonadEffect)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Query as HQ
 import Halogen.Query.HalogenM as HM
 import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
 import Type.Proxy (Proxy(..))
+import Web.HTML.Common (ClassName(..))
 
 --------------------------------
 -- Orthography Options Select
@@ -40,7 +43,7 @@ type OrthSlots
 
 data OrthQuery a
   = OrthGetGrubb (GrubbOptions -> a)
-  | OrthSetGrubb GrubbOptions a
+  -- | OrthSetGrubb GrubbOptions a
   -- | OrthGetIPA (IPAOptions -> a)
   -- | OrthSetIPA IPAOptions a
   -- | OrthGetGeorgian (GeorgianOptions -> a)
@@ -67,17 +70,6 @@ type OrthState
     -- , orthGeorgian :: GeorgianOptions
     -- }
 
-{-
-handleOrthChange :: forall m s act. OrthToggle -> Hal.HalogenM Unit act s OrthOptions m OrthOptions
-handleOrthChange OrthToggleBox = do
-handleOrthChange tog = do
-  x <- Hal.modify  (toggleGrubb tog)
-  HM.raise x
-  pure x
--}
-
--- handleGrubbChange_ :: forall m r. MonadState {grubbOptions :: GrubbOptions | r} m => GrubbToggle -> m Unit
--- handleGrubbChange_ tog = Hal.modify_ (\x -> x {grubbOptions = toggleGrubb tog x.grubbOptions})
 handleOrthChange_ :: forall m. OrthAction -> Hal.HalogenM OrthState OrthAction OrthSlots OrthOptions m Unit
 handleOrthChange_ OrthToggleBox = Hal.modify_ (\x -> x {orthOpen = (not x.orthOpen)})
 handleOrthChange_ (OrthRaiseOptions opts) = HM.raise opts
@@ -89,15 +81,35 @@ orthComp
   = Hal.mkComponent
     { initialState : \_ -> {orthOpen : false}
     , render : \st -> orthOptionsGUI st
-    , eval : HC.mkEval $ HC.defaultEval {handleAction = handleOrthChange_}
+    , eval : HC.mkEval $ HC.defaultEval 
+       { handleAction = handleOrthChange_ 
+       , handleQuery  = handleOrthQuery
+       }
     }
 
 orthOptionsGUI :: forall m. MonadEffect m => OrthState -> Hal.ComponentHTML OrthAction OrthSlots m
 orthOptionsGUI orst
   = Html.div_
-      [ Html.p_ [Html.text "Grubb Options"]
-      , Html.p_ [Html.slot  _grubbOptions unit grubbComp {-orst.orthGrubb-} defGrubbOptions orthRaiseGrubb]
-      -- , Html.p_ [Html.txt "IPA Options"]
-      -- , Html.p_ [Html.slot  _ipaOptions unit ipaComp defIPAOptions OrthIPAOptions]
+      [ Html.button [HP.class_ (ClassName "collapsible")] [Html.text $ buttonText orst ]
+      , Html.div [HP.class_ (ClassName "hid-content"), HP.style (blockStyle orst)]
+        [ Html.p_ [Html.text "Grubb Options"]
+        , Html.p_ [Html.slot  _grubbOptions unit grubbComp {-orst.orthGrubb-} defGrubbOptions orthRaiseGrubb]
+        -- , Html.p_ [Html.txt "IPA Options"]
+        -- , Html.p_ [Html.slot  _ipaOptions unit ipaComp defIPAOptions OrthIPAOptions]
+        ]
       ]
 
+blockStyle :: OrthState -> String
+blockStyle orst
+  | orst.orthOpen = "display : open"
+  | otherwise     = "display : block"
+
+buttonText :: OrthState -> String
+buttonText orst
+  | orst.orthOpen = "Hide Specific Orthography Options"
+  | otherwise     = "Show Specific Orhtography Options"
+
+handleOrthQuery :: forall a m. Monad m => OrthQuery a -> Hal.HalogenM OrthState OrthAction OrthSlots OrthOptions m (Maybe a)
+handleOrthQuery (OrthGetGrubb reply) = do
+  rslt <- HQ.query _grubbOptions unit (GetGrubb (\x -> x))
+  pure $ reply <$> rslt
