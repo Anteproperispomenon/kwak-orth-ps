@@ -111,15 +111,16 @@ convertComp
 renderConverter :: forall m. MonadAff m => ParentState -> Hal.ComponentHTML ParentAction ParentSlots m
 renderConverter st
   = Html.div_
-    [ Html.p_ [Html.text "Individual Orthograph Options"]
+    [ Html.p_ [Html.text "Individual Orthography Options"]
+    , Html.p_ [Html.text "Grubb Options"]
     , Html.p_ [Html.slot  _grubbOptions unit grubbComp  st.grubbOptions ChangeGrubb]
     , Html.p_ [Html.text "Input Orthography"]
     , Html.p_ [Html.slot  _inputSelect  unit inputComp  st.inputSelect  ChangeOrthIn]
     , Html.p_ [Html.text "Output Orthography"]
     , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut]
-    , Html.p_ [Html.text "Input Text"]
+    -- , Html.p_ [Html.text "Input Text"]
     , Html.p_ [Html.slot  _inputText    unit inputTextComp  st.inputText ConvertText]
-    , Html.p_ [Html.text "Output Text"]
+    -- , Html.p_ [Html.text "Output Text"]
     , Html.p_ [Html.slot_ _outputText   unit outputTextComp st.outputText]
     -- , Html.p_ [Html.text "Test"]
     -- , Html.p_ [Html.slot_ _inputFile unit inputFileComp st.inputFile]
@@ -207,15 +208,16 @@ convertComp2
 renderConverter2 :: forall m. MonadAff m => ParentState2 -> Hal.ComponentHTML ParentAction2 ParentSlots2 m
 renderConverter2 st
   = Html.div_
-    [ Html.p_ [Html.text "Individual Orthograph Options"]
+    [ Html.p_ [Html.text "Individual Orthography Options"]
+    , Html.p_ [Html.text "Grubb Options"]
     , Html.p_ [Html.slot  _grubbOptions unit grubbComp  st.grubbOptions ChangeGrubb2]
     , Html.p_ [Html.text "Input Orthography"]
     , Html.p_ [Html.slot  _inputSelect  unit inputComp  st.inputSelect  ChangeOrthIn2]
     , Html.p_ [Html.text "Output Orthography"]
     , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut2]
-    , Html.p_ [Html.text "Input File"]
+    -- , Html.p_ [Html.text "Input File"]
     , Html.p_ [Html.slot  _inputFile unit inputFileComp st.inputFile.fileStr ConvertText2]
-    , Html.p_ [Html.text "Output Text"]
+    -- , Html.p_ [Html.text "Output Text"]
     , Html.p_ [Html.slot_ _outputText unit outputTextComp st.outputText]
     , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : st.outputText , fileTyp : st.inputFile.fileTyp} ]
     ]

@@ -3,6 +3,7 @@ module Kwakwala.GUI.Components.GrubbOptions
   , _grubbOptions
   , GrubbSlot
   , GrubbQuery(..)
+  , GrubbToggle
   ) where
 
 import Prelude
