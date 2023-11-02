@@ -234,7 +234,12 @@ renderConverter2 st
 handleConvertAction2 :: forall m. ParentAction2 -> Hal.HalogenM ParentState2 _ ParentSlots2 _ m Unit
 handleConvertAction2 x = case x of
   (ChangeOrthIn2  kit) -> do
+    old <- Hal.gets _.inputSelect
     Hal.modify_ (\st -> st {inputSelect  = kit })
+    when (kit == InIsland && old /= InIsland) $ do
+      void $ HQ.query _inputFile unit (InputFileIsland unit)
+    when (old == InIsland && kit /= InIsland) $ do
+      void $ HQ.query _inputFile unit (InputFileNonIsland unit)
   (ChangeOrthOut2 kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
   (ChangeOrthOpts2 (OrthGrubbOptions gbo)) -> do

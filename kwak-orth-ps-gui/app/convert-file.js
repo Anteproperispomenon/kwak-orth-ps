@@ -252,11 +252,11 @@
 
   // output/Data.Ord/foreign.js
   var unsafeCompareImpl = function(lt) {
-    return function(eq6) {
+    return function(eq7) {
       return function(gt) {
         return function(x) {
           return function(y) {
-            return x < y ? lt : x === y ? eq6 : gt;
+            return x < y ? lt : x === y ? eq7 : gt;
           };
         };
       };
@@ -2141,13 +2141,13 @@
     return v.value0;
   };
   var eqTuple = function(dictEq) {
-    var eq6 = eq(dictEq);
+    var eq7 = eq(dictEq);
     return function(dictEq1) {
       var eq17 = eq(dictEq1);
       return {
         eq: function(x) {
           return function(y) {
-            return eq6(x.value0)(y.value0) && eq17(x.value1)(y.value1);
+            return eq7(x.value0)(y.value0) && eq17(x.value1)(y.value1);
           };
         }
       };
@@ -10611,9 +10611,39 @@
   var bind7 = /* @__PURE__ */ bind(bindHalogenM);
   var get3 = /* @__PURE__ */ get(monadStateHalogenM);
   var pure10 = /* @__PURE__ */ pure(applicativeHalogenM);
-  var put3 = /* @__PURE__ */ put(monadStateHalogenM);
   var discard6 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var put3 = /* @__PURE__ */ put(monadStateHalogenM);
   var gets2 = /* @__PURE__ */ gets(monadStateHalogenM);
+  var InputString = /* @__PURE__ */ function() {
+    function InputString2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    InputString2.create = function(value0) {
+      return new InputString2(value0);
+    };
+    return InputString2;
+  }();
+  var InputFileIsland = /* @__PURE__ */ function() {
+    function InputFileIsland2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    InputFileIsland2.create = function(value0) {
+      return new InputFileIsland2(value0);
+    };
+    return InputFileIsland2;
+  }();
+  var InputFileNonIsland = /* @__PURE__ */ function() {
+    function InputFileNonIsland2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    InputFileNonIsland2.create = function(value0) {
+      return new InputFileNonIsland2(value0);
+    };
+    return InputFileNonIsland2;
+  }();
   var ChangeFile = /* @__PURE__ */ function() {
     function ChangeFile2(value0) {
       this.value0 = value0;
@@ -10647,7 +10677,7 @@
       return v.value0;
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 94, column 1 - line 94, column 38): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 106, column 1 - line 106, column 38): " + [v.constructor.name]);
   };
   var makeFileData = function(stt) {
     return {
@@ -10666,20 +10696,62 @@
       return new ChangeFile(v.value0);
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 99, column 19 - line 101, column 27): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 111, column 19 - line 113, column 27): " + [v.constructor.name]);
   };
   var inputFileGUI = function(dictMonad) {
     return function(stt) {
-      return div_([p_([text5("Input")]), p_([input([type_22(InputFile.value), accept2(inputTypes), multiple3(false), onFileUpload2(handleUpload)])]), p_([textarea([rows4(12), cols2(100), id2("output-box"), name15("output-box"), readOnly3(true), value14(stt.input)])]), p_([text5("Errors")]), p_([textarea([rows4(3), cols2(100), id2("error-box"), name15("error-box"), readOnly3(true), value14(renderError(stt.error))])]), p_([button([id2("convert-button"), name15("convert-button"), onClick(function(v) {
+      return div_([p_([text5("Input")]), p_([input([type_22(InputFile.value), accept2(inputTypes), multiple3(false), onFileUpload2(handleUpload)])]), p_([textarea([rows4(12), cols2(100), id2("output-box"), name15("output-box"), readOnly3(true), value14(stt.input), class_(stt.style)])]), p_([text5("Errors")]), p_([textarea([rows4(3), cols2(100), id2("error-box"), name15("error-box"), readOnly3(true), value14(renderError(stt.error))])]), p_([button([id2("convert-button"), name15("convert-button"), onClick(function(v) {
         return Reconvert.value;
       }), disabled10($$null2(stt.input))])([text5("Reconvert")])])]);
     };
   };
   var handleInputFileQuery = function(dictMonad) {
     return function(v) {
-      return bind7(get3)(function(stt) {
-        return pure10(new Just(v.value0(makeFileData(stt))));
-      });
+      if (v instanceof InputString) {
+        return bind7(get3)(function(stt) {
+          return pure10(new Just(v.value0(makeFileData(stt))));
+        });
+      }
+      ;
+      if (v instanceof InputFileIsland) {
+        return bind7(get3)(function(stt) {
+          return discard6(put3(function() {
+            var $40 = {};
+            for (var $41 in stt) {
+              if ({}.hasOwnProperty.call(stt, $41)) {
+                $40[$41] = stt[$41];
+              }
+              ;
+            }
+            ;
+            $40.style = "island";
+            return $40;
+          }()))(function() {
+            return pure10(new Just(v.value0));
+          });
+        });
+      }
+      ;
+      if (v instanceof InputFileNonIsland) {
+        return bind7(get3)(function(stt) {
+          return discard6(put3(function() {
+            var $44 = {};
+            for (var $45 in stt) {
+              if ({}.hasOwnProperty.call(stt, $45)) {
+                $44[$45] = stt[$45];
+              }
+              ;
+            }
+            ;
+            $44.style = "normal";
+            return $44;
+          }()))(function() {
+            return pure10(new Just(v.value0));
+          });
+        });
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 118, column 1 - line 118, column 136): " + [v.constructor.name]);
     };
   };
   var handleInputFileAction = function(dictMonadAff) {
@@ -10695,34 +10767,39 @@
             if (estr instanceof Left) {
               return bind7(get3)(function(stt) {
                 return put3(function() {
-                  var $39 = {};
-                  for (var $40 in stt) {
-                    if ({}.hasOwnProperty.call(stt, $40)) {
-                      $39[$40] = stt[$40];
+                  var $50 = {};
+                  for (var $51 in stt) {
+                    if ({}.hasOwnProperty.call(stt, $51)) {
+                      $50[$51] = stt[$51];
                     }
                     ;
                   }
                   ;
-                  $39.error = new Just(message(estr.value0));
-                  return $39;
+                  $50.error = new Just(message(estr.value0));
+                  return $50;
                 }());
               });
             }
             ;
             if (estr instanceof Right) {
-              return discard6(put3({
-                input: estr.value0,
-                error: Nothing.value,
-                ftype: ftyp
-              }))(function() {
-                return raise({
-                  fileStr: estr.value0,
-                  fileTyp: ftyp
+              return bind7(gets2(function(v1) {
+                return v1.style;
+              }))(function(sty) {
+                return discard6(put3({
+                  input: estr.value0,
+                  error: Nothing.value,
+                  ftype: ftyp,
+                  style: sty
+                }))(function() {
+                  return raise({
+                    fileStr: estr.value0,
+                    fileTyp: ftyp
+                  });
                 });
               });
             }
             ;
-            throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 117, column 3 - line 124, column 49): " + [estr.constructor.name]);
+            throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 137, column 3 - line 145, column 50): " + [estr.constructor.name]);
           });
         });
       }
@@ -10742,7 +10819,7 @@
         });
       }
       ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 111, column 1 - line 111, column 134): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 131, column 1 - line 131, column 134): " + [v.constructor.name]);
     };
   };
   var inputFileComp = function(dictMonadAff) {
@@ -10752,7 +10829,8 @@
         return {
           input: x,
           error: Nothing.value,
-          ftype: Nothing.value
+          ftype: Nothing.value,
+          style: "normal"
         };
       },
       render: inputFileGUI(Monad0),
@@ -34683,11 +34761,12 @@
       return "outputSelect";
     }
   })(ordUnit);
-  var slot4 = /* @__PURE__ */ slot3({
+  var inputFileIsSymbol = {
     reflectSymbol: function() {
       return "inputFile";
     }
-  })(ordUnit);
+  };
+  var slot4 = /* @__PURE__ */ slot3(inputFileIsSymbol)(ordUnit);
   var slot_2 = /* @__PURE__ */ slot_();
   var outputTextIsSymbol = {
     reflectSymbol: function() {
@@ -34701,15 +34780,20 @@
     }
   };
   var slot_22 = /* @__PURE__ */ slot_2(outputFileIsSymbol)(ordUnit);
-  var modify_4 = /* @__PURE__ */ modify_2(monadStateHalogenM);
   var bind24 = /* @__PURE__ */ bind(bindHalogenM);
-  var modify7 = /* @__PURE__ */ modify2(monadStateHalogenM);
-  var pure28 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var gets3 = /* @__PURE__ */ gets(monadStateHalogenM);
   var discard13 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var modify_4 = /* @__PURE__ */ modify_2(monadStateHalogenM);
+  var when5 = /* @__PURE__ */ when(applicativeHalogenM);
+  var eq6 = /* @__PURE__ */ eq(eqKwakInType);
+  var notEq4 = /* @__PURE__ */ notEq(eqKwakInType);
   var $$void9 = /* @__PURE__ */ $$void(functorHalogenM);
   var query3 = /* @__PURE__ */ query();
-  var query12 = /* @__PURE__ */ query3(outputTextIsSymbol)(ordUnit);
-  var query23 = /* @__PURE__ */ query3(outputFileIsSymbol)(ordUnit);
+  var query12 = /* @__PURE__ */ query3(inputFileIsSymbol)(ordUnit);
+  var modify7 = /* @__PURE__ */ modify2(monadStateHalogenM);
+  var pure28 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var query23 = /* @__PURE__ */ query3(outputTextIsSymbol)(ordUnit);
+  var query32 = /* @__PURE__ */ query3(outputFileIsSymbol)(ordUnit);
   var ChangeOrthIn2 = /* @__PURE__ */ function() {
     function ChangeOrthIn22(value0) {
       this.value0 = value0;
@@ -34767,117 +34851,125 @@
   };
   var handleConvertAction2 = function(x) {
     if (x instanceof ChangeOrthIn2) {
-      return modify_4(function(st) {
-        var $74 = {};
-        for (var $75 in st) {
-          if ({}.hasOwnProperty.call(st, $75)) {
-            $74[$75] = st[$75];
+      return bind24(gets3(function(v) {
+        return v.inputSelect;
+      }))(function(old) {
+        return discard13(modify_4(function(st) {
+          var $85 = {};
+          for (var $86 in st) {
+            if ({}.hasOwnProperty.call(st, $86)) {
+              $85[$86] = st[$86];
+            }
+            ;
           }
           ;
-        }
-        ;
-        $74.inputSelect = x.value0;
-        return $74;
+          $85.inputSelect = x.value0;
+          return $85;
+        }))(function() {
+          return discard13(when5(eq6(x.value0)(InIsland.value) && notEq4(old)(InIsland.value))($$void9(query12(_inputFile)(unit)(new InputFileIsland(unit)))))(function() {
+            return when5(eq6(old)(InIsland.value) && notEq4(x.value0)(InIsland.value))($$void9(query12(_inputFile)(unit)(new InputFileNonIsland(unit))));
+          });
+        });
       });
     }
     ;
     if (x instanceof ChangeOrthOut2) {
       return modify_4(function(st) {
-        var $78 = {};
-        for (var $79 in st) {
-          if ({}.hasOwnProperty.call(st, $79)) {
-            $78[$79] = st[$79];
+        var $89 = {};
+        for (var $90 in st) {
+          if ({}.hasOwnProperty.call(st, $90)) {
+            $89[$90] = st[$90];
           }
           ;
         }
         ;
-        $78.outputSelect = x.value0;
-        return $78;
+        $89.outputSelect = x.value0;
+        return $89;
       });
     }
     ;
     if (x instanceof ChangeOrthOpts2 && x.value0 instanceof OrthGrubbOptions) {
       return modify_4(function(st) {
-        var $85 = {};
-        for (var $86 in st) {
-          if ({}.hasOwnProperty.call(st, $86)) {
-            $85[$86] = st[$86];
+        var $96 = {};
+        for (var $97 in st) {
+          if ({}.hasOwnProperty.call(st, $97)) {
+            $96[$97] = st[$97];
           }
           ;
         }
         ;
-        $85.orthOptions = function() {
-          var $82 = {};
-          for (var $83 in st.orthOptions) {
-            if ({}.hasOwnProperty.call(st.orthOptions, $83)) {
-              $82[$83] = st["orthOptions"][$83];
+        $96.orthOptions = function() {
+          var $93 = {};
+          for (var $94 in st.orthOptions) {
+            if ({}.hasOwnProperty.call(st.orthOptions, $94)) {
+              $93[$94] = st["orthOptions"][$94];
             }
             ;
           }
           ;
-          $82.grubbOrthOptions = x.value0.value0;
-          return $82;
+          $93.grubbOrthOptions = x.value0.value0;
+          return $93;
         }();
-        return $85;
+        return $96;
       });
     }
     ;
     if (x instanceof ChangeOrthOpts2 && x.value0 instanceof OrthIPAOptions) {
       return modify_4(function(st) {
-        var $93 = {};
-        for (var $94 in st) {
-          if ({}.hasOwnProperty.call(st, $94)) {
-            $93[$94] = st[$94];
+        var $104 = {};
+        for (var $105 in st) {
+          if ({}.hasOwnProperty.call(st, $105)) {
+            $104[$105] = st[$105];
           }
           ;
         }
         ;
-        $93.orthOptions = function() {
-          var $90 = {};
-          for (var $91 in st.orthOptions) {
-            if ({}.hasOwnProperty.call(st.orthOptions, $91)) {
-              $90[$91] = st["orthOptions"][$91];
+        $104.orthOptions = function() {
+          var $101 = {};
+          for (var $102 in st.orthOptions) {
+            if ({}.hasOwnProperty.call(st.orthOptions, $102)) {
+              $101[$102] = st["orthOptions"][$102];
             }
             ;
           }
           ;
-          $90.ipaOrthOptions = x.value0.value0;
-          return $90;
+          $101.ipaOrthOptions = x.value0.value0;
+          return $101;
         }();
-        return $93;
+        return $104;
       });
     }
     ;
     if (x instanceof ConvertText2) {
       return bind24(modify7(function(st) {
-        var $98 = {};
-        for (var $99 in st) {
-          if ({}.hasOwnProperty.call(st, $99)) {
-            $98[$99] = st[$99];
+        var $109 = {};
+        for (var $110 in st) {
+          if ({}.hasOwnProperty.call(st, $110)) {
+            $109[$110] = st[$110];
           }
           ;
         }
         ;
-        $98.inputFile = x.value0;
-        return $98;
+        $109.inputFile = x.value0;
+        return $109;
       }))(function(stt) {
         return bind24(pure28(convertOrthography(stt.inputSelect)(stt.outputSelect)(stt.orthOptions)(x.value0.fileStr)))(function(newStr) {
-          return discard13($$void9(query12(_outputText)(unit)(new OutputString(newStr, unit))))(function() {
-            return discard13($$void9(query23(_outputFile)(unit)(new ReceiveFileData({
+          return discard13($$void9(query23(_outputText)(unit)(new OutputString(newStr, unit))))(function() {
+            return discard13($$void9(query32(_outputFile)(unit)(new ReceiveFileData({
               fileStr: newStr,
               fileTyp: x.value0.fileTyp
             }, unit))))(function() {
               return modify_4(function(st) {
-                var $101 = {};
-                for (var $102 in st) {
-                  if ({}.hasOwnProperty.call(st, $102)) {
-                    $101[$102] = st[$102];
+                var $112 = {};
+                for (var $113 in st) {
+                  if ({}.hasOwnProperty.call(st, $113)) {
+                    $112[$113] = st[$113];
                   }
                   ;
                 }
                 ;
-                $101.outputText = newStr;
-                return $101;
+                $112.outputText = newStr;
+                return $112;
               });
             });
           });
@@ -34885,7 +34977,7 @@
       });
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components (line 229, column 26 - line 248, column 50): " + [x.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components (line 235, column 26 - line 259, column 50): " + [x.constructor.name]);
   };
   var defParentState2 = /* @__PURE__ */ function() {
     return {

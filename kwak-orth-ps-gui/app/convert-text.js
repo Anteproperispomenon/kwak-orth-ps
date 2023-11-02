@@ -1182,11 +1182,11 @@
 
   // output/Data.Ord/foreign.js
   var unsafeCompareImpl = function(lt) {
-    return function(eq6) {
+    return function(eq7) {
       return function(gt) {
         return function(x) {
           return function(y) {
-            return x < y ? lt : x === y ? eq6 : gt;
+            return x < y ? lt : x === y ? eq7 : gt;
           };
         };
       };
@@ -2138,13 +2138,13 @@
     return v.value0;
   };
   var eqTuple = function(dictEq) {
-    var eq6 = eq(dictEq);
+    var eq7 = eq(dictEq);
     return function(dictEq1) {
       var eq17 = eq(dictEq1);
       return {
         eq: function(x) {
           return function(y) {
-            return eq6(x.value0)(y.value0) && eq17(x.value1)(y.value1);
+            return eq7(x.value0)(y.value0) && eq17(x.value1)(y.value1);
           };
         }
       };
@@ -2204,6 +2204,14 @@
       return state1(function(s) {
         var s$prime = f(s);
         return new Tuple(s$prime, s$prime);
+      });
+    };
+  };
+  var gets = function(dictMonadState) {
+    var state1 = state(dictMonadState);
+    return function(f) {
+      return state1(function(s) {
+        return new Tuple(f(s), s);
       });
     };
   };
@@ -3271,9 +3279,9 @@
   var map8 = /* @__PURE__ */ map(functorEffect);
   var discard2 = /* @__PURE__ */ discard(discardUnit);
   var throwError2 = /* @__PURE__ */ throwError(monadThrowAff);
-  var selectElement = function(query4) {
+  var selectElement = function(query5) {
     return bind2(liftEffect3(bindFlipped4(composeKleisliFlipped2(function() {
-      var $16 = querySelector(query4);
+      var $16 = querySelector(query5);
       return function($17) {
         return $16(toParentNode($17));
       };
@@ -10144,7 +10152,40 @@
   var bind7 = /* @__PURE__ */ bind(bindHalogenM);
   var get3 = /* @__PURE__ */ get(monadStateHalogenM);
   var pure10 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var discard6 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var put3 = /* @__PURE__ */ put(monadStateHalogenM);
+  var modify_3 = /* @__PURE__ */ modify_2(monadStateHalogenM);
+  var gets2 = /* @__PURE__ */ gets(monadStateHalogenM);
+  var InputString = /* @__PURE__ */ function() {
+    function InputString2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    InputString2.create = function(value0) {
+      return new InputString2(value0);
+    };
+    return InputString2;
+  }();
+  var InputSetIsland = /* @__PURE__ */ function() {
+    function InputSetIsland2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    InputSetIsland2.create = function(value0) {
+      return new InputSetIsland2(value0);
+    };
+    return InputSetIsland2;
+  }();
+  var InputSetNonIsland = /* @__PURE__ */ function() {
+    function InputSetNonIsland2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    InputSetNonIsland2.create = function(value0) {
+      return new InputSetNonIsland2(value0);
+    };
+    return InputSetNonIsland2;
+  }();
   var ChangeInput = /* @__PURE__ */ function() {
     function ChangeInput2(value0) {
       this.value0 = value0;
@@ -10163,38 +10204,96 @@
     return SendInput2;
   }();
   var inputTextGUI = function(dictMonad) {
-    return function(_str) {
+    return function(st) {
       return div_([p_([text5("Input")]), p_([textarea([autofocus6(true), rows4(12), cols2(100), id2("input-box"), name15("input-box"), placeholder3("Input Text"), onValueInput(function(x) {
         return new ChangeInput(x);
-      })])]), p_([button([id2("convert-button"), name15("convert-button"), onClick(function(v) {
+      }), class_(st.itStyle)])]), p_([button([id2("convert-button"), name15("convert-button"), onClick(function(v) {
         return SendInput.value;
       })])([text5("Convert")])])]);
     };
   };
   var handleInputTextQuery = function(dictMonad) {
     return function(v) {
-      return bind7(get3)(function(str) {
-        return pure10(new Just(v.value0(str)));
-      });
+      if (v instanceof InputString) {
+        return bind7(get3)(function(st) {
+          return pure10(new Just(v.value0(st.itString)));
+        });
+      }
+      ;
+      if (v instanceof InputSetIsland) {
+        return bind7(get3)(function(st) {
+          return discard6(put3(function() {
+            var $23 = {};
+            for (var $24 in st) {
+              if ({}.hasOwnProperty.call(st, $24)) {
+                $23[$24] = st[$24];
+              }
+              ;
+            }
+            ;
+            $23.itStyle = "island";
+            return $23;
+          }()))(function() {
+            return pure10(new Just(v.value0));
+          });
+        });
+      }
+      ;
+      if (v instanceof InputSetNonIsland) {
+        return bind7(get3)(function(st) {
+          return discard6(put3(function() {
+            var $27 = {};
+            for (var $28 in st) {
+              if ({}.hasOwnProperty.call(st, $28)) {
+                $27[$28] = st[$28];
+              }
+              ;
+            }
+            ;
+            $27.itStyle = "normal";
+            return $27;
+          }()))(function() {
+            return pure10(new Just(v.value0));
+          });
+        });
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputText (line 72, column 1 - line 72, column 134): " + [v.constructor.name]);
     };
   };
   var handleInputTextAction = function(v) {
     if (v instanceof ChangeInput) {
-      return put3(v.value0);
+      return modify_3(function(st) {
+        var $32 = {};
+        for (var $33 in st) {
+          if ({}.hasOwnProperty.call(st, $33)) {
+            $32[$33] = st[$33];
+          }
+          ;
+        }
+        ;
+        $32.itString = v.value0;
+        return $32;
+      });
     }
     ;
     if (v instanceof SendInput) {
-      return bind7(get3)(function(str) {
+      return bind7(gets2(function(v1) {
+        return v1.itString;
+      }))(function(str) {
         return raise(str);
       });
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputText (line 60, column 1 - line 60, column 108): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputText (line 86, column 1 - line 86, column 116): " + [v.constructor.name]);
   };
   var inputTextComp = function(dictMonad) {
     return mkComponent({
       initialState: function(x) {
-        return x;
+        return {
+          itString: x,
+          itStyle: "normal"
+        };
       },
       render: inputTextGUI(dictMonad),
       "eval": mkEval({
@@ -10422,7 +10521,7 @@
     }
   };
   var query22 = /* @__PURE__ */ query2(ipaOptionsIsSymbol)(ordUnit);
-  var modify_3 = /* @__PURE__ */ modify_2(monadStateHalogenM);
+  var modify_4 = /* @__PURE__ */ modify_2(monadStateHalogenM);
   var slot2 = /* @__PURE__ */ slot();
   var slot1 = /* @__PURE__ */ slot2(grubbOptionsIsSymbol)(ordUnit);
   var slot22 = /* @__PURE__ */ slot2(ipaOptionsIsSymbol)(ordUnit);
@@ -10512,7 +10611,7 @@
   };
   var handleOrthChange_ = function(v) {
     if (v instanceof OrthToggleBox) {
-      return modify_3(function(x) {
+      return modify_4(function(x) {
         var $36 = {};
         for (var $37 in x) {
           if ({}.hasOwnProperty.call(x, $37)) {
@@ -10594,7 +10693,7 @@
   var bind11 = /* @__PURE__ */ bind(bindHalogenM);
   var get6 = /* @__PURE__ */ get(monadStateHalogenM);
   var pure15 = /* @__PURE__ */ pure(applicativeHalogenM);
-  var discard6 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var discard7 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var put4 = /* @__PURE__ */ put(monadStateHalogenM);
   var radioButtonsO = function(kwk) {
     return div2([class_("radio-in")])([input2([type_24(InputRadio.value), id2("grubb-out"), name15("ROutput"), value16("guh1"), onClick(function(v) {
@@ -10617,7 +10716,7 @@
     };
   };
   var handleOrthOut = function(kot) {
-    return discard6(put4(kot))(function() {
+    return discard7(put4(kot))(function() {
       return raise(kot);
     });
   };
@@ -10642,7 +10741,7 @@
 
   // output/Kwakwala.GUI.Components.OutputText/index.js
   var value17 = /* @__PURE__ */ value12(isPropString);
-  var discard7 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var discard8 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var put5 = /* @__PURE__ */ put(monadStateHalogenM);
   var pure16 = /* @__PURE__ */ pure(applicativeHalogenM);
   var OutputString = /* @__PURE__ */ function() {
@@ -10665,7 +10764,7 @@
   };
   var handleOutputTextQuery = function(dictMonad) {
     return function(v) {
-      return discard7(put5(v.value0))(function() {
+      return discard8(put5(v.value0))(function() {
         return pure16(new Just(v.value1));
       });
     };
@@ -29825,7 +29924,7 @@
 
   // output/Parsing.Token/index.js
   var bind15 = /* @__PURE__ */ bind(bindParserT);
-  var discard8 = /* @__PURE__ */ discard(discardUnit)(bindParserT);
+  var discard9 = /* @__PURE__ */ discard(discardUnit)(bindParserT);
   var pure18 = /* @__PURE__ */ pure(applicativeParserT);
   var token = function(tokpos) {
     return bind15(getParserT)(function(v) {
@@ -29835,7 +29934,7 @@
       }
       ;
       if (v1 instanceof Just) {
-        return discard8(stateParserT(function(v2) {
+        return discard9(stateParserT(function(v2) {
           return new Tuple(unit, new ParseState(v1.value0.tail, tokpos(v1.value0.head), true));
         }))(function() {
           return pure18(v1.value0.head);
@@ -29861,7 +29960,7 @@
   var pure19 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeStateT(monadParserT));
   var foldr4 = /* @__PURE__ */ foldr(foldableList);
   var lift3 = /* @__PURE__ */ lift(monadTransStateT)(monadParserT);
-  var discard9 = /* @__PURE__ */ discard(discardUnit)(bindStateT2);
+  var discard10 = /* @__PURE__ */ discard(discardUnit)(bindStateT2);
   var monadStateStateT2 = /* @__PURE__ */ monadStateStateT(monadParserT);
   var get7 = /* @__PURE__ */ get(monadStateStateT2);
   var functorStateT2 = /* @__PURE__ */ functorStateT(functorParserT);
@@ -29923,7 +30022,7 @@
     };
   };
   var liftEmit = lift3;
-  var parseEOF = /* @__PURE__ */ discard9(/* @__PURE__ */ liftEmit(eof2))(function() {
+  var parseEOF = /* @__PURE__ */ discard10(/* @__PURE__ */ liftEmit(eof2))(function() {
     return bind16(get7)(function(st) {
       if (st instanceof WordStart) {
         return voidLeft4(put6(EndOfFile.value))("");
@@ -29956,7 +30055,7 @@
       }
       ;
       if (v instanceof Just) {
-        return discard9($$void7(lift3(token(function(v2) {
+        return discard10($$void7(lift3(token(function(v2) {
           return initialPos;
         }))))(function() {
           return pure19(v.value0);
@@ -29975,13 +30074,13 @@
       }
       ;
       if (c instanceof AfterLetter) {
-        return discard9(put6(AfterVowel.value))(function() {
+        return discard10(put6(AfterVowel.value))(function() {
           return pure19(mergeLetters(c.value0)(v));
         });
       }
       ;
       if (c instanceof WordStart) {
-        return discard9(put6(AfterVowel.value))(function() {
+        return discard10(put6(AfterVowel.value))(function() {
           return pure19(makeVowel(v));
         });
       }
@@ -29999,7 +30098,7 @@
     }
     ;
     if (rslt instanceof Just && rslt.value0 instanceof Punct) {
-      return discard9($$void7(lift3(token(function(v) {
+      return discard10($$void7(lift3(token(function(v) {
         return initialPos;
       }))))(function() {
         return pure19(rslt.value0.value0);
@@ -30015,19 +30114,19 @@
       }
       ;
       if (st instanceof AfterVowel) {
-        return discard9(put6(WordStart.value))(function() {
+        return discard10(put6(WordStart.value))(function() {
           return pure19(str);
         });
       }
       ;
       if (st instanceof AfterLetter) {
-        return discard9(put6(WordStart.value))(function() {
+        return discard10(put6(WordStart.value))(function() {
           return pure19(letterCoda(st.value0) + str);
         });
       }
       ;
       if (st instanceof EndOfFile) {
-        return discard9(put6(WordStart.value))(function() {
+        return discard10(put6(WordStart.value))(function() {
           return pure19(str);
         });
       }
@@ -30047,7 +30146,7 @@
       }
       ;
       if (v instanceof Just) {
-        return discard9($$void7(lift3(token(function(v1) {
+        return discard10($$void7(lift3(token(function(v1) {
           return initialPos;
         }))))(function() {
           return pure19(v.value0);
@@ -31379,7 +31478,7 @@
   var applySecond3 = /* @__PURE__ */ applySecond(applyParserT);
   var peekChar3 = /* @__PURE__ */ peekChar(monadRecIdentity);
   var choice2 = /* @__PURE__ */ choice(foldableArray);
-  var discard10 = /* @__PURE__ */ discard(discardUnit)(bindParserT);
+  var discard11 = /* @__PURE__ */ discard(discardUnit)(bindParserT);
   var $$void8 = /* @__PURE__ */ $$void(functorParserT);
   var when4 = /* @__PURE__ */ when(applicativeParserT);
   var disj1 = /* @__PURE__ */ disj(/* @__PURE__ */ heytingAlgebraFunction(heytingAlgebraBoolean));
@@ -31778,9 +31877,9 @@
       }
       ;
       if (v.value0 === "l" || v.value0 === "L") {
-        return choice2([discard10($$void8(anyChar))(function() {
+        return choice2([discard11($$void8(anyChar))(function() {
           return bind19(peekChar3)(function(y) {
-            return discard10(when4(liftP(isH)(y))(fail2(`"'lh" error`)))(function() {
+            return discard11(when4(liftP(isH)(y))(fail2(`"'lh" error`)))(function() {
               return pure23(makeCase(isUpperC(v.value0))(LY.value));
             });
           });
@@ -34044,19 +34143,25 @@
     }
   };
   var slot_1 = /* @__PURE__ */ slot_2(outputTextIsSymbol)(ordUnit);
-  var slot5 = /* @__PURE__ */ slot3({
+  var inputTextIsSymbol = {
     reflectSymbol: function() {
       return "inputText";
     }
-  })(ordUnit);
-  var modify_4 = /* @__PURE__ */ modify_2(monadStateHalogenM);
+  };
+  var slot5 = /* @__PURE__ */ slot3(inputTextIsSymbol)(ordUnit);
   var bind23 = /* @__PURE__ */ bind(bindHalogenM);
-  var modify7 = /* @__PURE__ */ modify2(monadStateHalogenM);
-  var pure27 = /* @__PURE__ */ pure(applicativeHalogenM);
-  var discard11 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var gets3 = /* @__PURE__ */ gets(monadStateHalogenM);
+  var discard12 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var modify_5 = /* @__PURE__ */ modify_2(monadStateHalogenM);
+  var when5 = /* @__PURE__ */ when(applicativeHalogenM);
+  var eq6 = /* @__PURE__ */ eq(eqKwakInType);
+  var notEq4 = /* @__PURE__ */ notEq(eqKwakInType);
   var $$void9 = /* @__PURE__ */ $$void(functorHalogenM);
   var query3 = /* @__PURE__ */ query();
-  var query12 = /* @__PURE__ */ query3(outputTextIsSymbol)(ordUnit);
+  var modify7 = /* @__PURE__ */ modify2(monadStateHalogenM);
+  var pure27 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var query23 = /* @__PURE__ */ query3(outputTextIsSymbol)(ordUnit);
+  var query4 = /* @__PURE__ */ query3(inputTextIsSymbol)(ordUnit);
   var ChangeOrthIn = /* @__PURE__ */ function() {
     function ChangeOrthIn2(value0) {
       this.value0 = value0;
@@ -34111,120 +34216,128 @@
   };
   var handleConvertAction = function(x) {
     if (x instanceof ChangeOrthIn) {
-      return modify_4(function(st) {
-        var $106 = {};
-        for (var $107 in st) {
-          if ({}.hasOwnProperty.call(st, $107)) {
-            $106[$107] = st[$107];
+      return bind23(gets3(function(v) {
+        return v.inputSelect;
+      }))(function(old) {
+        return discard12(modify_5(function(st) {
+          var $117 = {};
+          for (var $118 in st) {
+            if ({}.hasOwnProperty.call(st, $118)) {
+              $117[$118] = st[$118];
+            }
+            ;
           }
           ;
-        }
-        ;
-        $106.inputSelect = x.value0;
-        return $106;
+          $117.inputSelect = x.value0;
+          return $117;
+        }))(function() {
+          return discard12(when5(eq6(x.value0)(InIsland.value) && notEq4(old)(InIsland.value))($$void9(query4(_inputText)(unit)(new InputSetIsland(unit)))))(function() {
+            return when5(eq6(old)(InIsland.value) && notEq4(x.value0)(InIsland.value))($$void9(query4(_inputText)(unit)(new InputSetNonIsland(unit))));
+          });
+        });
       });
     }
     ;
     if (x instanceof ChangeOrthOut) {
-      return modify_4(function(st) {
-        var $110 = {};
-        for (var $111 in st) {
-          if ({}.hasOwnProperty.call(st, $111)) {
-            $110[$111] = st[$111];
+      return modify_5(function(st) {
+        var $121 = {};
+        for (var $122 in st) {
+          if ({}.hasOwnProperty.call(st, $122)) {
+            $121[$122] = st[$122];
           }
           ;
         }
         ;
-        $110.outputSelect = x.value0;
-        return $110;
+        $121.outputSelect = x.value0;
+        return $121;
       });
     }
     ;
     if (x instanceof ChangeOrthOpts && x.value0 instanceof OrthGrubbOptions) {
-      return modify_4(function(st) {
-        var $117 = {};
-        for (var $118 in st) {
-          if ({}.hasOwnProperty.call(st, $118)) {
-            $117[$118] = st[$118];
+      return modify_5(function(st) {
+        var $128 = {};
+        for (var $129 in st) {
+          if ({}.hasOwnProperty.call(st, $129)) {
+            $128[$129] = st[$129];
           }
           ;
         }
         ;
-        $117.orthOptions = function() {
-          var $114 = {};
-          for (var $115 in st.orthOptions) {
-            if ({}.hasOwnProperty.call(st.orthOptions, $115)) {
-              $114[$115] = st["orthOptions"][$115];
+        $128.orthOptions = function() {
+          var $125 = {};
+          for (var $126 in st.orthOptions) {
+            if ({}.hasOwnProperty.call(st.orthOptions, $126)) {
+              $125[$126] = st["orthOptions"][$126];
             }
             ;
           }
           ;
-          $114.grubbOrthOptions = x.value0.value0;
-          return $114;
+          $125.grubbOrthOptions = x.value0.value0;
+          return $125;
         }();
-        return $117;
+        return $128;
       });
     }
     ;
     if (x instanceof ChangeOrthOpts && x.value0 instanceof OrthIPAOptions) {
-      return modify_4(function(st) {
-        var $125 = {};
-        for (var $126 in st) {
-          if ({}.hasOwnProperty.call(st, $126)) {
-            $125[$126] = st[$126];
+      return modify_5(function(st) {
+        var $136 = {};
+        for (var $137 in st) {
+          if ({}.hasOwnProperty.call(st, $137)) {
+            $136[$137] = st[$137];
           }
           ;
         }
         ;
-        $125.orthOptions = function() {
-          var $122 = {};
-          for (var $123 in st.orthOptions) {
-            if ({}.hasOwnProperty.call(st.orthOptions, $123)) {
-              $122[$123] = st["orthOptions"][$123];
+        $136.orthOptions = function() {
+          var $133 = {};
+          for (var $134 in st.orthOptions) {
+            if ({}.hasOwnProperty.call(st.orthOptions, $134)) {
+              $133[$134] = st["orthOptions"][$134];
             }
             ;
           }
           ;
-          $122.ipaOrthOptions = x.value0.value0;
-          return $122;
+          $133.ipaOrthOptions = x.value0.value0;
+          return $133;
         }();
-        return $125;
+        return $136;
       });
     }
     ;
     if (x instanceof ConvertText) {
       return bind23(modify7(function(st) {
-        var $130 = {};
-        for (var $131 in st) {
-          if ({}.hasOwnProperty.call(st, $131)) {
-            $130[$131] = st[$131];
+        var $141 = {};
+        for (var $142 in st) {
+          if ({}.hasOwnProperty.call(st, $142)) {
+            $141[$142] = st[$142];
           }
           ;
         }
         ;
-        $130.inputText = x.value0;
-        return $130;
+        $141.inputText = x.value0;
+        return $141;
       }))(function(stt) {
         return bind23(pure27(convertOrthography(stt.inputSelect)(stt.outputSelect)(stt.orthOptions)(x.value0)))(function(newStr) {
-          return discard11($$void9(query12(_outputText)(unit)(new OutputString(newStr, unit))))(function() {
-            return modify_4(function(st) {
-              var $133 = {};
-              for (var $134 in st) {
-                if ({}.hasOwnProperty.call(st, $134)) {
-                  $133[$134] = st[$134];
+          return discard12($$void9(query23(_outputText)(unit)(new OutputString(newStr, unit))))(function() {
+            return modify_5(function(st) {
+              var $144 = {};
+              for (var $145 in st) {
+                if ({}.hasOwnProperty.call(st, $145)) {
+                  $144[$145] = st[$145];
                 }
                 ;
               }
               ;
-              $133.outputText = newStr;
-              return $133;
+              $144.outputText = newStr;
+              return $144;
             });
           });
         });
       });
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components (line 130, column 25 - line 148, column 50): " + [x.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components (line 131, column 25 - line 154, column 50): " + [x.constructor.name]);
   };
   var defParentState = /* @__PURE__ */ function() {
     return {
