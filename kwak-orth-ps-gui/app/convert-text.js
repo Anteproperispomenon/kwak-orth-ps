@@ -6940,6 +6940,7 @@
   var label4 = /* @__PURE__ */ element2("label");
   var p = /* @__PURE__ */ element2("p");
   var p_ = /* @__PURE__ */ p([]);
+  var span3 = /* @__PURE__ */ element2("span");
   var textarea = function(es) {
     return element2("textarea")(es)([]);
   };
@@ -10273,7 +10274,7 @@
         };
       }
       ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.GrubbOptions (line 94, column 1 - line 94, column 59): " + [v.constructor.name, v1.constructor.name]);
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.GrubbOptions (line 103, column 1 - line 103, column 59): " + [v.constructor.name, v1.constructor.name]);
     };
   };
   var handleGrubbQuery = function(v) {
@@ -10287,13 +10288,13 @@
     });
   };
   var grubbOptionsGUI = function(grb) {
-    return div_([p_([input2([type_22(InputCheckbox.value), id2("grubb-j"), name15("CGrubb"), value14("grb1"), onClick(function(v) {
+    return div2([class_("orth-options")])([p_([label4([$$for("grubb-j"), class_("orth-span")])([input2([type_22(InputCheckbox.value), id2("grubb-j"), name15("CGrubb"), value14("grb1"), onClick(function(v) {
       return GrbTogJ.value;
-    }), checked2(grb.grbUseJ)]), label4([$$for("grubb-j")])([text5("Use J for /h/")])]), p_([input2([type_22(InputCheckbox.value), id2("grubb-e"), name15("CGrubb"), value14("grb2"), onClick(function(v) {
+    }), checked2(grb.grbUseJ)]), text5("Use J for /h/")])]), p_([label4([$$for("grubb-e"), class_("orth-span")])([input2([type_22(InputCheckbox.value), id2("grubb-e"), name15("CGrubb"), value14("grb2"), onClick(function(v) {
       return GrbTog$prime.value;
-    }), checked2(grb["grbUse'"])]), label4([$$for("grubb-e")])([text5("Include apostrophes at word start")])]), p_([input2([type_22(InputCheckbox.value), id2("grubb-7"), name15("CGrubb"), value14("grb3"), onClick(function(v) {
+    }), checked2(grb["grbUse'"])]), text5("Include apostrophes at word start")])]), p_([label4([$$for("grubb-7")])([input2([type_22(InputCheckbox.value), id2("grubb-7"), name15("CGrubb"), value14("grb3"), onClick(function(v) {
       return GrbTog7.value;
-    }), checked2(grb.grbUse7)]), label4([$$for("grubb-7")])([text5("Replace apostrophes with 7s")])])]);
+    }), checked2(grb.grbUse7)]), text5("Replace apostrophes with 7s")])])]);
   };
   var grubbComp = function(dictMonadEffect) {
     return mkComponent({
@@ -10363,7 +10364,7 @@
         };
       }
       ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.IPAOptions (line 83, column 1 - line 83, column 51): " + [v.constructor.name, v1.constructor.name]);
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.IPAOptions (line 92, column 1 - line 92, column 51): " + [v.constructor.name, v1.constructor.name]);
     };
   };
   var handleIPAQuery = function(v) {
@@ -10377,11 +10378,11 @@
     });
   };
   var grubbOptionsGUI2 = function(ops) {
-    return div_([p_([input2([type_23(InputCheckbox.value), id2("ipa-tie"), name15("CIPA"), value15("ipa1"), onClick(function(v) {
+    return div2([class_("orth-options")])([p_([span3([class_("orth-span")])([label4([$$for("ipa-tie")])([input2([type_23(InputCheckbox.value), id2("ipa-tie"), name15("CIPA"), value15("ipa1"), onClick(function(v) {
       return IpaTogTie.value;
-    }), checked2(ops.ipaUseTies)]), label4([$$for("ipa-tie")])([text5("Include ties in the middle of affricates")])]), p_([input2([type_23(InputCheckbox.value), id2("ipa-pal"), name15("CIPA"), value15("ipa2"), onClick(function(v) {
+    }), checked2(ops.ipaUseTies)]), text5("Include ties in the middle of affricates")])])]), p_([span3([class_("orth-span")])([label4([$$for("ipa-pal")])([input2([type_23(InputCheckbox.value), id2("ipa-pal"), name15("CIPA"), value15("ipa2"), onClick(function(v) {
       return IpaTogPal.value;
-    }), checked2(ops.ipaShowPal)]), label4([$$for("ipa-pal")])([text5("Include palatalisation marks for velar consonants")])])]);
+    }), checked2(ops.ipaShowPal)]), text5("Include palatalisation marks for velar consonants")])])])]);
   };
   var ipaComp = function(dictMonadEffect) {
     return mkComponent({
