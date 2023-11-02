@@ -8869,7 +8869,7 @@
         };
       }
       ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.GrubbOptions (line 88, column 1 - line 88, column 59): " + [v.constructor.name, v1.constructor.name]);
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.GrubbOptions (line 94, column 1 - line 94, column 59): " + [v.constructor.name, v1.constructor.name]);
     };
   };
   var handleGrubbQuery = function(v) {
@@ -8883,13 +8883,13 @@
     });
   };
   var grubbOptionsGUI = function(grb) {
-    return div_([input([type_23(InputCheckbox.value), id2("grubb-j"), name15("CGrubb"), value15("grb1"), onClick(function(v) {
+    return div_([p_([input([type_23(InputCheckbox.value), id2("grubb-j"), name15("CGrubb"), value15("grb1"), onClick(function(v) {
       return GrbTogJ.value;
-    }), checked2(grb.grbUseJ)]), label4([$$for("grubb-j")])([text5("Use J for /h/")]), input([type_23(InputCheckbox.value), id2("grubb-e"), name15("CGrubb"), value15("grb2"), onClick(function(v) {
+    }), checked2(grb.grbUseJ)]), label4([$$for("grubb-j")])([text5("Use J for /h/")])]), p_([input([type_23(InputCheckbox.value), id2("grubb-e"), name15("CGrubb"), value15("grb2"), onClick(function(v) {
       return GrbTog$prime.value;
-    }), checked2(grb["grbUse'"])]), label4([$$for("grubb-e")])([text5("Include apostrophes at word start")]), input([type_23(InputCheckbox.value), id2("grubb-7"), name15("CGrubb"), value15("grb3"), onClick(function(v) {
+    }), checked2(grb["grbUse'"])]), label4([$$for("grubb-e")])([text5("Include apostrophes at word start")])]), p_([input([type_23(InputCheckbox.value), id2("grubb-7"), name15("CGrubb"), value15("grb3"), onClick(function(v) {
       return GrbTog7.value;
-    }), checked2(grb.grbUse7)]), label4([$$for("grubb-7")])([text5("Replace apostrophes with 7s")])]);
+    }), checked2(grb.grbUse7)]), label4([$$for("grubb-7")])([text5("Replace apostrophes with 7s")])])]);
   };
   var grubbComp = function(dictMonadEffect) {
     return mkComponent({
@@ -8959,7 +8959,7 @@
         };
       }
       ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.IPAOptions (line 79, column 1 - line 79, column 51): " + [v.constructor.name, v1.constructor.name]);
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.IPAOptions (line 83, column 1 - line 83, column 51): " + [v.constructor.name, v1.constructor.name]);
     };
   };
   var handleIPAQuery = function(v) {
@@ -8973,11 +8973,11 @@
     });
   };
   var grubbOptionsGUI2 = function(ops) {
-    return div_([input([type_24(InputCheckbox.value), id2("ipa-tie"), name15("CIPA"), value16("ipa1"), onClick(function(v) {
+    return div_([p_([input([type_24(InputCheckbox.value), id2("ipa-tie"), name15("CIPA"), value16("ipa1"), onClick(function(v) {
       return IpaTogTie.value;
-    }), checked2(ops.ipaUseTies)]), label4([$$for("ipa-tie")])([text5("Include ties in the middle of affricates")]), input([type_24(InputCheckbox.value), id2("ipa-pal"), name15("CIPA"), value16("ipa2"), onClick(function(v) {
+    }), checked2(ops.ipaUseTies)]), label4([$$for("ipa-tie")])([text5("Include ties in the middle of affricates")])]), p_([input([type_24(InputCheckbox.value), id2("ipa-pal"), name15("CIPA"), value16("ipa2"), onClick(function(v) {
       return IpaTogPal.value;
-    }), checked2(ops.ipaShowPal)]), label4([$$for("ipa-pal")])([text5("Include palatalisation marks for velar consonants")])]);
+    }), checked2(ops.ipaShowPal)]), label4([$$for("ipa-pal")])([text5("Include palatalisation marks for velar consonants")])])]);
   };
   var ipaComp = function(dictMonadEffect) {
     return mkComponent({
