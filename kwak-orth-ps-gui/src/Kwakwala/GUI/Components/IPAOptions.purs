@@ -17,6 +17,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.Query.HalogenM as HM
 import Kwakwala.Output.IPA (IPAOptions)
 import Type.Proxy (Proxy(..))
+import Web.HTML.Common (ClassName(..))
 
 --------------------------------
 -- IPA Options Select
@@ -62,14 +63,32 @@ ipaComp
 
 grubbOptionsGUI :: forall m s. IPAOptions -> Hal.ComponentHTML IPAToggle s m
 grubbOptionsGUI ops
-  = Html.div_
+  = Html.div [HP.class_ (ClassName "orth-options")]
     [ Html.p_
-      [ Html.input [HP.type_ HP.InputCheckbox, HP.id "ipa-tie", HP.name "CIPA", HP.value "ipa1", HE.onClick (\_ -> IpaTogTie), HP.checked ops.ipaUseTies]
-      , Html.label [HP.for "ipa-tie"] [Html.text "Include ties in the middle of affricates"]
+      [ Html.span [HP.class_ (ClassName "orth-span")]
+        [ Html.label [HP.for "ipa-tie"]
+          [ Html.input  [HP.type_ HP.InputCheckbox, HP.id "ipa-tie", HP.name "CIPA", HP.value "ipa1", HE.onClick (\_ -> IpaTogTie), HP.checked ops.ipaUseTies] 
+          , Html.text "Include ties in the middle of affricates"
+          ]
+        ]
+        {-
+        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "ipa-tie", HP.name "CIPA", HP.value "ipa1", HE.onClick (\_ -> IpaTogTie), HP.checked ops.ipaUseTies]
+        , Html.label [HP.for "ipa-tie"] [Html.text "Include ties in the middle of affricates"]
+        ]
+        -}
       ]
     , Html.p_
-      [ Html.input [HP.type_ HP.InputCheckbox, HP.id "ipa-pal", HP.name "CIPA", HP.value "ipa2", HE.onClick (\_ -> IpaTogPal), HP.checked ops.ipaShowPal]
-      , Html.label [HP.for "ipa-pal"] [Html.text "Include palatalisation marks for velar consonants"]
+      [ Html.span [HP.class_ (ClassName "orth-span")]
+        [ Html.label [HP.for "ipa-pal"]
+          [ Html.input  [HP.type_ HP.InputCheckbox, HP.id "ipa-pal", HP.name "CIPA", HP.value "ipa2", HE.onClick (\_ -> IpaTogPal), HP.checked ops.ipaShowPal] 
+          , Html.text "Include palatalisation marks for velar consonants"
+          ]
+        ]
+        {-
+        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "ipa-pal", HP.name "CIPA", HP.value "ipa2", HE.onClick (\_ -> IpaTogPal), HP.checked ops.ipaShowPal]
+        , Html.label [HP.for "ipa-pal"] [Html.text "Include palatalisation marks for velar consonants"]
+        ]
+        -}
       ]
     ]
 

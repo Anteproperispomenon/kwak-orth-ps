@@ -18,6 +18,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.Query.HalogenM as HM
 import Kwakwala.Output.Grubb (GrubbOptions)
 import Type.Proxy (Proxy(..))
+import Web.HTML.Common (ClassName(..))
 
 --------------------------------
 -- Grubb Options Select
@@ -68,7 +69,7 @@ grubbComp
 
 grubbOptionsGUI :: forall m s. GrubbOptions -> Hal.ComponentHTML GrubbToggle s m
 grubbOptionsGUI grb
-  = Html.div_
+  = Html.div [HP.class_ (ClassName "orth-options")]
     [ Html.p_
       [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-j", HP.name "CGrubb", HP.value "grb1", HE.onClick (\_ -> GrbTogJ), HP.checked grb.grbUseJ]
       , Html.label [HP.for "grubb-j"] [Html.text "Use J for /h/"]
