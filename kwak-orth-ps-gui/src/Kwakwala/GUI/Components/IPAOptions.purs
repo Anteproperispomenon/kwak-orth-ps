@@ -71,11 +71,6 @@ grubbOptionsGUI ops
           , Html.text "Include ties in the middle of affricates"
           ]
         ]
-        {-
-        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "ipa-tie", HP.name "CIPA", HP.value "ipa1", HE.onClick (\_ -> IpaTogTie), HP.checked ops.ipaUseTies]
-        , Html.label [HP.for "ipa-tie"] [Html.text "Include ties in the middle of affricates"]
-        ]
-        -}
       ]
     , Html.p_
       [ Html.span [HP.class_ (ClassName "orth-span")]
@@ -84,11 +79,6 @@ grubbOptionsGUI ops
           , Html.text "Include palatalisation marks for velar consonants"
           ]
         ]
-        {-
-        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "ipa-pal", HP.name "CIPA", HP.value "ipa2", HE.onClick (\_ -> IpaTogPal), HP.checked ops.ipaShowPal]
-        , Html.label [HP.for "ipa-pal"] [Html.text "Include palatalisation marks for velar consonants"]
-        ]
-        -}
       ]
     ]
 
