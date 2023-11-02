@@ -1,6 +1,8 @@
 module Kwakwala.GUI.Types
   ( KwakOutputType(..)
   , KwakInputType(..)
+  , AllOrthOptions
+  , defAllOrthOptions
   , FileData
   -- , GrubbOptions
   )
@@ -8,15 +10,16 @@ module Kwakwala.GUI.Types
 
 import Prelude
 
-import Kwakwala.Output.Grubb (GrubbOptions)
-
 import Data.Maybe (Maybe)
 import Data.MediaType (MediaType)
+import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
+import Kwakwala.Output.IPA   (IPAOptions  , defIPAOptions)
 
 data KwakOutputType
   = OutGrubb -- GrubbOptions
   | OutNapa
   | OutUmista
+  | OutIPA
   | OutSyllabic
 
 derive instance  eqKwakOutType :: Eq  KwakOutputType
@@ -26,6 +29,7 @@ instance showKwakOut :: Show KwakOutputType where
   show OutGrubb    = "Grubb"
   show OutNapa     = "NAPA"
   show OutUmista   = "U'mista"
+  show OutIPA      = "IPA"
   show OutSyllabic = "Syllabic"
 
 data KwakInputType
@@ -48,4 +52,17 @@ instance showKwakIn :: Show KwakInputType where
 type FileData
   = { fileStr :: String
     , fileTyp :: Maybe MediaType
+    }
+
+type AllOrthOptions
+  = { grubbOrthOptions :: GrubbOptions
+    , ipaOrthOptions :: IPAOptions
+    -- , georgianOrthOptions :: GeorgianOptions
+    }
+
+defAllOrthOptions :: AllOrthOptions
+defAllOrthOptions
+  = { grubbOrthOptions : defGrubbOptions
+    , ipaOrthOptions : defIPAOptions
+    -- , georgianOrthOptions : defGeorgianOptions
     }

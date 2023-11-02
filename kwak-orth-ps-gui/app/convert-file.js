@@ -8377,629 +8377,6 @@
     };
   };
 
-  // output/Kwakwala.GUI.Types/index.js
-  var OutGrubb = /* @__PURE__ */ function() {
-    function OutGrubb2() {
-    }
-    ;
-    OutGrubb2.value = new OutGrubb2();
-    return OutGrubb2;
-  }();
-  var OutNapa = /* @__PURE__ */ function() {
-    function OutNapa2() {
-    }
-    ;
-    OutNapa2.value = new OutNapa2();
-    return OutNapa2;
-  }();
-  var OutUmista = /* @__PURE__ */ function() {
-    function OutUmista2() {
-    }
-    ;
-    OutUmista2.value = new OutUmista2();
-    return OutUmista2;
-  }();
-  var OutSyllabic = /* @__PURE__ */ function() {
-    function OutSyllabic2() {
-    }
-    ;
-    OutSyllabic2.value = new OutSyllabic2();
-    return OutSyllabic2;
-  }();
-  var InGrubb = /* @__PURE__ */ function() {
-    function InGrubb2() {
-    }
-    ;
-    InGrubb2.value = new InGrubb2();
-    return InGrubb2;
-  }();
-  var InNapa = /* @__PURE__ */ function() {
-    function InNapa2() {
-    }
-    ;
-    InNapa2.value = new InNapa2();
-    return InNapa2;
-  }();
-  var InUmista = /* @__PURE__ */ function() {
-    function InUmista2() {
-    }
-    ;
-    InUmista2.value = new InUmista2();
-    return InUmista2;
-  }();
-  var InIsland = /* @__PURE__ */ function() {
-    function InIsland2() {
-    }
-    ;
-    InIsland2.value = new InIsland2();
-    return InIsland2;
-  }();
-  var InBoas = /* @__PURE__ */ function() {
-    function InBoas2() {
-    }
-    ;
-    InBoas2.value = new InBoas2();
-    return InBoas2;
-  }();
-  var eqKwakOutType = {
-    eq: function(x) {
-      return function(y) {
-        if (x instanceof OutGrubb && y instanceof OutGrubb) {
-          return true;
-        }
-        ;
-        if (x instanceof OutNapa && y instanceof OutNapa) {
-          return true;
-        }
-        ;
-        if (x instanceof OutUmista && y instanceof OutUmista) {
-          return true;
-        }
-        ;
-        if (x instanceof OutSyllabic && y instanceof OutSyllabic) {
-          return true;
-        }
-        ;
-        return false;
-      };
-    }
-  };
-  var eqKwakInType = {
-    eq: function(x) {
-      return function(y) {
-        if (x instanceof InGrubb && y instanceof InGrubb) {
-          return true;
-        }
-        ;
-        if (x instanceof InNapa && y instanceof InNapa) {
-          return true;
-        }
-        ;
-        if (x instanceof InUmista && y instanceof InUmista) {
-          return true;
-        }
-        ;
-        if (x instanceof InIsland && y instanceof InIsland) {
-          return true;
-        }
-        ;
-        if (x instanceof InBoas && y instanceof InBoas) {
-          return true;
-        }
-        ;
-        return false;
-      };
-    }
-  };
-
-  // output/Kwakwala.GUI.Components.InSelect/index.js
-  var type_19 = /* @__PURE__ */ type_17(isPropInputType);
-  var value13 = /* @__PURE__ */ value12(isPropString);
-  var eq3 = /* @__PURE__ */ eq(eqKwakInType);
-  var bind6 = /* @__PURE__ */ bind(bindHalogenM);
-  var get2 = /* @__PURE__ */ get(monadStateHalogenM);
-  var pure9 = /* @__PURE__ */ pure(applicativeHalogenM);
-  var discard5 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
-  var put2 = /* @__PURE__ */ put(monadStateHalogenM);
-  var radioButtonsI = function(kwk) {
-    return div_([input([type_19(InputRadio.value), id2("grubb-in"), name15("RInput"), value13("uh1"), onClick(function(v) {
-      return InGrubb.value;
-    }), checked2(eq3(kwk)(InGrubb.value))]), label4([$$for("grubb-in")])([text5("Grubb")]), input([type_19(InputRadio.value), id2("umista-in"), name15("RInput"), value13("uh2"), onClick(function(v) {
-      return InUmista.value;
-    }), checked2(eq3(kwk)(InUmista.value))]), label4([$$for("Umista-in")])([text5("Umista")]), input([type_19(InputRadio.value), id2("napa-in"), name15("RInput"), value13("uh3"), onClick(function(v) {
-      return InNapa.value;
-    }), checked2(eq3(kwk)(InNapa.value))]), label4([$$for("napa-in")])([text5("NAPA")]), input([type_19(InputRadio.value), id2("boas-in"), name15("RInput"), value13("uh4"), onClick(function(v) {
-      return InBoas.value;
-    }), checked2(eq3(kwk)(InBoas.value))]), label4([$$for("boas-in")])([text5("Boas")]), input([type_19(InputRadio.value), id2("island-in"), name15("RInput"), value13("uh5"), onClick(function(v) {
-      return InIsland.value;
-    }), checked2(eq3(kwk)(InIsland.value))]), label4([$$for("island-in")])([text5("Island")])]);
-  };
-  var handleOrthInQuery = function(dictMonad) {
-    return function(v) {
-      return bind6(get2)(function(kit) {
-        return pure9(new Just(v.value0(kit)));
-      });
-    };
-  };
-  var handleOrthIn = function(kit) {
-    return discard5(put2(kit))(function() {
-      return raise(kit);
-    });
-  };
-  var inputComp = function(dictMonadEffect) {
-    return mkComponent({
-      initialState: function(x) {
-        return x;
-      },
-      render: radioButtonsI,
-      "eval": mkEval({
-        handleAction: handleOrthIn,
-        handleQuery: handleOrthInQuery(dictMonadEffect.Monad0()),
-        receive: defaultEval.receive,
-        initialize: defaultEval.initialize,
-        finalize: defaultEval.finalize
-      })
-    });
-  };
-  var _inputSelect = /* @__PURE__ */ function() {
-    return $$Proxy.value;
-  }();
-
-  // output/Data.MediaType.Common/index.js
-  var textPlain = "text/plain";
-  var textCSV = "text/csv";
-
-  // output/Web.File.Blob/foreign.js
-  function typeImpl(blob) {
-    return blob.type;
-  }
-  function blobImpl(args) {
-    return function(mediaType2) {
-      return new Blob(args, { type: mediaType2 });
-    };
-  }
-
-  // output/Web.File.Blob/index.js
-  var type_20 = function(blob) {
-    var blobType = typeImpl(blob);
-    var $2 = blobType === "";
-    if ($2) {
-      return Nothing.value;
-    }
-    ;
-    return new Just(blobType);
-  };
-  var fromString = function(str) {
-    return function(ct) {
-      return blobImpl([str])(ct);
-    };
-  };
-
-  // output/Web.File.File/index.js
-  var type_21 = function($1) {
-    return type_20($1);
-  };
-  var toBlob = unsafeCoerce2;
-
-  // output/Web.File.FileReader/foreign.js
-  function fileReader() {
-    return new FileReader();
-  }
-  function result(fr) {
-    return function() {
-      return fr.result;
-    };
-  }
-  function readAsText(blob) {
-    return function(fr) {
-      return function() {
-        fr.readAsText(blob);
-      };
-    };
-  }
-
-  // output/Web.File.FileReader/index.js
-  var toEventTarget2 = unsafeCoerce2;
-
-  // output/Web.File.FileReader.Aff/index.js
-  var show3 = /* @__PURE__ */ show(/* @__PURE__ */ showNonEmptyList(showForeignError));
-  var mempty2 = /* @__PURE__ */ mempty(monoidCanceler);
-  var readString2 = /* @__PURE__ */ readString(monadIdentity);
-  var readAs = function(readMethod) {
-    return function(getResult) {
-      return function(blob) {
-        return makeAff(function(fun) {
-          var succ = function($12) {
-            return fun(Right.create($12));
-          };
-          var err = function($13) {
-            return fun(Left.create($13));
-          };
-          return function __do2() {
-            var fr = fileReader();
-            var et = toEventTarget2(fr);
-            var errorListener = eventListener(function(v) {
-              return err(error("error"));
-            })();
-            var loadListener = eventListener(function(v) {
-              return function __do3() {
-                var res = result(fr)();
-                return either(function(errs) {
-                  return err(error(show3(errs)));
-                })(succ)(runExcept(readMethod(res)))();
-              };
-            })();
-            addEventListener(error2)(errorListener)(false)(et)();
-            addEventListener(load2)(loadListener)(false)(et)();
-            getResult(blob)(fr)();
-            return mempty2;
-          };
-        });
-      };
-    };
-  };
-  var readAsText2 = /* @__PURE__ */ readAs(readString2)(readAsText);
-
-  // output/Kwakwala.GUI.Components.InputFile/index.js
-  var type_22 = /* @__PURE__ */ type_17(isPropInputType);
-  var onFileUpload2 = /* @__PURE__ */ onFileUpload(unfoldableArray);
-  var value14 = /* @__PURE__ */ value12(isPropString);
-  var bind7 = /* @__PURE__ */ bind(bindHalogenM);
-  var get3 = /* @__PURE__ */ get(monadStateHalogenM);
-  var pure10 = /* @__PURE__ */ pure(applicativeHalogenM);
-  var put3 = /* @__PURE__ */ put(monadStateHalogenM);
-  var discard6 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
-  var gets2 = /* @__PURE__ */ gets(monadStateHalogenM);
-  var ChangeFile = /* @__PURE__ */ function() {
-    function ChangeFile2(value0) {
-      this.value0 = value0;
-    }
-    ;
-    ChangeFile2.create = function(value0) {
-      return new ChangeFile2(value0);
-    };
-    return ChangeFile2;
-  }();
-  var Reconvert = /* @__PURE__ */ function() {
-    function Reconvert2() {
-    }
-    ;
-    Reconvert2.value = new Reconvert2();
-    return Reconvert2;
-  }();
-  var DoNothing = /* @__PURE__ */ function() {
-    function DoNothing2() {
-    }
-    ;
-    DoNothing2.value = new DoNothing2();
-    return DoNothing2;
-  }();
-  var renderError = function(v) {
-    if (v instanceof Nothing) {
-      return "No Errors";
-    }
-    ;
-    if (v instanceof Just) {
-      return v.value0;
-    }
-    ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 94, column 1 - line 94, column 38): " + [v.constructor.name]);
-  };
-  var makeFileData = function(stt) {
-    return {
-      fileStr: stt.input,
-      fileTyp: stt.ftype
-    };
-  };
-  var inputTypes = /* @__PURE__ */ append(semigroupInputAcceptType)(/* @__PURE__ */ mediaType(textPlain))(/* @__PURE__ */ mediaType(textCSV));
-  var handleUpload = function(xs) {
-    var v = head(xs);
-    if (v instanceof Nothing) {
-      return DoNothing.value;
-    }
-    ;
-    if (v instanceof Just) {
-      return new ChangeFile(v.value0);
-    }
-    ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 99, column 19 - line 101, column 27): " + [v.constructor.name]);
-  };
-  var inputFileGUI = function(dictMonad) {
-    return function(stt) {
-      return div_([p_([text5("Input")]), p_([input([type_22(InputFile.value), accept2(inputTypes), multiple3(false), onFileUpload2(handleUpload)])]), p_([textarea([rows4(12), cols2(100), id2("output-box"), name15("output-box"), readOnly3(true), value14(stt.input)])]), p_([text5("Errors")]), p_([textarea([rows4(3), cols2(100), id2("error-box"), name15("error-box"), readOnly3(true), value14(renderError(stt.error))])]), p_([button([id2("convert-button"), name15("convert-button"), onClick(function(v) {
-        return Reconvert.value;
-      }), disabled10($$null2(stt.input))])([text5("Reconvert")])])]);
-    };
-  };
-  var handleInputFileQuery = function(dictMonad) {
-    return function(v) {
-      return bind7(get3)(function(stt) {
-        return pure10(new Just(v.value0(makeFileData(stt))));
-      });
-    };
-  };
-  var handleInputFileAction = function(dictMonadAff) {
-    var liftAff2 = liftAff(monadAffHalogenM(dictMonadAff));
-    return function(v) {
-      if (v instanceof DoNothing) {
-        return pure10(unit);
-      }
-      ;
-      if (v instanceof ChangeFile) {
-        return bind7(liftAff2(attempt(readAsText2(toBlob(v.value0)))))(function(estr) {
-          return bind7(pure10(type_21(v.value0)))(function(ftyp) {
-            if (estr instanceof Left) {
-              return bind7(get3)(function(stt) {
-                return put3(function() {
-                  var $39 = {};
-                  for (var $40 in stt) {
-                    if ({}.hasOwnProperty.call(stt, $40)) {
-                      $39[$40] = stt[$40];
-                    }
-                    ;
-                  }
-                  ;
-                  $39.error = new Just(message(estr.value0));
-                  return $39;
-                }());
-              });
-            }
-            ;
-            if (estr instanceof Right) {
-              return discard6(put3({
-                input: estr.value0,
-                error: Nothing.value,
-                ftype: ftyp
-              }))(function() {
-                return raise({
-                  fileStr: estr.value0,
-                  fileTyp: ftyp
-                });
-              });
-            }
-            ;
-            throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 117, column 3 - line 124, column 49): " + [estr.constructor.name]);
-          });
-        });
-      }
-      ;
-      if (v instanceof Reconvert) {
-        return bind7(gets2(function(v1) {
-          return v1.input;
-        }))(function(str) {
-          return bind7(gets2(function(v1) {
-            return v1.ftype;
-          }))(function(typ) {
-            return raise({
-              fileStr: str,
-              fileTyp: typ
-            });
-          });
-        });
-      }
-      ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 111, column 1 - line 111, column 134): " + [v.constructor.name]);
-    };
-  };
-  var inputFileComp = function(dictMonadAff) {
-    var Monad0 = dictMonadAff.MonadEffect0().Monad0();
-    return mkComponent({
-      initialState: function(x) {
-        return {
-          input: x,
-          error: Nothing.value,
-          ftype: Nothing.value
-        };
-      },
-      render: inputFileGUI(Monad0),
-      "eval": mkEval({
-        handleAction: handleInputFileAction(dictMonadAff),
-        handleQuery: handleInputFileQuery(Monad0),
-        receive: defaultEval.receive,
-        initialize: defaultEval.initialize,
-        finalize: defaultEval.finalize
-      })
-    });
-  };
-  var _inputFile = /* @__PURE__ */ function() {
-    return $$Proxy.value;
-  }();
-
-  // output/Kwakwala.GUI.Components.GrubbOptions/index.js
-  var bind8 = /* @__PURE__ */ bind(bindHalogenM);
-  var get4 = /* @__PURE__ */ get(monadStateHalogenM);
-  var pure11 = /* @__PURE__ */ pure(applicativeHalogenM);
-  var modify5 = /* @__PURE__ */ modify2(monadStateHalogenM);
-  var type_23 = /* @__PURE__ */ type_17(isPropInputType);
-  var value15 = /* @__PURE__ */ value12(isPropString);
-  var GrbTogJ = /* @__PURE__ */ function() {
-    function GrbTogJ2() {
-    }
-    ;
-    GrbTogJ2.value = new GrbTogJ2();
-    return GrbTogJ2;
-  }();
-  var GrbTog$prime = /* @__PURE__ */ function() {
-    function GrbTog$prime2() {
-    }
-    ;
-    GrbTog$prime2.value = new GrbTog$prime2();
-    return GrbTog$prime2;
-  }();
-  var GrbTog7 = /* @__PURE__ */ function() {
-    function GrbTog72() {
-    }
-    ;
-    GrbTog72.value = new GrbTog72();
-    return GrbTog72;
-  }();
-  var GetGrubb = /* @__PURE__ */ function() {
-    function GetGrubb2(value0) {
-      this.value0 = value0;
-    }
-    ;
-    GetGrubb2.create = function(value0) {
-      return new GetGrubb2(value0);
-    };
-    return GetGrubb2;
-  }();
-  var toggleGrubb = function(v) {
-    return function(v1) {
-      if (v instanceof GrbTogJ) {
-        return {
-          grbUseJ: !v1.grbUseJ,
-          "grbUse'": v1["grbUse'"],
-          grbUse7: v1.grbUse7
-        };
-      }
-      ;
-      if (v instanceof GrbTog$prime) {
-        return {
-          grbUseJ: v1.grbUseJ,
-          "grbUse'": !v1["grbUse'"],
-          grbUse7: v1.grbUse7
-        };
-      }
-      ;
-      if (v instanceof GrbTog7) {
-        return {
-          grbUseJ: v1.grbUseJ,
-          "grbUse'": v1["grbUse'"],
-          grbUse7: !v1.grbUse7
-        };
-      }
-      ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.GrubbOptions (line 94, column 1 - line 94, column 59): " + [v.constructor.name, v1.constructor.name]);
-    };
-  };
-  var handleGrubbQuery = function(v) {
-    return bind8(get4)(function(x) {
-      return pure11(new Just(v.value0(x)));
-    });
-  };
-  var handleGrubbChange_ = function(tog) {
-    return bind8(modify5(toggleGrubb(tog)))(function(x) {
-      return raise(x);
-    });
-  };
-  var grubbOptionsGUI = function(grb) {
-    return div_([p_([input([type_23(InputCheckbox.value), id2("grubb-j"), name15("CGrubb"), value15("grb1"), onClick(function(v) {
-      return GrbTogJ.value;
-    }), checked2(grb.grbUseJ)]), label4([$$for("grubb-j")])([text5("Use J for /h/")])]), p_([input([type_23(InputCheckbox.value), id2("grubb-e"), name15("CGrubb"), value15("grb2"), onClick(function(v) {
-      return GrbTog$prime.value;
-    }), checked2(grb["grbUse'"])]), label4([$$for("grubb-e")])([text5("Include apostrophes at word start")])]), p_([input([type_23(InputCheckbox.value), id2("grubb-7"), name15("CGrubb"), value15("grb3"), onClick(function(v) {
-      return GrbTog7.value;
-    }), checked2(grb.grbUse7)]), label4([$$for("grubb-7")])([text5("Replace apostrophes with 7s")])])]);
-  };
-  var grubbComp = function(dictMonadEffect) {
-    return mkComponent({
-      initialState: function(x) {
-        return x;
-      },
-      render: function(st) {
-        return grubbOptionsGUI(st);
-      },
-      "eval": mkEval({
-        handleAction: handleGrubbChange_,
-        handleQuery: handleGrubbQuery,
-        receive: defaultEval.receive,
-        initialize: defaultEval.initialize,
-        finalize: defaultEval.finalize
-      })
-    });
-  };
-  var _grubbOptions = /* @__PURE__ */ function() {
-    return $$Proxy.value;
-  }();
-
-  // output/Kwakwala.GUI.Components.IPAOptions/index.js
-  var bind9 = /* @__PURE__ */ bind(bindHalogenM);
-  var get5 = /* @__PURE__ */ get(monadStateHalogenM);
-  var pure13 = /* @__PURE__ */ pure(applicativeHalogenM);
-  var modify6 = /* @__PURE__ */ modify2(monadStateHalogenM);
-  var type_24 = /* @__PURE__ */ type_17(isPropInputType);
-  var value16 = /* @__PURE__ */ value12(isPropString);
-  var IpaTogPal = /* @__PURE__ */ function() {
-    function IpaTogPal2() {
-    }
-    ;
-    IpaTogPal2.value = new IpaTogPal2();
-    return IpaTogPal2;
-  }();
-  var IpaTogTie = /* @__PURE__ */ function() {
-    function IpaTogTie2() {
-    }
-    ;
-    IpaTogTie2.value = new IpaTogTie2();
-    return IpaTogTie2;
-  }();
-  var GetIPA = /* @__PURE__ */ function() {
-    function GetIPA2(value0) {
-      this.value0 = value0;
-    }
-    ;
-    GetIPA2.create = function(value0) {
-      return new GetIPA2(value0);
-    };
-    return GetIPA2;
-  }();
-  var toggleIPA = function(v) {
-    return function(v1) {
-      if (v instanceof IpaTogPal) {
-        return {
-          ipaUseTies: v1.ipaUseTies,
-          ipaShowPal: !v1.ipaShowPal
-        };
-      }
-      ;
-      if (v instanceof IpaTogTie) {
-        return {
-          ipaUseTies: !v1.ipaUseTies,
-          ipaShowPal: v1.ipaShowPal
-        };
-      }
-      ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.IPAOptions (line 83, column 1 - line 83, column 51): " + [v.constructor.name, v1.constructor.name]);
-    };
-  };
-  var handleIPAQuery = function(v) {
-    return bind9(get5)(function(x) {
-      return pure13(new Just(v.value0(x)));
-    });
-  };
-  var handleIPAChange_ = function(tog) {
-    return bind9(modify6(toggleIPA(tog)))(function(x) {
-      return raise(x);
-    });
-  };
-  var grubbOptionsGUI2 = function(ops) {
-    return div_([p_([input([type_24(InputCheckbox.value), id2("ipa-tie"), name15("CIPA"), value16("ipa1"), onClick(function(v) {
-      return IpaTogTie.value;
-    }), checked2(ops.ipaUseTies)]), label4([$$for("ipa-tie")])([text5("Include ties in the middle of affricates")])]), p_([input([type_24(InputCheckbox.value), id2("ipa-pal"), name15("CIPA"), value16("ipa2"), onClick(function(v) {
-      return IpaTogPal.value;
-    }), checked2(ops.ipaShowPal)]), label4([$$for("ipa-pal")])([text5("Include palatalisation marks for velar consonants")])])]);
-  };
-  var ipaComp = function(dictMonadEffect) {
-    return mkComponent({
-      initialState: function(x) {
-        return x;
-      },
-      render: function(st) {
-        return grubbOptionsGUI2(st);
-      },
-      "eval": mkEval({
-        handleAction: handleIPAChange_,
-        handleQuery: handleIPAQuery,
-        receive: defaultEval.receive,
-        initialize: defaultEval.initialize,
-        finalize: defaultEval.finalize
-      })
-    });
-  };
-  var _ipaOptions = /* @__PURE__ */ function() {
-    return $$Proxy.value;
-  }();
-
   // output/Kwakwala.Types/index.js
   var Av = /* @__PURE__ */ function() {
     function Av2() {
@@ -10644,10 +10021,947 @@
   };
 
   // output/Kwakwala.Output.IPA/index.js
+  var foldMap2 = /* @__PURE__ */ foldMap(foldableList)(monoidString);
+  var outputIpaX = function(v) {
+    return function(v1) {
+      if (v1 instanceof M) {
+        return "m";
+      }
+      ;
+      if (v1 instanceof MY) {
+        return "m\u02C0";
+      }
+      ;
+      if (v1 instanceof N) {
+        return "n";
+      }
+      ;
+      if (v1 instanceof NY) {
+        return "n\u02C0";
+      }
+      ;
+      if (v1 instanceof P) {
+        return "p";
+      }
+      ;
+      if (v1 instanceof T) {
+        return "t";
+      }
+      ;
+      if (v1 instanceof B) {
+        return "b";
+      }
+      ;
+      if (v1 instanceof D) {
+        return "d";
+      }
+      ;
+      if (v1 instanceof PY) {
+        return "p\u02BC";
+      }
+      ;
+      if (v1 instanceof TY) {
+        return "t\u02BC";
+      }
+      ;
+      if (v1 instanceof TS) {
+        if (v.ipaUseTies) {
+          return "t\u0361s";
+        }
+        ;
+        if (otherwise) {
+          return "ts";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof TL) {
+        if (v.ipaUseTies) {
+          return "t\u0361\u026C";
+        }
+        ;
+        if (otherwise) {
+          return "t\u026C";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof DZ) {
+        if (v.ipaUseTies) {
+          return "d\u0361z";
+        }
+        ;
+        if (otherwise) {
+          return "dz";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof DL) {
+        if (v.ipaUseTies) {
+          return "d\u0361\u026E";
+        }
+        ;
+        if (otherwise) {
+          return "d\u026E";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof TSY) {
+        if (v.ipaUseTies) {
+          return "t\u0361s\u02BC";
+        }
+        ;
+        if (otherwise) {
+          return "ts\u02BC";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof TLY) {
+        if (v.ipaUseTies) {
+          return "t\u0361\u026C\u02BC";
+        }
+        ;
+        if (otherwise) {
+          return "t\u026C\u02BC";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof S) {
+        return "s";
+      }
+      ;
+      if (v1 instanceof LH) {
+        return "\u026C";
+      }
+      ;
+      if (v1 instanceof L) {
+        return "l";
+      }
+      ;
+      if (v1 instanceof LY) {
+        return "l\u02C0";
+      }
+      ;
+      if (v1 instanceof J) {
+        return "j";
+      }
+      ;
+      if (v1 instanceof JY) {
+        return "j\u02C0";
+      }
+      ;
+      if (v1 instanceof K) {
+        if (v.ipaShowPal) {
+          return "k\u02B2";
+        }
+        ;
+        if (otherwise) {
+          return "k";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof KW) {
+        return "k\u02B7";
+      }
+      ;
+      if (v1 instanceof G) {
+        if (v.ipaShowPal) {
+          return "g\u02B2";
+        }
+        ;
+        if (otherwise) {
+          return "g";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof GW) {
+        return "g\u02B7";
+      }
+      ;
+      if (v1 instanceof KY) {
+        if (v.ipaShowPal) {
+          return "k\u02B2\u02BC";
+        }
+        ;
+        if (otherwise) {
+          return "k\u02BC";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof KWY) {
+        return "k\u02B7\u02BC";
+      }
+      ;
+      if (v1 instanceof Q) {
+        return "q";
+      }
+      ;
+      if (v1 instanceof QW) {
+        return "q\u02B7";
+      }
+      ;
+      if (v1 instanceof GU) {
+        return "\u0262";
+      }
+      ;
+      if (v1 instanceof GUW) {
+        return "\u0262\u02B7";
+      }
+      ;
+      if (v1 instanceof QY) {
+        return "q\u02BC";
+      }
+      ;
+      if (v1 instanceof QWY) {
+        return "q\u02B7\u02BC";
+      }
+      ;
+      if (v1 instanceof X) {
+        if (v.ipaShowPal) {
+          return "x\u02B2";
+        }
+        ;
+        if (otherwise) {
+          return "x";
+        }
+        ;
+      }
+      ;
+      if (v1 instanceof XW) {
+        return "x\u02B7";
+      }
+      ;
+      if (v1 instanceof XU) {
+        return "\u03C7";
+      }
+      ;
+      if (v1 instanceof XUW) {
+        return "\u03C7\u02B7";
+      }
+      ;
+      if (v1 instanceof W) {
+        return "w";
+      }
+      ;
+      if (v1 instanceof WY) {
+        return "w\u02C0";
+      }
+      ;
+      if (v1 instanceof Y) {
+        return "\u0294";
+      }
+      ;
+      if (v1 instanceof H) {
+        return "h";
+      }
+      ;
+      if (v1 instanceof A) {
+        return "a";
+      }
+      ;
+      if (v1 instanceof E) {
+        return "e";
+      }
+      ;
+      if (v1 instanceof I) {
+        return "i";
+      }
+      ;
+      if (v1 instanceof O) {
+        return "o";
+      }
+      ;
+      if (v1 instanceof U) {
+        return "u";
+      }
+      ;
+      if (v1 instanceof AU) {
+        return "\u0259";
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.Output.IPA (line 70, column 1 - line 70, column 49): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var outputIPALetter = function(v) {
+    return function(v1) {
+      if (v1 instanceof Maj) {
+        return outputIpaX(v)(v1.value0);
+      }
+      ;
+      if (v1 instanceof Min2) {
+        return outputIpaX(v)(v1.value0);
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.Output.IPA (line 147, column 1 - line 147, column 55): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var outputIPAChar = function(v) {
+    return function(v1) {
+      if (v1 instanceof Kwak) {
+        return outputIPALetter(v)(v1.value0);
+      }
+      ;
+      if (v1 instanceof Punct) {
+        return v1.value0;
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.Output.IPA (line 152, column 1 - line 152, column 51): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var outputIPAChars = function(ops) {
+    return function(xs) {
+      return foldMap2(outputIPAChar(ops))(xs);
+    };
+  };
   var defIPAOptions = {
     ipaUseTies: true,
     ipaShowPal: true
   };
+
+  // output/Kwakwala.GUI.Types/index.js
+  var OutGrubb = /* @__PURE__ */ function() {
+    function OutGrubb2() {
+    }
+    ;
+    OutGrubb2.value = new OutGrubb2();
+    return OutGrubb2;
+  }();
+  var OutNapa = /* @__PURE__ */ function() {
+    function OutNapa2() {
+    }
+    ;
+    OutNapa2.value = new OutNapa2();
+    return OutNapa2;
+  }();
+  var OutUmista = /* @__PURE__ */ function() {
+    function OutUmista2() {
+    }
+    ;
+    OutUmista2.value = new OutUmista2();
+    return OutUmista2;
+  }();
+  var OutIPA = /* @__PURE__ */ function() {
+    function OutIPA2() {
+    }
+    ;
+    OutIPA2.value = new OutIPA2();
+    return OutIPA2;
+  }();
+  var OutSyllabic = /* @__PURE__ */ function() {
+    function OutSyllabic2() {
+    }
+    ;
+    OutSyllabic2.value = new OutSyllabic2();
+    return OutSyllabic2;
+  }();
+  var InGrubb = /* @__PURE__ */ function() {
+    function InGrubb2() {
+    }
+    ;
+    InGrubb2.value = new InGrubb2();
+    return InGrubb2;
+  }();
+  var InNapa = /* @__PURE__ */ function() {
+    function InNapa2() {
+    }
+    ;
+    InNapa2.value = new InNapa2();
+    return InNapa2;
+  }();
+  var InUmista = /* @__PURE__ */ function() {
+    function InUmista2() {
+    }
+    ;
+    InUmista2.value = new InUmista2();
+    return InUmista2;
+  }();
+  var InIsland = /* @__PURE__ */ function() {
+    function InIsland2() {
+    }
+    ;
+    InIsland2.value = new InIsland2();
+    return InIsland2;
+  }();
+  var InBoas = /* @__PURE__ */ function() {
+    function InBoas2() {
+    }
+    ;
+    InBoas2.value = new InBoas2();
+    return InBoas2;
+  }();
+  var eqKwakOutType = {
+    eq: function(x) {
+      return function(y) {
+        if (x instanceof OutGrubb && y instanceof OutGrubb) {
+          return true;
+        }
+        ;
+        if (x instanceof OutNapa && y instanceof OutNapa) {
+          return true;
+        }
+        ;
+        if (x instanceof OutUmista && y instanceof OutUmista) {
+          return true;
+        }
+        ;
+        if (x instanceof OutIPA && y instanceof OutIPA) {
+          return true;
+        }
+        ;
+        if (x instanceof OutSyllabic && y instanceof OutSyllabic) {
+          return true;
+        }
+        ;
+        return false;
+      };
+    }
+  };
+  var eqKwakInType = {
+    eq: function(x) {
+      return function(y) {
+        if (x instanceof InGrubb && y instanceof InGrubb) {
+          return true;
+        }
+        ;
+        if (x instanceof InNapa && y instanceof InNapa) {
+          return true;
+        }
+        ;
+        if (x instanceof InUmista && y instanceof InUmista) {
+          return true;
+        }
+        ;
+        if (x instanceof InIsland && y instanceof InIsland) {
+          return true;
+        }
+        ;
+        if (x instanceof InBoas && y instanceof InBoas) {
+          return true;
+        }
+        ;
+        return false;
+      };
+    }
+  };
+  var defAllOrthOptions = {
+    grubbOrthOptions: defGrubbOptions,
+    ipaOrthOptions: defIPAOptions
+  };
+
+  // output/Kwakwala.GUI.Components.InSelect/index.js
+  var type_19 = /* @__PURE__ */ type_17(isPropInputType);
+  var value13 = /* @__PURE__ */ value12(isPropString);
+  var eq3 = /* @__PURE__ */ eq(eqKwakInType);
+  var bind6 = /* @__PURE__ */ bind(bindHalogenM);
+  var get2 = /* @__PURE__ */ get(monadStateHalogenM);
+  var pure9 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var discard5 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var put2 = /* @__PURE__ */ put(monadStateHalogenM);
+  var radioButtonsI = function(kwk) {
+    return div_([input([type_19(InputRadio.value), id2("grubb-in"), name15("RInput"), value13("uh1"), onClick(function(v) {
+      return InGrubb.value;
+    }), checked2(eq3(kwk)(InGrubb.value))]), label4([$$for("grubb-in")])([text5("Grubb")]), input([type_19(InputRadio.value), id2("umista-in"), name15("RInput"), value13("uh2"), onClick(function(v) {
+      return InUmista.value;
+    }), checked2(eq3(kwk)(InUmista.value))]), label4([$$for("umista-in")])([text5("Umista")]), input([type_19(InputRadio.value), id2("napa-in"), name15("RInput"), value13("uh3"), onClick(function(v) {
+      return InNapa.value;
+    }), checked2(eq3(kwk)(InNapa.value))]), label4([$$for("napa-in")])([text5("NAPA")]), input([type_19(InputRadio.value), id2("boas-in"), name15("RInput"), value13("uh4"), onClick(function(v) {
+      return InBoas.value;
+    }), checked2(eq3(kwk)(InBoas.value))]), label4([$$for("boas-in")])([text5("Boas")]), input([type_19(InputRadio.value), id2("island-in"), name15("RInput"), value13("uh5"), onClick(function(v) {
+      return InIsland.value;
+    }), checked2(eq3(kwk)(InIsland.value))]), label4([$$for("island-in")])([text5("Island")])]);
+  };
+  var handleOrthInQuery = function(dictMonad) {
+    return function(v) {
+      return bind6(get2)(function(kit) {
+        return pure9(new Just(v.value0(kit)));
+      });
+    };
+  };
+  var handleOrthIn = function(kit) {
+    return discard5(put2(kit))(function() {
+      return raise(kit);
+    });
+  };
+  var inputComp = function(dictMonadEffect) {
+    return mkComponent({
+      initialState: function(x) {
+        return x;
+      },
+      render: radioButtonsI,
+      "eval": mkEval({
+        handleAction: handleOrthIn,
+        handleQuery: handleOrthInQuery(dictMonadEffect.Monad0()),
+        receive: defaultEval.receive,
+        initialize: defaultEval.initialize,
+        finalize: defaultEval.finalize
+      })
+    });
+  };
+  var _inputSelect = /* @__PURE__ */ function() {
+    return $$Proxy.value;
+  }();
+
+  // output/Data.MediaType.Common/index.js
+  var textPlain = "text/plain";
+  var textCSV = "text/csv";
+
+  // output/Web.File.Blob/foreign.js
+  function typeImpl(blob) {
+    return blob.type;
+  }
+  function blobImpl(args) {
+    return function(mediaType2) {
+      return new Blob(args, { type: mediaType2 });
+    };
+  }
+
+  // output/Web.File.Blob/index.js
+  var type_20 = function(blob) {
+    var blobType = typeImpl(blob);
+    var $2 = blobType === "";
+    if ($2) {
+      return Nothing.value;
+    }
+    ;
+    return new Just(blobType);
+  };
+  var fromString = function(str) {
+    return function(ct) {
+      return blobImpl([str])(ct);
+    };
+  };
+
+  // output/Web.File.File/index.js
+  var type_21 = function($1) {
+    return type_20($1);
+  };
+  var toBlob = unsafeCoerce2;
+
+  // output/Web.File.FileReader/foreign.js
+  function fileReader() {
+    return new FileReader();
+  }
+  function result(fr) {
+    return function() {
+      return fr.result;
+    };
+  }
+  function readAsText(blob) {
+    return function(fr) {
+      return function() {
+        fr.readAsText(blob);
+      };
+    };
+  }
+
+  // output/Web.File.FileReader/index.js
+  var toEventTarget2 = unsafeCoerce2;
+
+  // output/Web.File.FileReader.Aff/index.js
+  var show3 = /* @__PURE__ */ show(/* @__PURE__ */ showNonEmptyList(showForeignError));
+  var mempty2 = /* @__PURE__ */ mempty(monoidCanceler);
+  var readString2 = /* @__PURE__ */ readString(monadIdentity);
+  var readAs = function(readMethod) {
+    return function(getResult) {
+      return function(blob) {
+        return makeAff(function(fun) {
+          var succ = function($12) {
+            return fun(Right.create($12));
+          };
+          var err = function($13) {
+            return fun(Left.create($13));
+          };
+          return function __do2() {
+            var fr = fileReader();
+            var et = toEventTarget2(fr);
+            var errorListener = eventListener(function(v) {
+              return err(error("error"));
+            })();
+            var loadListener = eventListener(function(v) {
+              return function __do3() {
+                var res = result(fr)();
+                return either(function(errs) {
+                  return err(error(show3(errs)));
+                })(succ)(runExcept(readMethod(res)))();
+              };
+            })();
+            addEventListener(error2)(errorListener)(false)(et)();
+            addEventListener(load2)(loadListener)(false)(et)();
+            getResult(blob)(fr)();
+            return mempty2;
+          };
+        });
+      };
+    };
+  };
+  var readAsText2 = /* @__PURE__ */ readAs(readString2)(readAsText);
+
+  // output/Kwakwala.GUI.Components.InputFile/index.js
+  var type_22 = /* @__PURE__ */ type_17(isPropInputType);
+  var onFileUpload2 = /* @__PURE__ */ onFileUpload(unfoldableArray);
+  var value14 = /* @__PURE__ */ value12(isPropString);
+  var bind7 = /* @__PURE__ */ bind(bindHalogenM);
+  var get3 = /* @__PURE__ */ get(monadStateHalogenM);
+  var pure10 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var put3 = /* @__PURE__ */ put(monadStateHalogenM);
+  var discard6 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
+  var gets2 = /* @__PURE__ */ gets(monadStateHalogenM);
+  var ChangeFile = /* @__PURE__ */ function() {
+    function ChangeFile2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    ChangeFile2.create = function(value0) {
+      return new ChangeFile2(value0);
+    };
+    return ChangeFile2;
+  }();
+  var Reconvert = /* @__PURE__ */ function() {
+    function Reconvert2() {
+    }
+    ;
+    Reconvert2.value = new Reconvert2();
+    return Reconvert2;
+  }();
+  var DoNothing = /* @__PURE__ */ function() {
+    function DoNothing2() {
+    }
+    ;
+    DoNothing2.value = new DoNothing2();
+    return DoNothing2;
+  }();
+  var renderError = function(v) {
+    if (v instanceof Nothing) {
+      return "No Errors";
+    }
+    ;
+    if (v instanceof Just) {
+      return v.value0;
+    }
+    ;
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 94, column 1 - line 94, column 38): " + [v.constructor.name]);
+  };
+  var makeFileData = function(stt) {
+    return {
+      fileStr: stt.input,
+      fileTyp: stt.ftype
+    };
+  };
+  var inputTypes = /* @__PURE__ */ append(semigroupInputAcceptType)(/* @__PURE__ */ mediaType(textPlain))(/* @__PURE__ */ mediaType(textCSV));
+  var handleUpload = function(xs) {
+    var v = head(xs);
+    if (v instanceof Nothing) {
+      return DoNothing.value;
+    }
+    ;
+    if (v instanceof Just) {
+      return new ChangeFile(v.value0);
+    }
+    ;
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 99, column 19 - line 101, column 27): " + [v.constructor.name]);
+  };
+  var inputFileGUI = function(dictMonad) {
+    return function(stt) {
+      return div_([p_([text5("Input")]), p_([input([type_22(InputFile.value), accept2(inputTypes), multiple3(false), onFileUpload2(handleUpload)])]), p_([textarea([rows4(12), cols2(100), id2("output-box"), name15("output-box"), readOnly3(true), value14(stt.input)])]), p_([text5("Errors")]), p_([textarea([rows4(3), cols2(100), id2("error-box"), name15("error-box"), readOnly3(true), value14(renderError(stt.error))])]), p_([button([id2("convert-button"), name15("convert-button"), onClick(function(v) {
+        return Reconvert.value;
+      }), disabled10($$null2(stt.input))])([text5("Reconvert")])])]);
+    };
+  };
+  var handleInputFileQuery = function(dictMonad) {
+    return function(v) {
+      return bind7(get3)(function(stt) {
+        return pure10(new Just(v.value0(makeFileData(stt))));
+      });
+    };
+  };
+  var handleInputFileAction = function(dictMonadAff) {
+    var liftAff2 = liftAff(monadAffHalogenM(dictMonadAff));
+    return function(v) {
+      if (v instanceof DoNothing) {
+        return pure10(unit);
+      }
+      ;
+      if (v instanceof ChangeFile) {
+        return bind7(liftAff2(attempt(readAsText2(toBlob(v.value0)))))(function(estr) {
+          return bind7(pure10(type_21(v.value0)))(function(ftyp) {
+            if (estr instanceof Left) {
+              return bind7(get3)(function(stt) {
+                return put3(function() {
+                  var $39 = {};
+                  for (var $40 in stt) {
+                    if ({}.hasOwnProperty.call(stt, $40)) {
+                      $39[$40] = stt[$40];
+                    }
+                    ;
+                  }
+                  ;
+                  $39.error = new Just(message(estr.value0));
+                  return $39;
+                }());
+              });
+            }
+            ;
+            if (estr instanceof Right) {
+              return discard6(put3({
+                input: estr.value0,
+                error: Nothing.value,
+                ftype: ftyp
+              }))(function() {
+                return raise({
+                  fileStr: estr.value0,
+                  fileTyp: ftyp
+                });
+              });
+            }
+            ;
+            throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 117, column 3 - line 124, column 49): " + [estr.constructor.name]);
+          });
+        });
+      }
+      ;
+      if (v instanceof Reconvert) {
+        return bind7(gets2(function(v1) {
+          return v1.input;
+        }))(function(str) {
+          return bind7(gets2(function(v1) {
+            return v1.ftype;
+          }))(function(typ) {
+            return raise({
+              fileStr: str,
+              fileTyp: typ
+            });
+          });
+        });
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.InputFile (line 111, column 1 - line 111, column 134): " + [v.constructor.name]);
+    };
+  };
+  var inputFileComp = function(dictMonadAff) {
+    var Monad0 = dictMonadAff.MonadEffect0().Monad0();
+    return mkComponent({
+      initialState: function(x) {
+        return {
+          input: x,
+          error: Nothing.value,
+          ftype: Nothing.value
+        };
+      },
+      render: inputFileGUI(Monad0),
+      "eval": mkEval({
+        handleAction: handleInputFileAction(dictMonadAff),
+        handleQuery: handleInputFileQuery(Monad0),
+        receive: defaultEval.receive,
+        initialize: defaultEval.initialize,
+        finalize: defaultEval.finalize
+      })
+    });
+  };
+  var _inputFile = /* @__PURE__ */ function() {
+    return $$Proxy.value;
+  }();
+
+  // output/Kwakwala.GUI.Components.GrubbOptions/index.js
+  var bind8 = /* @__PURE__ */ bind(bindHalogenM);
+  var get4 = /* @__PURE__ */ get(monadStateHalogenM);
+  var pure11 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var modify5 = /* @__PURE__ */ modify2(monadStateHalogenM);
+  var type_23 = /* @__PURE__ */ type_17(isPropInputType);
+  var value15 = /* @__PURE__ */ value12(isPropString);
+  var GrbTogJ = /* @__PURE__ */ function() {
+    function GrbTogJ2() {
+    }
+    ;
+    GrbTogJ2.value = new GrbTogJ2();
+    return GrbTogJ2;
+  }();
+  var GrbTog$prime = /* @__PURE__ */ function() {
+    function GrbTog$prime2() {
+    }
+    ;
+    GrbTog$prime2.value = new GrbTog$prime2();
+    return GrbTog$prime2;
+  }();
+  var GrbTog7 = /* @__PURE__ */ function() {
+    function GrbTog72() {
+    }
+    ;
+    GrbTog72.value = new GrbTog72();
+    return GrbTog72;
+  }();
+  var GetGrubb = /* @__PURE__ */ function() {
+    function GetGrubb2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    GetGrubb2.create = function(value0) {
+      return new GetGrubb2(value0);
+    };
+    return GetGrubb2;
+  }();
+  var toggleGrubb = function(v) {
+    return function(v1) {
+      if (v instanceof GrbTogJ) {
+        return {
+          grbUseJ: !v1.grbUseJ,
+          "grbUse'": v1["grbUse'"],
+          grbUse7: v1.grbUse7
+        };
+      }
+      ;
+      if (v instanceof GrbTog$prime) {
+        return {
+          grbUseJ: v1.grbUseJ,
+          "grbUse'": !v1["grbUse'"],
+          grbUse7: v1.grbUse7
+        };
+      }
+      ;
+      if (v instanceof GrbTog7) {
+        return {
+          grbUseJ: v1.grbUseJ,
+          "grbUse'": v1["grbUse'"],
+          grbUse7: !v1.grbUse7
+        };
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.GrubbOptions (line 94, column 1 - line 94, column 59): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var handleGrubbQuery = function(v) {
+    return bind8(get4)(function(x) {
+      return pure11(new Just(v.value0(x)));
+    });
+  };
+  var handleGrubbChange_ = function(tog) {
+    return bind8(modify5(toggleGrubb(tog)))(function(x) {
+      return raise(x);
+    });
+  };
+  var grubbOptionsGUI = function(grb) {
+    return div_([p_([input([type_23(InputCheckbox.value), id2("grubb-j"), name15("CGrubb"), value15("grb1"), onClick(function(v) {
+      return GrbTogJ.value;
+    }), checked2(grb.grbUseJ)]), label4([$$for("grubb-j")])([text5("Use J for /h/")])]), p_([input([type_23(InputCheckbox.value), id2("grubb-e"), name15("CGrubb"), value15("grb2"), onClick(function(v) {
+      return GrbTog$prime.value;
+    }), checked2(grb["grbUse'"])]), label4([$$for("grubb-e")])([text5("Include apostrophes at word start")])]), p_([input([type_23(InputCheckbox.value), id2("grubb-7"), name15("CGrubb"), value15("grb3"), onClick(function(v) {
+      return GrbTog7.value;
+    }), checked2(grb.grbUse7)]), label4([$$for("grubb-7")])([text5("Replace apostrophes with 7s")])])]);
+  };
+  var grubbComp = function(dictMonadEffect) {
+    return mkComponent({
+      initialState: function(x) {
+        return x;
+      },
+      render: function(st) {
+        return grubbOptionsGUI(st);
+      },
+      "eval": mkEval({
+        handleAction: handleGrubbChange_,
+        handleQuery: handleGrubbQuery,
+        receive: defaultEval.receive,
+        initialize: defaultEval.initialize,
+        finalize: defaultEval.finalize
+      })
+    });
+  };
+  var _grubbOptions = /* @__PURE__ */ function() {
+    return $$Proxy.value;
+  }();
+
+  // output/Kwakwala.GUI.Components.IPAOptions/index.js
+  var bind9 = /* @__PURE__ */ bind(bindHalogenM);
+  var get5 = /* @__PURE__ */ get(monadStateHalogenM);
+  var pure13 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var modify6 = /* @__PURE__ */ modify2(monadStateHalogenM);
+  var type_24 = /* @__PURE__ */ type_17(isPropInputType);
+  var value16 = /* @__PURE__ */ value12(isPropString);
+  var IpaTogPal = /* @__PURE__ */ function() {
+    function IpaTogPal2() {
+    }
+    ;
+    IpaTogPal2.value = new IpaTogPal2();
+    return IpaTogPal2;
+  }();
+  var IpaTogTie = /* @__PURE__ */ function() {
+    function IpaTogTie2() {
+    }
+    ;
+    IpaTogTie2.value = new IpaTogTie2();
+    return IpaTogTie2;
+  }();
+  var GetIPA = /* @__PURE__ */ function() {
+    function GetIPA2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    GetIPA2.create = function(value0) {
+      return new GetIPA2(value0);
+    };
+    return GetIPA2;
+  }();
+  var toggleIPA = function(v) {
+    return function(v1) {
+      if (v instanceof IpaTogPal) {
+        return {
+          ipaUseTies: v1.ipaUseTies,
+          ipaShowPal: !v1.ipaShowPal
+        };
+      }
+      ;
+      if (v instanceof IpaTogTie) {
+        return {
+          ipaUseTies: !v1.ipaUseTies,
+          ipaShowPal: v1.ipaShowPal
+        };
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.IPAOptions (line 83, column 1 - line 83, column 51): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var handleIPAQuery = function(v) {
+    return bind9(get5)(function(x) {
+      return pure13(new Just(v.value0(x)));
+    });
+  };
+  var handleIPAChange_ = function(tog) {
+    return bind9(modify6(toggleIPA(tog)))(function(x) {
+      return raise(x);
+    });
+  };
+  var grubbOptionsGUI2 = function(ops) {
+    return div_([p_([input([type_24(InputCheckbox.value), id2("ipa-tie"), name15("CIPA"), value16("ipa1"), onClick(function(v) {
+      return IpaTogTie.value;
+    }), checked2(ops.ipaUseTies)]), label4([$$for("ipa-tie")])([text5("Include ties in the middle of affricates")])]), p_([input([type_24(InputCheckbox.value), id2("ipa-pal"), name15("CIPA"), value16("ipa2"), onClick(function(v) {
+      return IpaTogPal.value;
+    }), checked2(ops.ipaShowPal)]), label4([$$for("ipa-pal")])([text5("Include palatalisation marks for velar consonants")])])]);
+  };
+  var ipaComp = function(dictMonadEffect) {
+    return mkComponent({
+      initialState: function(x) {
+        return x;
+      },
+      render: function(st) {
+        return grubbOptionsGUI2(st);
+      },
+      "eval": mkEval({
+        handleAction: handleIPAChange_,
+        handleQuery: handleIPAQuery,
+        receive: defaultEval.receive,
+        initialize: defaultEval.initialize,
+        finalize: defaultEval.finalize
+      })
+    });
+  };
+  var _ipaOptions = /* @__PURE__ */ function() {
+    return $$Proxy.value;
+  }();
 
   // output/Kwakwala.GUI.Components.OrthOptions/index.js
   var bind10 = /* @__PURE__ */ bind(bindHalogenM);
@@ -10751,7 +11065,7 @@
         });
       }
       ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 135, column 1 - line 135, column 125): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 123, column 1 - line 123, column 125): " + [v.constructor.name]);
     };
   };
   var handleOrthChange_ = function(v) {
@@ -10774,11 +11088,7 @@
       return raise(v.value0);
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 94, column 1 - line 94, column 108): " + [v.constructor.name]);
-  };
-  var defAllOrthOptions = {
-    grubbOrthOptions: defGrubbOptions,
-    ipaOrthOptions: defIPAOptions
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 82, column 1 - line 82, column 108): " + [v.constructor.name]);
   };
   var buttonText = function(orst) {
     if (orst.orthOpen) {
@@ -10789,7 +11099,7 @@
       return "Show Specific Orhtography Options";
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 130, column 1 - line 130, column 34): " + [orst.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 118, column 1 - line 118, column 34): " + [orst.constructor.name]);
   };
   var blockStyle = function(orst) {
     if (orst.orthOpen) {
@@ -10800,7 +11110,7 @@
       return "display : none";
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 123, column 1 - line 123, column 34): " + [orst.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 111, column 1 - line 111, column 34): " + [orst.constructor.name]);
   };
   var orthOptionsGUI = function(dictMonadEffect) {
     var grubbComp2 = grubbComp(dictMonadEffect);
@@ -10851,7 +11161,9 @@
       return OutUmista.value;
     }), checked2(eq4(kwk)(OutUmista.value))]), label4([$$for("Umista-out")])([text5("Umista")]), input([type_25(InputRadio.value), id2("napa-out"), name15("ROutput"), value17("guh3"), onClick(function(v) {
       return OutNapa.value;
-    }), checked2(eq4(kwk)(OutNapa.value))]), label4([$$for("napa-out")])([text5("NAPA")]), input([type_25(InputRadio.value), id2("syll-out"), name15("ROutput"), value17("guh4"), onClick(function(v) {
+    }), checked2(eq4(kwk)(OutNapa.value))]), label4([$$for("napa-out")])([text5("NAPA")]), input([type_25(InputRadio.value), id2("ipa-out"), name15("ROutput"), value17("guh4"), onClick(function(v) {
+      return OutIPA.value;
+    }), checked2(eq4(kwk)(OutIPA.value))]), label4([$$for("ipa-out")])([text5("IPA")]), input([type_25(InputRadio.value), id2("syll-out"), name15("ROutput"), value17("guh5"), onClick(function(v) {
       return OutSyllabic.value;
     }), checked2(eq4(kwk)(OutSyllabic.value))]), label4([$$for("syll-out")])([text5("Syllabic (Carrier)")])]);
   };
@@ -11030,7 +11342,7 @@
   }();
 
   // output/Kwakwala.Output.Napa/index.js
-  var foldMap2 = /* @__PURE__ */ foldMap(foldableList)(monoidString);
+  var foldMap3 = /* @__PURE__ */ foldMap(foldableList)(monoidString);
   var outputNAPA$prime = function(v) {
     if (v instanceof M) {
       return "M";
@@ -11444,7 +11756,7 @@
     throw new Error("Failed pattern match at Kwakwala.Output.Napa (line 140, column 1 - line 140, column 38): " + [v.constructor.name]);
   };
   var outputNapaChars = function(xs) {
-    return foldMap2(outputNapaChar)(xs);
+    return foldMap3(outputNapaChar)(xs);
   };
 
   // output/Kwakwala.Output.Syllabic.Tables/index.js
@@ -34290,10 +34602,10 @@
 
   // output/Kwakwala.GUI.Convert/index.js
   var outputByType = function(kot) {
-    return function(gbo) {
+    return function(ops) {
       return function(lst) {
         if (kot instanceof OutGrubb) {
-          return outputGrubbAsciiChars(gbo)(lst);
+          return outputGrubbAsciiChars(ops.grubbOrthOptions)(lst);
         }
         ;
         if (kot instanceof OutNapa) {
@@ -34304,11 +34616,15 @@
           return outputUmistaChars(lst);
         }
         ;
+        if (kot instanceof OutIPA) {
+          return outputIPAChars(ops.ipaOrthOptions)(lst);
+        }
+        ;
         if (kot instanceof OutSyllabic) {
           return outputSyllabics(lst);
         }
         ;
-        throw new Error("Failed pattern match at Kwakwala.GUI.Convert (line 39, column 28 - line 43, column 37): " + [kot.constructor.name]);
+        throw new Error("Failed pattern match at Kwakwala.GUI.Convert (line 41, column 28 - line 46, column 37): " + [kot.constructor.name]);
       };
     };
   };
@@ -34334,13 +34650,13 @@
         return encodeFromBoas(str);
       }
       ;
-      throw new Error("Failed pattern match at Kwakwala.GUI.Convert (line 31, column 24 - line 36, column 35): " + [kit.constructor.name]);
+      throw new Error("Failed pattern match at Kwakwala.GUI.Convert (line 33, column 24 - line 38, column 35): " + [kit.constructor.name]);
     };
   };
   var convertOrthography = function(kit) {
     return function(kot) {
-      return function(gbo) {
-        var $3 = outputByType(kot)(gbo);
+      return function(ops) {
+        var $3 = outputByType(kot)(ops);
         var $4 = encodeByType(kit);
         return function($5) {
           return $3($4($5));
@@ -34544,7 +34860,7 @@
         $98.inputFile = x.value0;
         return $98;
       }))(function(stt) {
-        return bind24(pure28(convertOrthography(stt.inputSelect)(stt.outputSelect)(stt.orthOptions.grubbOrthOptions)(x.value0.fileStr)))(function(newStr) {
+        return bind24(pure28(convertOrthography(stt.inputSelect)(stt.outputSelect)(stt.orthOptions)(x.value0.fileStr)))(function(newStr) {
           return discard13($$void9(query12(_outputText)(unit)(new OutputString(newStr, unit))))(function() {
             return discard13($$void9(query23(_outputFile)(unit)(new ReceiveFileData({
               fileStr: newStr,

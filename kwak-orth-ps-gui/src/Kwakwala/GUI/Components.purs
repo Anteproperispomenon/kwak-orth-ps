@@ -33,7 +33,7 @@ import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Aff.Class (class MonadAff)
 
 import Kwakwala.GUI.Convert
-import Kwakwala.GUI.Types (FileData)
+import Kwakwala.GUI.Types (FileData, AllOrthOptions, defAllOrthOptions)
 
 import Control.Monad.State.Class (class MonadState, get)
 import Control.Monad.Trans.Class (lift)
@@ -143,7 +143,7 @@ handleConvertAction x = case x of
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions.grubbOrthOptions str
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
     void $ HQ.query _outputText unit (OutputString newStr unit)
     Hal.modify_ (\st -> st {outputText = newStr})
 
@@ -242,7 +242,7 @@ handleConvertAction2 x = case x of
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions.grubbOrthOptions fdt.fileStr
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
     Hal.modify_ (\st -> st {outputText = newStr})

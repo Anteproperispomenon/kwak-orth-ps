@@ -47,7 +47,9 @@ radioButtonsO kwk
       , Html.label [HP.for "Umista-out"] [Html.text "Umista"]
       , Html.input [HP.type_ HP.InputRadio, HP.id "napa-out"  , HP.name "ROutput", HP.value "guh3", HE.onClick (\_ -> OutNapa)    , HP.checked (kwk == OutNapa)]
       , Html.label [HP.for "napa-out"] [Html.text "NAPA"]
-      , Html.input [HP.type_ HP.InputRadio, HP.id "syll-out"  , HP.name "ROutput", HP.value "guh4", HE.onClick (\_ -> OutSyllabic), HP.checked (kwk == OutSyllabic)]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "ipa-out"   , HP.name "ROutput", HP.value "guh4", HE.onClick (\_ -> OutIPA)     , HP.checked (kwk == OutIPA)]
+      , Html.label [HP.for "ipa-out"] [Html.text "IPA"]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "syll-out"  , HP.name "ROutput", HP.value "guh5", HE.onClick (\_ -> OutSyllabic), HP.checked (kwk == OutSyllabic)]
       , Html.label [HP.for "syll-out"] [Html.text "Syllabic (Carrier)"]
       ]
 

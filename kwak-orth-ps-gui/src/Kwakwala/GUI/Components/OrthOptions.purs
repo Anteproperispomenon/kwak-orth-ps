@@ -4,14 +4,15 @@ module Kwakwala.GUI.Components.OrthOptions
   , OrthOptions(..)
   , OrthSlot
   , OrthQuery(..)
-  , AllOrthOptions
-  , defAllOrthOptions
+  -- , AllOrthOptions
+  -- , defAllOrthOptions
   ) where
 
+import Prelude
 
 import Kwakwala.GUI.Components.GrubbOptions
 import Kwakwala.GUI.Components.IPAOptions
-import Prelude
+import Kwakwala.GUI.Types (AllOrthOptions, defAllOrthOptions)
 
 import Data.Maybe (Maybe(..))
 import Effect.Class (class MonadEffect)
@@ -69,19 +70,6 @@ data OrthOptions
   = OrthGrubbOptions GrubbOptions
   | OrthIPAOptions IPAOptions
   -- | OrthGeorgianOptions GeorgianOptions
-
-type AllOrthOptions
-  = { grubbOrthOptions :: GrubbOptions
-    , ipaOrthOptions :: IPAOptions
-    -- , georgianOrthOptions :: GeorgianOptions
-    }
-
-defAllOrthOptions :: AllOrthOptions
-defAllOrthOptions
-  = { grubbOrthOptions : defGrubbOptions
-    , ipaOrthOptions : defIPAOptions
-    -- , georgianOrthOptions : defGeorgianOptions
-    }
 
 type OrthState
   = { orthOpen :: Boolean
