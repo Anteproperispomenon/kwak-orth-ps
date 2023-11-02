@@ -14,9 +14,9 @@ package:
   name: kwak-orth-ps-gui
   bundle:
     module: Main
+    outfile: "app/convert-text.js" 
     #module: MainFile
-    outfile: "convert-text.js" 
-    #outfile: "convert-file.js"
+    #outfile: "app/convert-file.js"
     platform: browser
     type: "app"
   #test:
