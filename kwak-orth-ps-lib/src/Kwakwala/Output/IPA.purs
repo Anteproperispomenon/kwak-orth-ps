@@ -83,10 +83,10 @@ outputIpaX s TS
   | otherwise    = "ts"
 outputIpaX s TL  
   | s.ipaUseTies = "t͡ɬ"
-  | otherwise    = "t͡ɬ"
+  | otherwise    = "tɬ"
 outputIpaX s DZ  
   | s.ipaUseTies = "d͡z"
-  | otherwise    = "d͡z"
+  | otherwise    = "dz"
 outputIpaX s DL  
   | s.ipaUseTies = "d͡ɮ"
   | otherwise    = "dɮ"
@@ -140,8 +140,8 @@ outputIpaX _ AU  = "ə"
 -- outputIpa :: IPAOptions -> KwakLetter -> String
 -- outputIpa = outputIpaX
 
-----------------------------------------------------
---
+-------------------------------------------
+-- IPA Output functions
 
 -- | Output a single `CasedLetter` in IPA.
 outputIPALetter :: IPAOptions -> CasedLetter -> String
