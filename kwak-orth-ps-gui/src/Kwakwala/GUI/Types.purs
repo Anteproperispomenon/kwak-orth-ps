@@ -1,6 +1,7 @@
 module Kwakwala.GUI.Types
   ( KwakOutputType(..)
   , KwakInputType(..)
+  , FileData
   -- , GrubbOptions
   )
   where
@@ -8,6 +9,9 @@ module Kwakwala.GUI.Types
 import Prelude
 
 import Kwakwala.Output.Grubb (GrubbOptions)
+
+import Data.Maybe (Maybe)
+import Data.MediaType (MediaType)
 
 data KwakOutputType
   = OutGrubb -- GrubbOptions
@@ -41,3 +45,7 @@ instance showKwakIn :: Show KwakInputType where
   show InBoas   = "Boas"
   show InIsland = "Island"
 
+type FileData
+  = { fileStr :: String
+    , fileTyp :: Maybe MediaType
+    }

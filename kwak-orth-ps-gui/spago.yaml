@@ -3,14 +3,22 @@ package:
     - console
     - effect
     - prelude
+    - dom-filereader
     - lists
     - parsing
     - tailrec
     - halogen
-    - halogen-formless
+    # - halogen-formless
     - kwak-orth-ps-lib
     - web-html
   name: kwak-orth-ps-gui
+  bundle:
+    module: Main
+    outfile: "app/convert-text.js" 
+    #module: MainFile
+    #outfile: "app/convert-file.js"
+    platform: browser
+    type: "app"
   #test:
   #  dependencies: []
   #  main: Test.Main

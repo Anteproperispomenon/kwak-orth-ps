@@ -1,4 +1,4 @@
-module Main where
+module MainFile where
 
 import Prelude
 
@@ -13,9 +13,9 @@ import Halogen.HTML.Events as HE
 import Halogen.VDom.Driver (runUI)
 -- import Type.Proxy (Proxy(..))
 
-import Kwakwala.GUI.Components (convertComp, ParentAction(..))
+import Kwakwala.GUI.Components (convertComp2, ParentAction2(..))
 
 main :: Effect Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
-  runUI convertComp (ConvertText "") body
+  runUI convertComp2 (ConvertText2 { fileStr : "" , fileTyp : Nothing} ) body

@@ -3,10 +3,12 @@ module Kwakwala.GUI.Components.GrubbOptions
   , _grubbOptions
   , GrubbSlot
   , GrubbQuery(..)
+  , GrubbToggle
   ) where
 
 import Prelude
 
+import Data.Maybe (Maybe(..))
 import Effect.Class (class MonadEffect)
 import Halogen as Hal
 import Halogen.Component as HC
@@ -33,7 +35,7 @@ type GrubbSlot x = Hal.Slot GrubbQuery GrubbOptions x
 
 data GrubbQuery a
   = GetGrubb (GrubbOptions -> a)
-  | SetGrubb GrubbOptions a
+  -- | SetGrubb GrubbOptions a
 
 handleGrubbChange :: forall m s act. GrubbToggle -> Hal.HalogenM GrubbOptions act s GrubbOptions m GrubbOptions
 handleGrubbChange tog = do
@@ -48,12 +50,20 @@ handleGrubbChange_ tog = do
   x <- Hal.modify (toggleGrubb tog)
   HM.raise x
 
+handleGrubbQuery :: forall m s act a. GrubbQuery a -> Hal.HalogenM GrubbOptions act s GrubbOptions m (Maybe a)
+handleGrubbQuery (GetGrubb reply) = do
+  x <- Hal.get
+  pure $ Just (reply x)
+
 grubbComp :: forall m. (MonadEffect m) => HC.Component GrubbQuery GrubbOptions GrubbOptions m
 grubbComp
   = Hal.mkComponent
     { initialState : \x -> x
     , render : \st -> grubbOptionsGUI st
-    , eval : HC.mkEval $ HC.defaultEval {handleAction = handleGrubbChange_}
+    , eval : HC.mkEval $ HC.defaultEval 
+       { handleAction = handleGrubbChange_ 
+       , handleQuery  = handleGrubbQuery
+       }
     }
 
 grubbOptionsGUI :: forall m s. GrubbOptions -> Hal.ComponentHTML GrubbToggle s m
@@ -62,7 +72,7 @@ grubbOptionsGUI grb
       [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-j", HP.name "CGrubb", HP.value "grb1", HE.onClick (\_ -> GrbTogJ), HP.checked grb.grbUseJ]
       , Html.label [HP.for "grubb-j"] [Html.text "Use J for /h/"]
       , Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-e", HP.name "CGrubb", HP.value "grb2", HE.onClick (\_ -> GrbTog'), HP.checked grb.grbUse']
-      , Html.label [HP.for "grubb-e"] [Html.text "Omit apostrophes at start"]
+      , Html.label [HP.for "grubb-e"] [Html.text "Include apostrophes at word start"]
       , Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-7", HP.name "CGrubb", HP.value "grb3", HE.onClick (\_ -> GrbTog7), HP.checked grb.grbUse7]
       , Html.label [HP.for "grubb-7"] [Html.text "Replace apostrophes with 7s"]
       ]
@@ -79,3 +89,5 @@ toggleGrubb :: GrubbToggle -> GrubbOptions -> GrubbOptions
 toggleGrubb GrbTogJ grb = grb {grbUseJ = not grb.grbUseJ}
 toggleGrubb GrbTog' grb = grb {grbUse' = not grb.grbUse'}
 toggleGrubb GrbTog7 grb = grb {grbUse7 = not grb.grbUse7}
+
+

@@ -1,6 +1,9 @@
 module Kwakwala.GUI.Components
   ( convertComp
   , ParentAction(..)
+  
+  , convertComp2
+  , ParentAction2(..)
 
   -- , OrthInQuery
   -- , OrthOutQuery
@@ -20,15 +23,23 @@ import Kwakwala.GUI.Components.OutSelect
 import Kwakwala.GUI.Components.GrubbOptions
 import Kwakwala.GUI.Components.InputText
 import Kwakwala.GUI.Components.OutputText
+import Kwakwala.GUI.Components.InputFile
+import Kwakwala.GUI.Components.OutputFile
+import Kwakwala.GUI.Components.OrthOptions
+
 
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Aff.Class (class MonadAff)
 
 import Kwakwala.GUI.Convert
+import Kwakwala.GUI.Types (FileData)
 
 import Control.Monad.State.Class (class MonadState, get)
 import Control.Monad.Trans.Class (lift)
 import Data.Maybe (Maybe(..))
+import Data.MediaType (MediaType)
+import Data.MediaType.Common (textPlain)
 import Halogen (ComponentHTML)
 import Halogen as Hal
 import Halogen.Component as HC
@@ -42,12 +53,12 @@ import Kwakwala.Output.Grubb (GrubbOptions(..), GrubbOptions, defGrubbOptions)
 import Type.Proxy (Proxy(..))
 
 --------------------------------
--- Parent Component
+-- Parent Component (Text)
 
 type ParentSlots
   = ( inputSelect  :: InputSlot  Unit
     , outputSelect :: OutputSlot Unit
-    , grubbOptions :: GrubbSlot  Unit
+    , orthOptions  :: OrthSlot   Unit
     , inputText    :: InputTextSlot  Unit
     , outputText   :: OutputTextSlot Unit
     ) 
@@ -55,36 +66,39 @@ type ParentSlots
 type ParentStateX r
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
-    , grubbOptions :: GrubbOptions
+    , orthOptions  :: AllOrthOptions
     , inputText  :: String
     , outputText :: String
+    -- , inputFile :: String
     | r
     }
 
 type ParentState
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
-    , grubbOptions :: GrubbOptions
+    , orthOptions  :: AllOrthOptions
     , inputText  :: String
     , outputText :: String
+    -- , inputFile :: String
     }
 
 data ParentAction
-  = ChangeOrthIn  KwakInputType
-  | ChangeOrthOut KwakOutputType
-  | ChangeGrubb   GrubbOptions
-  | ConvertText   String
+  = ChangeOrthIn   KwakInputType
+  | ChangeOrthOut  KwakOutputType
+  | ChangeOrthOpts OrthOptions
+  | ConvertText    String
 
 defParentState :: ParentState
 defParentState = 
   { inputSelect  : InGrubb
   , outputSelect : OutGrubb
-  , grubbOptions : defGrubbOptions
+  , orthOptions : defAllOrthOptions
   , inputText  : ""
   , outputText : ""
+  -- , inputFile : ""
   }
 
-convertComp :: forall m. (MonadEffect m) => HC.Component _ ParentAction _ m
+convertComp :: forall m. (MonadAff m) => HC.Component _ ParentAction _ m
 convertComp 
   = Hal.mkComponent
      { initialState : (\_ -> defParentState)
@@ -95,19 +109,21 @@ convertComp
        }
      }
 
-renderConverter :: forall m. MonadEffect m => ParentState -> Hal.ComponentHTML ParentAction ParentSlots m
+renderConverter :: forall m. MonadAff m => ParentState -> Hal.ComponentHTML ParentAction ParentSlots m
 renderConverter st
   = Html.div_
-    [ Html.p_ [Html.text "Individual Orthograph Options"]
-    , Html.p_ [Html.slot  _grubbOptions unit grubbComp  st.grubbOptions ChangeGrubb]
+    [ Html.h1_ [Html.text "Kwak'wala Orthography Conversion (Text)"]
+    , Html.p_ [Html.slot  _orthOptions  unit orthComp  unit ChangeOrthOpts]
     , Html.p_ [Html.text "Input Orthography"]
     , Html.p_ [Html.slot  _inputSelect  unit inputComp  st.inputSelect  ChangeOrthIn]
     , Html.p_ [Html.text "Output Orthography"]
     , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut]
-    , Html.p_ [Html.text "Input Text"]
+    -- , Html.p_ [Html.text "Input Text"]
     , Html.p_ [Html.slot  _inputText    unit inputTextComp  st.inputText ConvertText]
-    , Html.p_ [Html.text "Output Text"]
+    -- , Html.p_ [Html.text "Output Text"]
     , Html.p_ [Html.slot_ _outputText   unit outputTextComp st.outputText]
+    -- , Html.p_ [Html.text "Test"]
+    -- , Html.p_ [Html.slot_ _inputFile unit inputFileComp st.inputFile]
     ]
 
 handleConvertAction :: forall m. ParentAction -> Hal.HalogenM ParentState _ ParentSlots _ m Unit
@@ -116,14 +132,14 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {inputSelect  = kit })
   (ChangeOrthOut kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
-  (ChangeGrubb gbo) -> do
-    Hal.modify_ (\st -> st {grubbOptions = gbo})
+  (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
+    Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ConvertText str) -> do
     stt <- Hal.modify (\st -> st {inputText = str})
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.grubbOptions str
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions.grubbOrthOptions str
     void $ HQ.query _outputText unit (OutputString newStr unit)
     Hal.modify_ (\st -> st {outputText = newStr})
 
@@ -133,6 +149,94 @@ handleConvertAction x = case x of
 -- form :: forall i p. Node HTMLform p i
 -- form :: forall i p Array (IProp HTMLform i) -> Array (HTML p i) -> HTML p i
 
+--------------------------------
+-- Parent Component (File)
 
+type ParentSlots2
+  = ( inputSelect  :: InputSlot  Unit
+    , outputSelect :: OutputSlot Unit
+    , orthOptions  :: OrthSlot   Unit
+    , inputFile    :: InputFileSlot  Unit
+    , outputText   :: OutputTextSlot Unit
+    , outputFile   :: OutputFileSlot Unit
+    )
+
+type ParentState2X r
+  = { inputSelect  :: KwakInputType
+    , outputSelect :: KwakOutputType
+    , orthOptions  :: AllOrthOptions
+    , inputFile  :: String
+    , outputText :: String
+    | r
+    }
+
+type ParentState2
+  = { inputSelect  :: KwakInputType
+    , outputSelect :: KwakOutputType
+    , orthOptions  :: AllOrthOptions
+    , inputFile  :: FileData
+    , outputText :: String
+    }
+
+defParentState2 :: ParentState2
+defParentState2 = 
+  { inputSelect  : InGrubb
+  , outputSelect : OutGrubb
+  , orthOptions  : defAllOrthOptions
+  , inputFile  : { fileStr : "", fileTyp : Nothing}
+  , outputText : ""
+  }
+
+data ParentAction2
+  = ChangeOrthIn2   KwakInputType
+  | ChangeOrthOut2  KwakOutputType
+  | ChangeOrthOpts2 OrthOptions
+  | ConvertText2    FileData
+
+convertComp2 :: forall m. (MonadAff m) => HC.Component _ ParentAction2 _ m
+convertComp2 
+  = Hal.mkComponent
+     { initialState : (\_ -> defParentState2)
+     , render : renderConverter2
+     , eval : HC.mkEval $ HC.defaultEval
+       { receive = Just
+       , handleAction = handleConvertAction2
+       }
+     }
+
+
+renderConverter2 :: forall m. MonadAff m => ParentState2 -> Hal.ComponentHTML ParentAction2 ParentSlots2 m
+renderConverter2 st
+  = Html.div_
+    [ Html.h1_ [Html.text "Kwak'wala Orthography Conversion (File)"]
+    , Html.p_ [Html.slot  _orthOptions  unit orthComp  unit ChangeOrthOpts2]
+    , Html.p_ [Html.text "Input Orthography"]
+    , Html.p_ [Html.slot  _inputSelect  unit inputComp  st.inputSelect  ChangeOrthIn2]
+    , Html.p_ [Html.text "Output Orthography"]
+    , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut2]
+    -- , Html.p_ [Html.text "Input File"]
+    , Html.p_ [Html.slot  _inputFile unit inputFileComp st.inputFile.fileStr ConvertText2]
+    -- , Html.p_ [Html.text "Output Text"]
+    , Html.p_ [Html.slot_ _outputText unit outputTextComp st.outputText]
+    , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : st.outputText , fileTyp : st.inputFile.fileTyp} ]
+    ]
+
+handleConvertAction2 :: forall m. ParentAction2 -> Hal.HalogenM ParentState2 _ ParentSlots2 _ m Unit
+handleConvertAction2 x = case x of
+  (ChangeOrthIn2  kit) -> do
+    Hal.modify_ (\st -> st {inputSelect  = kit })
+  (ChangeOrthOut2 kot) -> do
+    Hal.modify_ (\st -> st {outputSelect = kot})
+  (ChangeOrthOpts2 (OrthGrubbOptions gbo)) -> do
+    Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
+  (ConvertText2 fdt) -> do
+    stt <- Hal.modify (\st -> st {inputFile = fdt})
+    -- stt.inputSelect
+    -- stt.outputSelect
+    -- stt.grubbOptions
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions.grubbOrthOptions fdt.fileStr
+    void $ HQ.query _outputText unit (OutputString newStr unit)
+    void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
+    Hal.modify_ (\st -> st {outputText = newStr})
 
 
