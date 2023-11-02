@@ -1032,8 +1032,8 @@
       if (aff.tag === Aff.Pure.tag) {
         return Aff.Pure(f(aff._1));
       } else {
-        return Aff.Bind(aff, function(value17) {
-          return Aff.Pure(f(value17));
+        return Aff.Bind(aff, function(value18) {
+          return Aff.Pure(f(value18));
         });
       }
     };
@@ -1104,24 +1104,24 @@
 
   // output/Control.Monad/index.js
   var unlessM = function(dictMonad) {
-    var bind23 = bind(dictMonad.Bind1());
+    var bind24 = bind(dictMonad.Bind1());
     var unless2 = unless(dictMonad.Applicative0());
     return function(mb) {
       return function(m) {
-        return bind23(mb)(function(b2) {
+        return bind24(mb)(function(b2) {
           return unless2(b2)(m);
         });
       };
     };
   };
   var ap = function(dictMonad) {
-    var bind23 = bind(dictMonad.Bind1());
-    var pure27 = pure(dictMonad.Applicative0());
+    var bind24 = bind(dictMonad.Bind1());
+    var pure28 = pure(dictMonad.Applicative0());
     return function(f) {
       return function(a2) {
-        return bind23(f)(function(f$prime) {
-          return bind23(a2)(function(a$prime) {
-            return pure27(f$prime(a$prime));
+        return bind24(f)(function(f$prime) {
+          return bind24(a2)(function(a$prime) {
+            return pure28(f$prime(a$prime));
           });
         });
       };
@@ -1788,10 +1788,10 @@
     var catchError1 = catchError(dictMonadError);
     var Monad0 = dictMonadError.MonadThrow0().Monad0();
     var map31 = map(Monad0.Bind1().Apply0().Functor0());
-    var pure27 = pure(Monad0.Applicative0());
+    var pure28 = pure(Monad0.Applicative0());
     return function(a2) {
       return catchError1(map31(Right.create)(a2))(function($52) {
-        return pure27(Left.create($52));
+        return pure28(Left.create($52));
       });
     };
   };
@@ -2261,13 +2261,13 @@
     };
   };
   var bindExceptT = function(dictMonad) {
-    var bind23 = bind(dictMonad.Bind1());
-    var pure27 = pure(dictMonad.Applicative0());
+    var bind24 = bind(dictMonad.Bind1());
+    var pure28 = pure(dictMonad.Applicative0());
     return {
       bind: function(v) {
         return function(k) {
-          return bind23(v)(either(function($187) {
-            return pure27(Left.create($187));
+          return bind24(v)(either(function($187) {
+            return pure28(Left.create($187));
           })(function(a2) {
             var v1 = k(a2);
             return v1;
@@ -2377,13 +2377,13 @@
   };
   var traverse_ = function(dictApplicative) {
     var applySecond7 = applySecond(dictApplicative.Apply0());
-    var pure27 = pure(dictApplicative);
+    var pure28 = pure(dictApplicative);
     return function(dictFoldable) {
       var foldr22 = foldr(dictFoldable);
       return function(f) {
         return foldr22(function($454) {
           return applySecond7(f($454));
-        })(pure27(unit));
+        })(pure28(unit));
       };
     };
   };
@@ -2493,13 +2493,13 @@
     }
     return function(apply3) {
       return function(map31) {
-        return function(pure27) {
+        return function(pure28) {
           return function(f) {
             return function(array) {
               function go2(bot, top3) {
                 switch (top3 - bot) {
                   case 0:
-                    return pure27([]);
+                    return pure28([]);
                   case 1:
                     return map31(array1)(f(array[bot]));
                   case 2:
@@ -2817,12 +2817,12 @@
   // output/Control.Monad.State.Trans/index.js
   var monadTransStateT = {
     lift: function(dictMonad) {
-      var bind23 = bind(dictMonad.Bind1());
-      var pure27 = pure(dictMonad.Applicative0());
+      var bind24 = bind(dictMonad.Bind1());
+      var pure28 = pure(dictMonad.Applicative0());
       return function(m) {
         return function(s) {
-          return bind23(m)(function(x) {
-            return pure27(new Tuple(x, s));
+          return bind24(m)(function(x) {
+            return pure28(new Tuple(x, s));
           });
         };
       };
@@ -2861,12 +2861,12 @@
     };
   };
   var bindStateT = function(dictMonad) {
-    var bind23 = bind(dictMonad.Bind1());
+    var bind24 = bind(dictMonad.Bind1());
     return {
       bind: function(v) {
         return function(f) {
           return function(s) {
-            return bind23(v(s))(function(v1) {
+            return bind24(v(s))(function(v1) {
               var v3 = f(v1.value0);
               return v3(v1.value1);
             });
@@ -2888,11 +2888,11 @@
     };
   };
   var applicativeStateT = function(dictMonad) {
-    var pure27 = pure(dictMonad.Applicative0());
+    var pure28 = pure(dictMonad.Applicative0());
     return {
       pure: function(a2) {
         return function(s) {
-          return pure27(new Tuple(a2, s));
+          return pure28(new Tuple(a2, s));
         };
       },
       Apply0: function() {
@@ -2902,8 +2902,8 @@
   };
   var monadRecStateT = function(dictMonadRec) {
     var Monad0 = dictMonadRec.Monad0();
-    var bind23 = bind(Monad0.Bind1());
-    var pure27 = pure(Monad0.Applicative0());
+    var bind24 = bind(Monad0.Bind1());
+    var pure28 = pure(Monad0.Applicative0());
     var tailRecM4 = tailRecM(dictMonadRec);
     var monadStateT1 = monadStateT(Monad0);
     return {
@@ -2911,8 +2911,8 @@
         return function(a2) {
           var f$prime = function(v) {
             var v1 = f(v.value0);
-            return bind23(v1(v.value1))(function(v2) {
-              return pure27(function() {
+            return bind24(v1(v.value1))(function(v2) {
+              return pure28(function() {
                 if (v2.value0 instanceof Loop) {
                   return new Loop(new Tuple(v2.value0.value0, v2.value1));
                 }
@@ -2936,12 +2936,12 @@
     };
   };
   var monadStateStateT = function(dictMonad) {
-    var pure27 = pure(dictMonad.Applicative0());
+    var pure28 = pure(dictMonad.Applicative0());
     var monadStateT1 = monadStateT(dictMonad);
     return {
       state: function(f) {
         return function($200) {
-          return pure27(f($200));
+          return pure28(f($200));
         };
       },
       Monad0: function() {
@@ -3146,10 +3146,10 @@
   };
 
   // output/Web.HTML.HTMLElement/foreign.js
-  function _read(nothing, just, value17) {
-    var tag = Object.prototype.toString.call(value17);
+  function _read(nothing, just, value18) {
+    var tag = Object.prototype.toString.call(value18);
     if (tag.indexOf("[object HTML") === 0 && tag.indexOf("Element]") === tag.length - 8) {
-      return just(value17);
+      return just(value18);
     } else {
       return nothing;
     }
@@ -3639,11 +3639,11 @@
       var Alt0 = dictAlternative.Plus1().Alt0();
       var alt13 = alt(Alt0);
       var map115 = map(Alt0.Functor0());
-      var pure27 = pure(dictAlternative.Applicative0());
+      var pure28 = pure(dictAlternative.Applicative0());
       return function(p2) {
         var go2 = function(acc) {
-          return bind110(alt13(map115(Loop.create)(p2))(pure27(new Done(unit))))(function(aa) {
-            return pure27(bimap2(function(v) {
+          return bind110(alt13(map115(Loop.create)(p2))(pure28(new Done(unit))))(function(aa) {
+            return pure28(bimap2(function(v) {
               return new Cons(v, acc);
             })(function(v) {
               return reverse(acc);
@@ -4538,18 +4538,18 @@
   }();
 
   // output/Data.Array/foreign.js
-  var replicateFill = function(count, value17) {
+  var replicateFill = function(count, value18) {
     if (count < 1) {
       return [];
     }
     var result2 = new Array(count);
-    return result2.fill(value17);
+    return result2.fill(value18);
   };
-  var replicatePolyfill = function(count, value17) {
+  var replicatePolyfill = function(count, value18) {
     var result2 = [];
     var n = 0;
     for (var i2 = 0; i2 < count; i2++) {
-      result2[n++] = value17;
+      result2[n++] = value18;
     }
     return result2;
   };
@@ -5376,14 +5376,14 @@
   };
 
   // output/Foreign/foreign.js
-  function typeOf(value17) {
-    return typeof value17;
+  function typeOf(value18) {
+    return typeof value18;
   }
-  function tagOf(value17) {
-    return Object.prototype.toString.call(value17).slice(8, -1);
+  function tagOf(value18) {
+    return Object.prototype.toString.call(value18).slice(8, -1);
   }
-  var isArray = Array.isArray || function(value17) {
-    return Object.prototype.toString.call(value17) === "[object Array]";
+  var isArray = Array.isArray || function(value18) {
+    return Object.prototype.toString.call(value18) === "[object Array]";
   };
 
   // output/Data.Int/foreign.js
@@ -5497,16 +5497,16 @@
     var pure110 = pure(applicativeExceptT(dictMonad));
     var fail1 = fail(dictMonad);
     return function(tag) {
-      return function(value17) {
-        if (tagOf(value17) === tag) {
-          return pure110(unsafeFromForeign(value17));
+      return function(value18) {
+        if (tagOf(value18) === tag) {
+          return pure110(unsafeFromForeign(value18));
         }
         ;
         if (otherwise) {
-          return fail1(new TypeMismatch(tag, tagOf(value17)));
+          return fail1(new TypeMismatch(tag, tagOf(value18)));
         }
         ;
-        throw new Error("Failed pattern match at Foreign (line 123, column 1 - line 123, column 104): " + [tag.constructor.name, value17.constructor.name]);
+        throw new Error("Failed pattern match at Foreign (line 123, column 1 - line 123, column 104): " + [tag.constructor.name, value18.constructor.name]);
       };
     };
   };
@@ -5923,7 +5923,7 @@
     return Lift.create;
   }();
   var goLeft = function(dictApplicative) {
-    var pure27 = pure(dictApplicative);
+    var pure28 = pure(dictApplicative);
     return function(fStack) {
       return function(valStack) {
         return function(nat) {
@@ -5931,7 +5931,7 @@
             return function(count) {
               if (func instanceof Pure) {
                 return new Tuple(new Cons({
-                  func: pure27(func.value0),
+                  func: pure28(func.value0),
                   count
                 }, fStack), valStack);
               }
@@ -6002,7 +6002,7 @@
   };
   var foldFreeAp = function(dictApplicative) {
     var goApply1 = goApply(dictApplicative);
-    var pure27 = pure(dictApplicative);
+    var pure28 = pure(dictApplicative);
     var goLeft1 = goLeft(dictApplicative);
     return function(nat) {
       return function(z) {
@@ -6011,7 +6011,7 @@
           var $tco_result;
           function $tco_loop(v) {
             if (v.value1.value0 instanceof Pure) {
-              var v1 = goApply1(v.value0)(v.value1.value1)(pure27(v.value1.value0.value0));
+              var v1 = goApply1(v.value0)(v.value1.value1)(pure28(v.value1.value0.value0));
               if (v1 instanceof Left) {
                 $tco_done = true;
                 return v1.value0;
@@ -7932,17 +7932,17 @@
   };
 
   // output/Foreign.Index/foreign.js
-  function unsafeReadPropImpl(f, s, key, value17) {
-    return value17 == null ? f : s(value17[key]);
+  function unsafeReadPropImpl(f, s, key, value18) {
+    return value18 == null ? f : s(value18[key]);
   }
 
   // output/Foreign.Index/index.js
   var unsafeReadProp = function(dictMonad) {
     var fail3 = fail(dictMonad);
-    var pure27 = pure(applicativeExceptT(dictMonad));
+    var pure28 = pure(applicativeExceptT(dictMonad));
     return function(k) {
-      return function(value17) {
-        return unsafeReadPropImpl(fail3(new TypeMismatch("object", typeOf(value17))), pure27, k, value17);
+      return function(value18) {
+        return unsafeReadPropImpl(fail3(new TypeMismatch("object", typeOf(value18))), pure28, k, value18);
       };
     };
   };
@@ -8350,6 +8350,94 @@
     });
   };
   var _grubbOptions = /* @__PURE__ */ function() {
+    return $$Proxy.value;
+  }();
+
+  // output/Kwakwala.GUI.Components.IPAOptions/index.js
+  var bind9 = /* @__PURE__ */ bind(bindHalogenM);
+  var get5 = /* @__PURE__ */ get(monadStateHalogenM);
+  var pure13 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var modify6 = /* @__PURE__ */ modify2(monadStateHalogenM);
+  var type_23 = /* @__PURE__ */ type_17(isPropInputType);
+  var value15 = /* @__PURE__ */ value12(isPropString);
+  var IpaTogPal = /* @__PURE__ */ function() {
+    function IpaTogPal2() {
+    }
+    ;
+    IpaTogPal2.value = new IpaTogPal2();
+    return IpaTogPal2;
+  }();
+  var IpaTogTie = /* @__PURE__ */ function() {
+    function IpaTogTie2() {
+    }
+    ;
+    IpaTogTie2.value = new IpaTogTie2();
+    return IpaTogTie2;
+  }();
+  var GetIPA = /* @__PURE__ */ function() {
+    function GetIPA2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    GetIPA2.create = function(value0) {
+      return new GetIPA2(value0);
+    };
+    return GetIPA2;
+  }();
+  var toggleIPA = function(v) {
+    return function(v1) {
+      if (v instanceof IpaTogPal) {
+        return {
+          ipaUseTies: v1.ipaUseTies,
+          ipaShowPal: !v1.ipaShowPal
+        };
+      }
+      ;
+      if (v instanceof IpaTogTie) {
+        return {
+          ipaUseTies: !v1.ipaUseTies,
+          ipaShowPal: v1.ipaShowPal
+        };
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.IPAOptions (line 79, column 1 - line 79, column 51): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var handleIPAQuery = function(v) {
+    return bind9(get5)(function(x) {
+      return pure13(new Just(v.value0(x)));
+    });
+  };
+  var handleIPAChange_ = function(tog) {
+    return bind9(modify6(toggleIPA(tog)))(function(x) {
+      return raise(x);
+    });
+  };
+  var grubbOptionsGUI2 = function(ops) {
+    return div_([input2([type_23(InputCheckbox.value), id2("ipa-tie"), name15("CIPA"), value15("ipa1"), onClick(function(v) {
+      return IpaTogTie.value;
+    }), checked2(ops.ipaUseTies)]), label4([$$for("ipa-tie")])([text5("Include ties in the middle of affricates")]), input2([type_23(InputCheckbox.value), id2("ipa-pal"), name15("CIPA"), value15("ipa2"), onClick(function(v) {
+      return IpaTogPal.value;
+    }), checked2(ops.ipaShowPal)]), label4([$$for("ipa-pal")])([text5("Include palatalisation marks for velar consonants")])]);
+  };
+  var ipaComp = function(dictMonadEffect) {
+    return mkComponent({
+      initialState: function(x) {
+        return x;
+      },
+      render: function(st) {
+        return grubbOptionsGUI2(st);
+      },
+      "eval": mkEval({
+        handleAction: handleIPAChange_,
+        handleQuery: handleIPAQuery,
+        receive: defaultEval.receive,
+        initialize: defaultEval.initialize,
+        finalize: defaultEval.finalize
+      })
+    });
+  };
+  var _ipaOptions = /* @__PURE__ */ function() {
     return $$Proxy.value;
   }();
 
@@ -9996,18 +10084,53 @@
     grbUse7: false
   };
 
+  // output/Kwakwala.Output.IPA/index.js
+  var defIPAOptions = {
+    ipaUseTies: true,
+    ipaShowPal: true
+  };
+
   // output/Kwakwala.GUI.Components.OrthOptions/index.js
-  var bind9 = /* @__PURE__ */ bind(bindHalogenM);
+  var bind10 = /* @__PURE__ */ bind(bindHalogenM);
+  var query2 = /* @__PURE__ */ query();
   var grubbOptionsIsSymbol = {
     reflectSymbol: function() {
       return "grubbOptions";
     }
   };
-  var query2 = /* @__PURE__ */ query()(grubbOptionsIsSymbol)(ordUnit);
-  var pure13 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var query1 = /* @__PURE__ */ query2(grubbOptionsIsSymbol)(ordUnit);
+  var pure14 = /* @__PURE__ */ pure(applicativeHalogenM);
   var map21 = /* @__PURE__ */ map(functorMaybe);
+  var ipaOptionsIsSymbol = {
+    reflectSymbol: function() {
+      return "ipaOptions";
+    }
+  };
+  var query22 = /* @__PURE__ */ query2(ipaOptionsIsSymbol)(ordUnit);
   var modify_3 = /* @__PURE__ */ modify_2(monadStateHalogenM);
-  var slot2 = /* @__PURE__ */ slot()(grubbOptionsIsSymbol)(ordUnit);
+  var slot2 = /* @__PURE__ */ slot();
+  var slot1 = /* @__PURE__ */ slot2(grubbOptionsIsSymbol)(ordUnit);
+  var slot22 = /* @__PURE__ */ slot2(ipaOptionsIsSymbol)(ordUnit);
+  var OrthGetGrubb = /* @__PURE__ */ function() {
+    function OrthGetGrubb2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    OrthGetGrubb2.create = function(value0) {
+      return new OrthGetGrubb2(value0);
+    };
+    return OrthGetGrubb2;
+  }();
+  var OrthGetIPA = /* @__PURE__ */ function() {
+    function OrthGetIPA2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    OrthGetIPA2.create = function(value0) {
+      return new OrthGetIPA2(value0);
+    };
+    return OrthGetIPA2;
+  }();
   var OrthGrubbOptions = /* @__PURE__ */ function() {
     function OrthGrubbOptions2(value0) {
       this.value0 = value0;
@@ -10017,6 +10140,16 @@
       return new OrthGrubbOptions2(value0);
     };
     return OrthGrubbOptions2;
+  }();
+  var OrthIPAOptions = /* @__PURE__ */ function() {
+    function OrthIPAOptions2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    OrthIPAOptions2.create = function(value0) {
+      return new OrthIPAOptions2(value0);
+    };
+    return OrthIPAOptions2;
   }();
   var OrthToggleBox = /* @__PURE__ */ function() {
     function OrthToggleBox2() {
@@ -10035,31 +10168,46 @@
     };
     return OrthRaiseOptions2;
   }();
-  var orthRaiseGrubb = function($35) {
-    return OrthRaiseOptions.create(OrthGrubbOptions.create($35));
+  var orthRaiseIPA = function($42) {
+    return OrthRaiseOptions.create(OrthIPAOptions.create($42));
+  };
+  var orthRaiseGrubb = function($43) {
+    return OrthRaiseOptions.create(OrthGrubbOptions.create($43));
   };
   var handleOrthQuery = function(dictMonad) {
     return function(v) {
-      return bind9(query2(_grubbOptions)(unit)(new GetGrubb(function(x) {
-        return x;
-      })))(function(rslt) {
-        return pure13(map21(v.value0)(rslt));
-      });
+      if (v instanceof OrthGetGrubb) {
+        return bind10(query1(_grubbOptions)(unit)(new GetGrubb(function(x) {
+          return x;
+        })))(function(rslt) {
+          return pure14(map21(v.value0)(rslt));
+        });
+      }
+      ;
+      if (v instanceof OrthGetIPA) {
+        return bind10(query22(_ipaOptions)(unit)(new GetIPA(function(x) {
+          return x;
+        })))(function(rslt) {
+          return pure14(map21(v.value0)(rslt));
+        });
+      }
+      ;
+      throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 135, column 1 - line 135, column 125): " + [v.constructor.name]);
     };
   };
   var handleOrthChange_ = function(v) {
     if (v instanceof OrthToggleBox) {
       return modify_3(function(x) {
-        var $29 = {};
-        for (var $30 in x) {
-          if ({}.hasOwnProperty.call(x, $30)) {
-            $29[$30] = x[$30];
+        var $36 = {};
+        for (var $37 in x) {
+          if ({}.hasOwnProperty.call(x, $37)) {
+            $36[$37] = x[$37];
           }
           ;
         }
         ;
-        $29.orthOpen = !x.orthOpen;
-        return $29;
+        $36.orthOpen = !x.orthOpen;
+        return $36;
       });
     }
     ;
@@ -10067,10 +10215,11 @@
       return raise(v.value0);
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 86, column 1 - line 86, column 108): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 94, column 1 - line 94, column 108): " + [v.constructor.name]);
   };
   var defAllOrthOptions = {
-    grubbOrthOptions: defGrubbOptions
+    grubbOrthOptions: defGrubbOptions,
+    ipaOrthOptions: defIPAOptions
   };
   var buttonText = function(orst) {
     if (orst.orthOpen) {
@@ -10081,7 +10230,7 @@
       return "Show Specific Orhtography Options";
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 122, column 1 - line 122, column 34): " + [orst.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 130, column 1 - line 130, column 34): " + [orst.constructor.name]);
   };
   var blockStyle = function(orst) {
     if (orst.orthOpen) {
@@ -10092,14 +10241,15 @@
       return "display : none";
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 115, column 1 - line 115, column 34): " + [orst.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components.OrthOptions (line 123, column 1 - line 123, column 34): " + [orst.constructor.name]);
   };
   var orthOptionsGUI = function(dictMonadEffect) {
     var grubbComp2 = grubbComp(dictMonadEffect);
+    var ipaComp2 = ipaComp(dictMonadEffect);
     return function(orst) {
       return div_([button([class_("collapsible"), onClick(function(v) {
         return OrthToggleBox.value;
-      })])([text5(buttonText(orst))]), div2([class_("hid-content"), style(blockStyle(orst))])([p_([text5("Grubb Options")]), p_([slot2(_grubbOptions)(unit)(grubbComp2)(defGrubbOptions)(orthRaiseGrubb)])])]);
+      })])([text5(buttonText(orst))]), div2([class_("hid-content"), style(blockStyle(orst))])([p_([text5("Grubb Options")]), p_([slot1(_grubbOptions)(unit)(grubbComp2)(defGrubbOptions)(orthRaiseGrubb)]), p_([text5("IPA Options")]), p_([slot22(_ipaOptions)(unit)(ipaComp2)(defIPAOptions)(orthRaiseIPA)])])]);
     };
   };
   var orthComp = function(dictMonadEffect) {
@@ -10127,29 +10277,29 @@
   }();
 
   // output/Kwakwala.GUI.Components.OutSelect/index.js
-  var type_23 = /* @__PURE__ */ type_17(isPropInputType);
-  var value15 = /* @__PURE__ */ value12(isPropString);
+  var type_24 = /* @__PURE__ */ type_17(isPropInputType);
+  var value16 = /* @__PURE__ */ value12(isPropString);
   var eq4 = /* @__PURE__ */ eq(eqKwakOutType);
-  var bind10 = /* @__PURE__ */ bind(bindHalogenM);
-  var get5 = /* @__PURE__ */ get(monadStateHalogenM);
-  var pure14 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var bind11 = /* @__PURE__ */ bind(bindHalogenM);
+  var get6 = /* @__PURE__ */ get(monadStateHalogenM);
+  var pure15 = /* @__PURE__ */ pure(applicativeHalogenM);
   var discard6 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var put4 = /* @__PURE__ */ put(monadStateHalogenM);
   var radioButtonsO = function(kwk) {
-    return div_([input2([type_23(InputRadio.value), id2("grubb-out"), name15("ROutput"), value15("guh1"), onClick(function(v) {
+    return div_([input2([type_24(InputRadio.value), id2("grubb-out"), name15("ROutput"), value16("guh1"), onClick(function(v) {
       return OutGrubb.value;
-    }), checked2(eq4(kwk)(OutGrubb.value))]), label4([$$for("grubb-out")])([text5("Grubb")]), input2([type_23(InputRadio.value), id2("umista-out"), name15("ROutput"), value15("guh2"), onClick(function(v) {
+    }), checked2(eq4(kwk)(OutGrubb.value))]), label4([$$for("grubb-out")])([text5("Grubb")]), input2([type_24(InputRadio.value), id2("umista-out"), name15("ROutput"), value16("guh2"), onClick(function(v) {
       return OutUmista.value;
-    }), checked2(eq4(kwk)(OutUmista.value))]), label4([$$for("Umista-out")])([text5("Umista")]), input2([type_23(InputRadio.value), id2("napa-out"), name15("ROutput"), value15("guh3"), onClick(function(v) {
+    }), checked2(eq4(kwk)(OutUmista.value))]), label4([$$for("Umista-out")])([text5("Umista")]), input2([type_24(InputRadio.value), id2("napa-out"), name15("ROutput"), value16("guh3"), onClick(function(v) {
       return OutNapa.value;
-    }), checked2(eq4(kwk)(OutNapa.value))]), label4([$$for("napa-out")])([text5("NAPA")]), input2([type_23(InputRadio.value), id2("syll-out"), name15("ROutput"), value15("guh4"), onClick(function(v) {
+    }), checked2(eq4(kwk)(OutNapa.value))]), label4([$$for("napa-out")])([text5("NAPA")]), input2([type_24(InputRadio.value), id2("syll-out"), name15("ROutput"), value16("guh4"), onClick(function(v) {
       return OutSyllabic.value;
     }), checked2(eq4(kwk)(OutSyllabic.value))]), label4([$$for("syll-out")])([text5("Syllabic (Carrier)")])]);
   };
   var handleOrthOutQuery = function(dictMonad) {
     return function(v) {
-      return bind10(get5)(function(kit) {
-        return pure14(new Just(v.value0(kit)));
+      return bind11(get6)(function(kit) {
+        return pure15(new Just(v.value0(kit)));
       });
     };
   };
@@ -10178,10 +10328,10 @@
   }();
 
   // output/Kwakwala.GUI.Components.OutputText/index.js
-  var value16 = /* @__PURE__ */ value12(isPropString);
+  var value17 = /* @__PURE__ */ value12(isPropString);
   var discard7 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var put5 = /* @__PURE__ */ put(monadStateHalogenM);
-  var pure15 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var pure16 = /* @__PURE__ */ pure(applicativeHalogenM);
   var OutputString = /* @__PURE__ */ function() {
     function OutputString2(value0, value1) {
       this.value0 = value0;
@@ -10197,13 +10347,13 @@
   }();
   var outputTextGUI = function(dictMonad) {
     return function(str) {
-      return div_([p_([text5("Output")]), p_([textarea([rows4(12), cols2(100), id2("output-box"), name15("output-box"), readOnly3(true), value16(str)])])]);
+      return div_([p_([text5("Output")]), p_([textarea([rows4(12), cols2(100), id2("output-box"), name15("output-box"), readOnly3(true), value17(str)])])]);
     };
   };
   var handleOutputTextQuery = function(dictMonad) {
     return function(v) {
       return discard7(put5(v.value0))(function() {
-        return pure15(new Just(v.value1));
+        return pure16(new Just(v.value1));
       });
     };
   };
@@ -12685,7 +12835,7 @@
 
   // output/Parsing.Combinators/index.js
   var alt5 = /* @__PURE__ */ alt(altParserT);
-  var pure16 = /* @__PURE__ */ pure(applicativeParserT);
+  var pure17 = /* @__PURE__ */ pure(applicativeParserT);
   var map23 = /* @__PURE__ */ map(functorParserT);
   var manyRec2 = /* @__PURE__ */ manyRec(monadRecParserT)(alternativeParserT);
   var apply2 = /* @__PURE__ */ apply(applyParserT);
@@ -12697,7 +12847,7 @@
   };
   var option2 = function(a2) {
     return function(p2) {
-      return alt5(p2)(pure16(a2));
+      return alt5(p2)(pure17(a2));
     };
   };
   var optionMaybe = function(p2) {
@@ -29345,14 +29495,14 @@
   // output/Parsing.String.Basic/index.js
   var takeWhile1 = function(predicate) {
     return consumeWith(function(s) {
-      var value17 = takeWhile2(predicate)(s);
-      var len = length5(value17);
+      var value18 = takeWhile2(predicate)(s);
+      var len = length5(value18);
       var $27 = len > 0;
       if ($27) {
         return new Right({
-          consumed: value17,
-          remainder: drop2(length5(value17))(s),
-          value: value17
+          consumed: value18,
+          remainder: drop2(length5(value18))(s),
+          value: value18
         });
       }
       ;
@@ -29361,11 +29511,11 @@
   };
 
   // output/Parsing.Token/index.js
-  var bind11 = /* @__PURE__ */ bind(bindParserT);
+  var bind15 = /* @__PURE__ */ bind(bindParserT);
   var discard8 = /* @__PURE__ */ discard(discardUnit)(bindParserT);
-  var pure17 = /* @__PURE__ */ pure(applicativeParserT);
+  var pure18 = /* @__PURE__ */ pure(applicativeParserT);
   var token = function(tokpos) {
-    return bind11(getParserT)(function(v) {
+    return bind15(getParserT)(function(v) {
       var v1 = uncons(v.value0);
       if (v1 instanceof Nothing) {
         return fail2("Unexpected EOF");
@@ -29375,14 +29525,14 @@
         return discard8(stateParserT(function(v2) {
           return new Tuple(unit, new ParseState(v1.value0.tail, tokpos(v1.value0.head), true));
         }))(function() {
-          return pure17(v1.value0.head);
+          return pure18(v1.value0.head);
         });
       }
       ;
       throw new Error("Failed pattern match at Parsing.Token (line 55, column 3 - line 59, column 16): " + [v1.constructor.name]);
     });
   };
-  var eof2 = /* @__PURE__ */ bind11(getParserT)(function(v) {
+  var eof2 = /* @__PURE__ */ bind15(getParserT)(function(v) {
     var $147 = $$null(v.value0);
     if ($147) {
       return consume;
@@ -29394,13 +29544,13 @@
   // output/Kwakwala.Output.Syllabic/index.js
   var evalStateT2 = /* @__PURE__ */ evalStateT(functorParserT);
   var bindStateT2 = /* @__PURE__ */ bindStateT(monadParserT);
-  var bind15 = /* @__PURE__ */ bind(bindStateT2);
-  var pure18 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeStateT(monadParserT));
+  var bind16 = /* @__PURE__ */ bind(bindStateT2);
+  var pure19 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeStateT(monadParserT));
   var foldr4 = /* @__PURE__ */ foldr(foldableList);
   var lift3 = /* @__PURE__ */ lift(monadTransStateT)(monadParserT);
   var discard9 = /* @__PURE__ */ discard(discardUnit)(bindStateT2);
   var monadStateStateT2 = /* @__PURE__ */ monadStateStateT(monadParserT);
-  var get6 = /* @__PURE__ */ get(monadStateStateT2);
+  var get7 = /* @__PURE__ */ get(monadStateStateT2);
   var functorStateT2 = /* @__PURE__ */ functorStateT(functorParserT);
   var voidLeft4 = /* @__PURE__ */ voidLeft(functorStateT2);
   var put6 = /* @__PURE__ */ put(monadStateStateT2);
@@ -29451,9 +29601,9 @@
     var append12 = append(dictSemigroup);
     return function(rpt) {
       return function(fnl) {
-        return bind15(many12(rpt))(function(xs) {
-          return bind15(fnl)(function(x) {
-            return pure18(foldr4(append12)(x)(xs));
+        return bind16(many12(rpt))(function(xs) {
+          return bind16(fnl)(function(x) {
+            return pure19(foldr4(append12)(x)(xs));
           });
         });
       };
@@ -29461,7 +29611,7 @@
   };
   var liftEmit = lift3;
   var parseEOF = /* @__PURE__ */ discard9(/* @__PURE__ */ liftEmit(eof2))(function() {
-    return bind15(get6)(function(st) {
+    return bind16(get7)(function(st) {
       if (st instanceof WordStart) {
         return voidLeft4(put6(EndOfFile.value))("");
       }
@@ -29481,7 +29631,7 @@
       throw new Error("Failed pattern match at Kwakwala.Output.Syllabic (line 194, column 3 - line 198, column 58): " + [st.constructor.name]);
     });
   });
-  var getVowel = /* @__PURE__ */ bind15(/* @__PURE__ */ lift3(peek))(function(rslt) {
+  var getVowel = /* @__PURE__ */ bind16(/* @__PURE__ */ lift3(peek))(function(rslt) {
     if (rslt instanceof Nothing) {
       return lift3(fail2("Can't get vowel; End of File."));
     }
@@ -29496,7 +29646,7 @@
         return discard9($$void7(lift3(token(function(v2) {
           return initialPos;
         }))))(function() {
-          return pure18(v.value0);
+          return pure19(v.value0);
         });
       }
       ;
@@ -29505,21 +29655,21 @@
     ;
     throw new Error("Failed pattern match at Kwakwala.Output.Syllabic (line 112, column 3 - line 118, column 15): " + [rslt.constructor.name]);
   });
-  var parseVowel = /* @__PURE__ */ bind15(getVowel)(function(v) {
-    return bind15(get6)(function(c) {
+  var parseVowel = /* @__PURE__ */ bind16(getVowel)(function(v) {
+    return bind16(get7)(function(c) {
       if (c instanceof AfterVowel) {
-        return pure18(makeVowel(v));
+        return pure19(makeVowel(v));
       }
       ;
       if (c instanceof AfterLetter) {
         return discard9(put6(AfterVowel.value))(function() {
-          return pure18(mergeLetters(c.value0)(v));
+          return pure19(mergeLetters(c.value0)(v));
         });
       }
       ;
       if (c instanceof WordStart) {
         return discard9(put6(AfterVowel.value))(function() {
-          return pure18(makeVowel(v));
+          return pure19(makeVowel(v));
         });
       }
       ;
@@ -29530,7 +29680,7 @@
       throw new Error("Failed pattern match at Kwakwala.Output.Syllabic (line 170, column 3 - line 178, column 59): " + [c.constructor.name]);
     });
   });
-  var getPunct = /* @__PURE__ */ bind15(/* @__PURE__ */ lift3(peek))(function(rslt) {
+  var getPunct = /* @__PURE__ */ bind16(/* @__PURE__ */ lift3(peek))(function(rslt) {
     if (rslt instanceof Nothing) {
       return lift3(fail2("Can't get Punctuation; End of File."));
     }
@@ -29539,40 +29689,40 @@
       return discard9($$void7(lift3(token(function(v) {
         return initialPos;
       }))))(function() {
-        return pure18(rslt.value0.value0);
+        return pure19(rslt.value0.value0);
       });
     }
     ;
     return lift3(fail2("Expected Punctuation; got Letter."));
   });
-  var parsePuncts = /* @__PURE__ */ bind15(getPunct)(function(str) {
-    return bind15(get6)(function(st) {
+  var parsePuncts = /* @__PURE__ */ bind16(getPunct)(function(str) {
+    return bind16(get7)(function(st) {
       if (st instanceof WordStart) {
-        return pure18(str);
+        return pure19(str);
       }
       ;
       if (st instanceof AfterVowel) {
         return discard9(put6(WordStart.value))(function() {
-          return pure18(str);
+          return pure19(str);
         });
       }
       ;
       if (st instanceof AfterLetter) {
         return discard9(put6(WordStart.value))(function() {
-          return pure18(letterCoda(st.value0) + str);
+          return pure19(letterCoda(st.value0) + str);
         });
       }
       ;
       if (st instanceof EndOfFile) {
         return discard9(put6(WordStart.value))(function() {
-          return pure18(str);
+          return pure19(str);
         });
       }
       ;
       throw new Error("Failed pattern match at Kwakwala.Output.Syllabic (line 153, column 3 - line 164, column 17): " + [st.constructor.name]);
     });
   });
-  var getCons = /* @__PURE__ */ bind15(/* @__PURE__ */ lift3(peek))(function(rslt) {
+  var getCons = /* @__PURE__ */ bind16(/* @__PURE__ */ lift3(peek))(function(rslt) {
     if (rslt instanceof Nothing) {
       return lift3(fail2("Can't get Consonant; End of File."));
     }
@@ -29587,7 +29737,7 @@
         return discard9($$void7(lift3(token(function(v1) {
           return initialPos;
         }))))(function() {
-          return pure18(v.value0);
+          return pure19(v.value0);
         });
       }
       ;
@@ -29596,8 +29746,8 @@
     ;
     throw new Error("Failed pattern match at Kwakwala.Output.Syllabic (line 127, column 3 - line 133, column 15): " + [rslt.constructor.name]);
   });
-  var parseCons = /* @__PURE__ */ bind15(getCons)(function(c) {
-    return bind15(get6)(function(s) {
+  var parseCons = /* @__PURE__ */ bind16(getCons)(function(c) {
+    return bind16(get7)(function(s) {
       if (s instanceof AfterVowel) {
         return voidLeft4(put6(new AfterLetter(c)))("");
       }
@@ -30083,8 +30233,8 @@
   var map24 = /* @__PURE__ */ map(functorParserT);
   var alt7 = /* @__PURE__ */ alt(altParserT);
   var voidLeft5 = /* @__PURE__ */ voidLeft(functorParserT);
-  var bind16 = /* @__PURE__ */ bind(bindParserT);
-  var pure19 = /* @__PURE__ */ pure(applicativeParserT);
+  var bind17 = /* @__PURE__ */ bind(bindParserT);
+  var pure20 = /* @__PURE__ */ pure(applicativeParserT);
   var eq5 = /* @__PURE__ */ eq(eqCodePoint);
   var lift22 = /* @__PURE__ */ lift2(applyParserT);
   var notEq2 = /* @__PURE__ */ notEq(eqCodePoint);
@@ -30120,7 +30270,7 @@
       ;
       throw new Error("Failed pattern match at Kwakwala.Parsing.Helpers (line 68, column 11 - line 68, column 32): " + [v.constructor.name]);
     };
-    return bind16(map24(fx)(peekChar1))(maybe(pure19(Nothing.value))(function(x) {
+    return bind17(map24(fx)(peekChar1))(maybe(pure20(Nothing.value))(function(x) {
       return voidLeft5(anyChar)(new Just(x));
     }));
   };
@@ -30167,11 +30317,11 @@
   // output/Kwakwala.Parsing.Boas/index.js
   var alt8 = /* @__PURE__ */ alt(altParserT);
   var voidLeft6 = /* @__PURE__ */ voidLeft(functorParserT);
-  var pure20 = /* @__PURE__ */ pure(applicativeParserT);
+  var pure21 = /* @__PURE__ */ pure(applicativeParserT);
   var applySecond2 = /* @__PURE__ */ applySecond(applyParserT);
   var map25 = /* @__PURE__ */ map(functorParserT);
   var notEq3 = /* @__PURE__ */ notEq(eqCodePoint);
-  var bind17 = /* @__PURE__ */ bind(bindParserT);
+  var bind18 = /* @__PURE__ */ bind(bindParserT);
   var peekChar2 = /* @__PURE__ */ peekChar(monadRecIdentity);
   var map110 = /* @__PURE__ */ map(functorFn);
   var append6 = /* @__PURE__ */ append(semigroupList);
@@ -30180,32 +30330,32 @@
   }();
   var parseY$prime = function(v) {
     if (v instanceof Nothing) {
-      return pure20(new Min2(Y.value));
+      return pure21(new Min2(Y.value));
     }
     ;
     if (v instanceof Just) {
       if (v.value0 === "m" || v.value0 === "M") {
-        return applySecond2(anyChar)(pure20(makeCase(isUpperC(v.value0))(MY.value)));
+        return applySecond2(anyChar)(pure21(makeCase(isUpperC(v.value0))(MY.value)));
       }
       ;
       if (v.value0 === "n" || v.value0 === "N") {
-        return applySecond2(anyChar)(pure20(makeCase(isUpperC(v.value0))(NY.value)));
+        return applySecond2(anyChar)(pure21(makeCase(isUpperC(v.value0))(NY.value)));
       }
       ;
       if (v.value0 === "l" || v.value0 === "L") {
-        return applySecond2(anyChar)(pure20(makeCase(isUpperC(v.value0))(LY.value)));
+        return applySecond2(anyChar)(pure21(makeCase(isUpperC(v.value0))(LY.value)));
       }
       ;
       if (v.value0 === "y" || v.value0 === "Y") {
-        return applySecond2(anyChar)(pure20(makeCase(isUpperC(v.value0))(JY.value)));
+        return applySecond2(anyChar)(pure21(makeCase(isUpperC(v.value0))(JY.value)));
       }
       ;
       if (v.value0 === "w" || v.value0 === "W") {
-        return applySecond2(anyChar)(pure20(makeCase(isUpperC(v.value0))(WY.value)));
+        return applySecond2(anyChar)(pure21(makeCase(isUpperC(v.value0))(WY.value)));
       }
       ;
       if (otherwise) {
-        return pure20(makeCase(isUpperC(v.value0))(Y.value));
+        return pure21(makeCase(isUpperC(v.value0))(Y.value));
       }
       ;
     }
@@ -30218,7 +30368,7 @@
   var parseTY = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(TY.value));
+        return pure21(makeCase(v)(TY.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30227,7 +30377,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(TY.value));
+          return pure21(makeCase(v)(TY.value));
         }
         ;
       }
@@ -30271,7 +30421,7 @@
   var parseD$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(D.value));
+        return pure21(makeCase(v)(D.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30280,7 +30430,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(D.value));
+          return pure21(makeCase(v)(D.value));
         }
         ;
       }
@@ -30288,10 +30438,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 211, column 1 - line 211, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseD = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseD = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "d" || x === "D";
   })))(function(b2) {
-    return bind17(peekChar2)(parseD$prime(b2));
+    return bind18(peekChar2)(parseD$prime(b2));
   });
   var parseB = /* @__PURE__ */ function() {
     return alt8(voidLeft6($$char("b"))(new Min2(B.value)))(voidLeft6($$char("B"))(new Maj(B.value)));
@@ -30336,7 +30486,7 @@
   var parseGU = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(GU.value));
+        return pure21(makeCase(v)(GU.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30345,7 +30495,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(GU.value));
+          return pure21(makeCase(v)(GU.value));
         }
         ;
       }
@@ -30356,7 +30506,7 @@
   var parseKE = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(KY.value));
+        return pure21(makeCase(v)(KY.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30365,7 +30515,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(KY.value));
+          return pure21(makeCase(v)(KY.value));
         }
         ;
       }
@@ -30376,7 +30526,7 @@
   var parseQE = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(QY.value));
+        return pure21(makeCase(v)(QY.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30385,7 +30535,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(QY.value));
+          return pure21(makeCase(v)(QY.value));
         }
         ;
       }
@@ -30396,7 +30546,7 @@
   var parseXU = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(X.value));
+        return pure21(makeCase(v)(X.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30405,7 +30555,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(X.value));
+          return pure21(makeCase(v)(X.value));
         }
         ;
       }
@@ -30424,14 +30574,14 @@
     ;
     return false;
   };
-  var parseY = /* @__PURE__ */ bind17(/* @__PURE__ */ applySecond2(/* @__PURE__ */ satisfy(isGlottal))(peekChar2))(parseY$prime);
+  var parseY = /* @__PURE__ */ bind18(/* @__PURE__ */ applySecond2(/* @__PURE__ */ satisfy(isGlottal))(peekChar2))(parseY$prime);
   var isEject = function(v) {
     return v === "!";
   };
   var parseKD = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(K.value));
+        return pure21(makeCase(v)(K.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30440,7 +30590,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(K.value));
+          return pure21(makeCase(v)(K.value));
         }
         ;
       }
@@ -30451,7 +30601,7 @@
   var parseKW = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(KW.value));
+        return pure21(makeCase(v)(KW.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30460,7 +30610,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(KW.value));
+          return pure21(makeCase(v)(KW.value));
         }
         ;
       }
@@ -30468,17 +30618,17 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 275, column 1 - line 275, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseP = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseP = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "p" || x === "P";
   })))(function(b2) {
-    return bind17(satisfyMaybe(isEject))(function(z) {
-      return maybe(pure20(makeCase(b2)(P.value)))($$const(pure20(makeCase(b2)(PY.value))))(z);
+    return bind18(satisfyMaybe(isEject))(function(z) {
+      return maybe(pure21(makeCase(b2)(P.value)))($$const(pure21(makeCase(b2)(PY.value))))(z);
     });
   });
   var parseQW = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(QW.value));
+        return pure21(makeCase(v)(QW.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30487,7 +30637,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(QW.value));
+          return pure21(makeCase(v)(QW.value));
         }
         ;
       }
@@ -30498,20 +30648,20 @@
   var parseQ$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(Q.value));
+        return pure21(makeCase(v)(Q.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isLabial(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseQW(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseQW(v));
         }
         ;
         if (isEject(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseQE(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseQE(v));
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(Q.value));
+          return pure21(makeCase(v)(Q.value));
         }
         ;
       }
@@ -30519,15 +30669,15 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 289, column 1 - line 289, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseQ = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseQ = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "q" || x === "Q";
   })))(function(b2) {
-    return bind17(peekChar2)(parseQ$prime(b2));
+    return bind18(peekChar2)(parseQ$prime(b2));
   });
   var parseTS = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(TS.value));
+        return pure21(makeCase(v)(TS.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30536,7 +30686,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(TS.value));
+          return pure21(makeCase(v)(TS.value));
         }
         ;
       }
@@ -30547,20 +30697,20 @@
   var parseT$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(T.value));
+        return pure21(makeCase(v)(T.value));
       }
       ;
       if (v1 instanceof Just) {
         if (v1.value0 === "s" || v1.value0 === "S") {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseTS(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseTS(v));
         }
         ;
         if (isEject(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseTY(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseTY(v));
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(T.value));
+          return pure21(makeCase(v)(T.value));
         }
         ;
       }
@@ -30568,10 +30718,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 228, column 1 - line 228, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseT = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseT = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "t" || x === "T";
   })))(function(b2) {
-    return bind17(peekChar2)(parseT$prime(b2));
+    return bind18(peekChar2)(parseT$prime(b2));
   });
   var isDotBelow = function(v) {
     if (v === "\u0323") {
@@ -30583,7 +30733,7 @@
   var parseGW = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(GW.value));
+        return pure21(makeCase(v)(GW.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30592,7 +30742,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(GW.value));
+          return pure21(makeCase(v)(GW.value));
         }
         ;
       }
@@ -30603,7 +30753,7 @@
   var parseTL$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(TL.value));
+        return pure21(makeCase(v)(TL.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30616,7 +30766,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(TL.value));
+          return pure21(makeCase(v)(TL.value));
         }
         ;
       }
@@ -30624,10 +30774,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 367, column 1 - line 367, column 63): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseTL = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseTL = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "\u029F" || (x === "\u2C60" || x === "\u023D");
   })))(function(b2) {
-    return bind17(peekChar2)(parseTL$prime(b2));
+    return bind18(peekChar2)(parseTL$prime(b2));
   });
   var isDotAfter = function(v) {
     if (v === "\xB7") {
@@ -30659,16 +30809,16 @@
   var parseG$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(G.value));
+        return pure21(makeCase(v)(G.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isLabial(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseGW(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseGW(v));
         }
         ;
         if (isDotBelow(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseGU(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseGU(v));
         }
         ;
         if (isDotAfter(v1.value0)) {
@@ -30676,7 +30826,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(G.value));
+          return pure21(makeCase(v)(G.value));
         }
         ;
       }
@@ -30684,32 +30834,32 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 316, column 1 - line 316, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseG = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseG = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "g" || x === "G";
   })))(function(b2) {
-    return bind17(peekChar2)(parseG$prime(b2));
+    return bind18(peekChar2)(parseG$prime(b2));
   });
   var parseK$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(K.value));
+        return pure21(makeCase(v)(K.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isLabial(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseKW(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseKW(v));
         }
         ;
         if (isEject(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseKE(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseKE(v));
         }
         ;
         if (isDotAfter(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseKD(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseKD(v));
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(K.value));
+          return pure21(makeCase(v)(K.value));
         }
         ;
       }
@@ -30717,32 +30867,32 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 255, column 1 - line 255, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseK = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseK = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "k" || x === "K";
   })))(function(b2) {
-    return bind17(peekChar2)(parseK$prime(b2));
+    return bind18(peekChar2)(parseK$prime(b2));
   });
   var parseX$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(XU.value));
+        return pure21(makeCase(v)(XU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isDotBelow(v1.value0)) {
-          return bind17(applySecond2(anyChar)(peekChar2))(parseXU(v));
+          return bind18(applySecond2(anyChar)(peekChar2))(parseXU(v));
         }
         ;
         if (isLabial(v1.value0)) {
-          return applySecond2(anyChar)(pure20(makeCase(v)(XUW.value)));
+          return applySecond2(anyChar)(pure21(makeCase(v)(XUW.value)));
         }
         ;
         if (isDotAfter(v1.value0)) {
-          return applySecond2(anyChar)(pure20(makeCase(v)(X.value)));
+          return applySecond2(anyChar)(pure21(makeCase(v)(X.value)));
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(XU.value));
+          return pure21(makeCase(v)(XU.value));
         }
         ;
       }
@@ -30750,10 +30900,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 345, column 1 - line 345, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseX = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseX = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "x" || x === "X";
   })))(function(b2) {
-    return bind17(peekChar2)(parseX$prime(b2));
+    return bind18(peekChar2)(parseX$prime(b2));
   });
   var isCircumflex = function(v) {
     if (v === "\u0302") {
@@ -30765,7 +30915,7 @@
   var parseA$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(A.value));
+        return pure21(makeCase(v)(A.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30778,7 +30928,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(A.value));
+          return pure21(makeCase(v)(A.value));
         }
         ;
       }
@@ -30786,15 +30936,15 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 399, column 1 - line 399, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseA = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseA = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "a" || (x === "A" || (x === "\xE1" || (x === "\xC1" || (x === "\xE0" || x === "\xC0"))));
   })))(function(b2) {
-    return bind17(peekChar2)(parseA$prime(b2));
+    return bind18(peekChar2)(parseA$prime(b2));
   });
   var parseI$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(I.value));
+        return pure21(makeCase(v)(I.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30803,7 +30953,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(I.value));
+          return pure21(makeCase(v)(I.value));
         }
         ;
       }
@@ -30811,15 +30961,15 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 414, column 1 - line 414, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseI = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseI = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "i" || x === "I";
   })))(function(b2) {
-    return bind17(peekChar2)(parseI$prime(b2));
+    return bind18(peekChar2)(parseI$prime(b2));
   });
   var parseU$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure20(makeCase(v)(U.value));
+        return pure21(makeCase(v)(U.value));
       }
       ;
       if (v1 instanceof Just) {
@@ -30828,7 +30978,7 @@
         }
         ;
         if (otherwise) {
-          return pure20(makeCase(v)(U.value));
+          return pure21(makeCase(v)(U.value));
         }
         ;
       }
@@ -30836,10 +30986,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 428, column 1 - line 428, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseU = /* @__PURE__ */ bind17(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseU = /* @__PURE__ */ bind18(/* @__PURE__ */ map25(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "u" || x === "U";
   })))(function(b2) {
-    return bind17(peekChar2)(parseU$prime(b2));
+    return bind18(peekChar2)(parseU$prime(b2));
   });
   var parseBoasLetter = /* @__PURE__ */ choice(foldableArray)([parseA, parseE, parseI, parseO, parseU, parseAU, parseY, parseTL, parseQ, parseK, parseG, parseX, parseP, parseT, parseM, parseN, parseL, parseW, parseY, parseB, parseH, parseD, parseLH, parseJ, parseS, parseZ]);
   var fixVowels = function(v) {
@@ -30890,7 +31040,7 @@
     ;
     throw new Error("Failed pattern match at Kwakwala.Parsing.Boas (line 106, column 1 - line 106, column 66): " + [ltr.constructor.name]);
   };
-  var parseBoasWord = /* @__PURE__ */ bind17(parseBoasLetter)(parseBoasWord$prime);
+  var parseBoasWord = /* @__PURE__ */ bind18(parseBoasLetter)(parseBoasWord$prime);
   var parseBoasMain = /* @__PURE__ */ function() {
     return alt8(map25(map(functorList)(Kwak.create))(parseBoasWord))(alt8(map25(function(v) {
       return new Cons(v, Nil.value);
@@ -30908,9 +31058,9 @@
   };
 
   // output/Kwakwala.Parsing.Grubb/index.js
-  var bind18 = /* @__PURE__ */ bind(bindParserT);
+  var bind19 = /* @__PURE__ */ bind(bindParserT);
   var map26 = /* @__PURE__ */ map(functorParserT);
-  var pure21 = /* @__PURE__ */ pure(applicativeParserT);
+  var pure23 = /* @__PURE__ */ pure(applicativeParserT);
   var alt9 = /* @__PURE__ */ alt(altParserT);
   var voidLeft7 = /* @__PURE__ */ voidLeft(functorParserT);
   var applySecond3 = /* @__PURE__ */ applySecond(applyParserT);
@@ -30924,15 +31074,15 @@
   var map111 = /* @__PURE__ */ map(functorFn);
   var append7 = /* @__PURE__ */ append(semigroupList);
   var map27 = /* @__PURE__ */ map(functorList);
-  var parseZ2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseZ2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "z" || (x === "Z" || (x === "\u01F3" || (x === "\u01F1" || x === "\u01F2")));
   })))(function(b2) {
-    return pure21(makeCase(b2)(DZ.value));
+    return pure23(makeCase(b2)(DZ.value));
   });
-  var parseWonly = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseWonly = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "w" || x === "W";
   })))(function(b2) {
-    return pure21(makeCase(b2)(W.value));
+    return pure23(makeCase(b2)(W.value));
   });
   var parseU2 = /* @__PURE__ */ function() {
     return alt9(voidLeft7($$char("u"))(new Min2(U.value)))(voidLeft7($$char("U"))(new Maj(U.value)));
@@ -30940,20 +31090,20 @@
   var parseTY2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(TY.value));
+        return pure23(makeCase(v)(TY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (v1.value0 === "s" || v1.value0 === "S") {
-          return applySecond3(anyChar)(pure21(makeCase(v)(TSY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(TSY.value)));
         }
         ;
         if (v1.value0 === "l" || v1.value0 === "L") {
-          return applySecond3(anyChar)(pure21(makeCase(v)(TLY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(TLY.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(TY.value));
+          return pure23(makeCase(v)(TY.value));
         }
         ;
       }
@@ -30961,54 +31111,54 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 296, column 1 - line 296, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseS2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseS2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "s" || x === "S";
   })))(function(b2) {
-    return pure21(makeCase(b2)(S.value));
+    return pure23(makeCase(b2)(S.value));
   });
   var parseO2 = /* @__PURE__ */ function() {
     return alt9(voidLeft7($$char("o"))(new Min2(O.value)))(voidLeft7($$char("O"))(new Maj(O.value)));
   }();
-  var parseNonly = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseNonly = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "n" || x === "N";
   })))(function(b2) {
-    return pure21(makeCase(b2)(N.value));
+    return pure23(makeCase(b2)(N.value));
   });
-  var parseMonly = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseMonly = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "m" || x === "M";
   })))(function(b2) {
-    return pure21(makeCase(b2)(M.value));
+    return pure23(makeCase(b2)(M.value));
   });
-  var parseJonly = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseJonly = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "y" || x === "Y";
   })))(function(b2) {
-    return pure21(makeCase(b2)(J.value));
+    return pure23(makeCase(b2)(J.value));
   });
   var parseI2 = /* @__PURE__ */ function() {
     return alt9(voidLeft7($$char("i"))(new Min2(I.value)))(voidLeft7($$char("I"))(new Maj(I.value)));
   }();
-  var parseH2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseH2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "h" || (x === "H" || (x === "j" || x === "J"));
   })))(function(b2) {
-    return pure21(makeCase(b2)(H.value));
+    return pure23(makeCase(b2)(H.value));
   });
   var parseD$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(D.value));
+        return pure23(makeCase(v)(D.value));
       }
       ;
       if (v1 instanceof Just) {
         if (v1.value0 === "z" || (v1.value0 === "Z" || v1.value0 === "\u1DBB")) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(DZ.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(DZ.value)));
         }
         ;
         if (v1.value0 === "l" || v1.value0 === "L") {
-          return applySecond3(anyChar)(pure21(makeCase(v)(DL.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(DL.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(D.value));
+          return pure23(makeCase(v)(D.value));
         }
         ;
       }
@@ -31016,15 +31166,15 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 229, column 1 - line 229, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseD2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseD2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "d" || x === "D";
   })))(function(b2) {
-    return bind18(peekChar3)(parseD$prime2(b2));
+    return bind19(peekChar3)(parseD$prime2(b2));
   });
-  var parseB2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseB2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "b" || x === "B";
   })))(function(b2) {
-    return pure21(makeCase(b2)(B.value));
+    return pure23(makeCase(b2)(B.value));
   });
   var parseA2 = /* @__PURE__ */ function() {
     return alt9(voidLeft7($$char("a"))(new Min2(A.value)))(voidLeft7($$char("A"))(new Maj(A.value)));
@@ -31052,16 +31202,16 @@
   var parseGH = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(GU.value));
+        return pure23(makeCase(v)(GU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(GUW.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(GUW.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(GU.value));
+          return pure23(makeCase(v)(GU.value));
         }
         ;
       }
@@ -31072,16 +31222,16 @@
   var parseKHY = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(QY.value));
+        return pure23(makeCase(v)(QY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(QWY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(QY.value));
+          return pure23(makeCase(v)(QY.value));
         }
         ;
       }
@@ -31092,16 +31242,16 @@
   var parseXU2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(XU.value));
+        return pure23(makeCase(v)(XU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(XUW.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(XUW.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(XU.value));
+          return pure23(makeCase(v)(XU.value));
         }
         ;
       }
@@ -31112,16 +31262,16 @@
   var parseXW = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(XW.value));
+        return pure23(makeCase(v)(XW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(XUW.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(XUW.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(XW.value));
+          return pure23(makeCase(v)(XW.value));
         }
         ;
       }
@@ -31143,16 +31293,16 @@
   var parseE$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(AU.value));
+        return pure23(makeCase(v)(AU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isH(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(E.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(E.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(AU.value));
+          return pure23(makeCase(v)(AU.value));
         }
         ;
       }
@@ -31160,24 +31310,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 476, column 1 - line 476, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseE2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseE2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "e" || x === "E";
   })))(function(b2) {
-    return bind18(peekChar3)(parseE$prime(b2));
+    return bind19(peekChar3)(parseE$prime(b2));
   });
   var parseGW2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(GW.value));
+        return pure23(makeCase(v)(GW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isH(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(GUW.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(GUW.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(GW.value));
+          return pure23(makeCase(v)(GW.value));
         }
         ;
       }
@@ -31188,20 +31338,20 @@
   var parseG$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(G.value));
+        return pure23(makeCase(v)(G.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isH(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseGH(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseGH(v));
         }
         ;
         if (isW(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseGW2(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseGW2(v));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(G.value));
+          return pure23(makeCase(v)(G.value));
         }
         ;
       }
@@ -31209,28 +31359,28 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 172, column 1 - line 172, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseG2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseG2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "g" || x === "G";
   })))(function(b2) {
-    return bind18(peekChar3)(parseG$prime2(b2));
+    return bind19(peekChar3)(parseG$prime2(b2));
   });
   var parseKY = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(KY.value));
+        return pure23(makeCase(v)(KY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(KWY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(KWY.value)));
         }
         ;
         if (isH(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseKHY(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseKHY(v));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(KY.value));
+          return pure23(makeCase(v)(KY.value));
         }
         ;
       }
@@ -31241,16 +31391,16 @@
   var parseLonly$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(L.value));
+        return pure23(makeCase(v)(L.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isH(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(LH.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(LH.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(L.value));
+          return pure23(makeCase(v)(L.value));
         }
         ;
       }
@@ -31258,28 +31408,28 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 400, column 1 - line 400, column 66): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseLonly = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseLonly = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "l" || x === "L";
   })))(function(b2) {
-    return bind18(peekChar3)(parseLonly$prime(b2));
+    return bind19(peekChar3)(parseLonly$prime(b2));
   });
   var parseX$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(X.value));
+        return pure23(makeCase(v)(X.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isH(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseXU2(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseXU2(v));
         }
         ;
         if (isW(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseXW(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseXW(v));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(X.value));
+          return pure23(makeCase(v)(X.value));
         }
         ;
       }
@@ -31287,46 +31437,46 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 202, column 1 - line 202, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseX2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseX2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "x" || x === "X";
   })))(function(b2) {
-    return bind18(peekChar3)(parseX$prime2(b2));
+    return bind19(peekChar3)(parseX$prime2(b2));
   });
   var parseY$prime2 = function(v) {
     if (v instanceof Nothing) {
-      return pure21(new Min2(Y.value));
+      return pure23(new Min2(Y.value));
     }
     ;
     if (v instanceof Just) {
       if (v.value0 === "m" || v.value0 === "M") {
-        return applySecond3(anyChar)(pure21(makeCase(isUpperC(v.value0))(MY.value)));
+        return applySecond3(anyChar)(pure23(makeCase(isUpperC(v.value0))(MY.value)));
       }
       ;
       if (v.value0 === "n" || v.value0 === "N") {
-        return applySecond3(anyChar)(pure21(makeCase(isUpperC(v.value0))(NY.value)));
+        return applySecond3(anyChar)(pure23(makeCase(isUpperC(v.value0))(NY.value)));
       }
       ;
       if (v.value0 === "y" || v.value0 === "Y") {
-        return applySecond3(anyChar)(pure21(makeCase(isUpperC(v.value0))(JY.value)));
+        return applySecond3(anyChar)(pure23(makeCase(isUpperC(v.value0))(JY.value)));
       }
       ;
       if (v.value0 === "w" || v.value0 === "W") {
-        return applySecond3(anyChar)(pure21(makeCase(isUpperC(v.value0))(WY.value)));
+        return applySecond3(anyChar)(pure23(makeCase(isUpperC(v.value0))(WY.value)));
       }
       ;
       if (v.value0 === "l" || v.value0 === "L") {
         return choice2([discard10($$void8(anyChar))(function() {
-          return bind18(peekChar3)(function(y) {
+          return bind19(peekChar3)(function(y) {
             return discard10(when4(liftP(isH)(y))(fail2(`"'lh" error`)))(function() {
-              return pure21(makeCase(isUpperC(v.value0))(LY.value));
+              return pure23(makeCase(isUpperC(v.value0))(LY.value));
             });
           });
-        }), pure21(makeCase(isUpperC(v.value0))(Y.value))]);
+        }), pure23(makeCase(isUpperC(v.value0))(Y.value))]);
       }
       ;
       if (otherwise) {
         var b2 = isUpperC(v.value0);
-        return pure21(makeCase(b2)(Y.value));
+        return pure23(makeCase(b2)(Y.value));
       }
       ;
     }
@@ -31370,16 +31520,16 @@
   var parseKHW = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(KW.value));
+        return pure23(makeCase(v)(KW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(QWY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(QW.value));
+          return pure23(makeCase(v)(QW.value));
         }
         ;
       }
@@ -31390,20 +31540,20 @@
   var parseKH = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(Q.value));
+        return pure23(makeCase(v)(Q.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseKHY(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseKHY(v));
         }
         ;
         if (isW(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseKHW(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseKHW(v));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(Q.value));
+          return pure23(makeCase(v)(Q.value));
         }
         ;
       }
@@ -31411,24 +31561,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 132, column 1 - line 132, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseQ2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseQ2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "q" || x === "Q";
   })))(function(b2) {
-    return bind18(peekChar3)(parseKH(b2));
+    return bind19(peekChar3)(parseKH(b2));
   });
   var parseKW2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(KW.value));
+        return pure23(makeCase(v)(KW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(KWY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(KWY.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(KW.value));
+          return pure23(makeCase(v)(KW.value));
         }
         ;
       }
@@ -31439,24 +31589,24 @@
   var parseK$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(K.value));
+        return pure23(makeCase(v)(K.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseKY(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseKY(v));
         }
         ;
         if (isW(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseKW2(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseKW2(v));
         }
         ;
         if (isH(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseKH(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseKH(v));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(K.value));
+          return pure23(makeCase(v)(K.value));
         }
         ;
       }
@@ -31464,24 +31614,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 124, column 1 - line 124, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseK2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseK2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "k" || x === "K";
   })))(function(b2) {
-    return bind18(peekChar3)(parseK$prime2(b2));
+    return bind19(peekChar3)(parseK$prime2(b2));
   });
   var parseP$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(P.value));
+        return pure23(makeCase(v)(P.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(PY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(PY.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(P.value));
+          return pure23(makeCase(v)(P.value));
         }
         ;
       }
@@ -31489,24 +31639,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 262, column 1 - line 262, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseP2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseP2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "p" || x === "P";
   })))(function(b2) {
-    return bind18(peekChar3)(parseP$prime(b2));
+    return bind19(peekChar3)(parseP$prime(b2));
   });
   var parseTL2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(TL.value));
+        return pure23(makeCase(v)(TL.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(TLY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(TLY.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(TL.value));
+          return pure23(makeCase(v)(TL.value));
         }
         ;
       }
@@ -31517,16 +31667,16 @@
   var parseTS2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(TS.value));
+        return pure23(makeCase(v)(TS.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return applySecond3(anyChar)(pure21(makeCase(v)(TSY.value)));
+          return applySecond3(anyChar)(pure23(makeCase(v)(TSY.value)));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(TS.value));
+          return pure23(makeCase(v)(TS.value));
         }
         ;
       }
@@ -31534,32 +31684,32 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 284, column 1 - line 284, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseC = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseC = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "c" || x === "C";
   })))(function(b2) {
-    return bind18(peekChar3)(parseTS2(b2));
+    return bind19(peekChar3)(parseTS2(b2));
   });
   var parseT$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure21(makeCase(v)(T.value));
+        return pure23(makeCase(v)(T.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost(v1.value0)) {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseTY2(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseTY2(v));
         }
         ;
         if (v1.value0 === "s" || v1.value0 === "S") {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseTS2(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseTS2(v));
         }
         ;
         if (v1.value0 === "l" || v1.value0 === "L") {
-          return bind18(applySecond3(anyChar)(peekChar3))(parseTL2(v));
+          return bind19(applySecond3(anyChar)(peekChar3))(parseTL2(v));
         }
         ;
         if (otherwise) {
-          return pure21(makeCase(v)(T.value));
+          return pure23(makeCase(v)(T.value));
         }
         ;
       }
@@ -31567,12 +31717,12 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 276, column 1 - line 276, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseT2 = /* @__PURE__ */ bind18(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseT2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map26(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "t" || x === "T";
   })))(function(b2) {
-    return bind18(peekChar3)(parseT$prime2(b2));
+    return bind19(peekChar3)(parseT$prime2(b2));
   });
-  var parseY2 = /* @__PURE__ */ bind18(/* @__PURE__ */ applySecond3(/* @__PURE__ */ satisfy(isApost))(peekChar3))(parseY$prime2);
+  var parseY2 = /* @__PURE__ */ bind19(/* @__PURE__ */ applySecond3(/* @__PURE__ */ satisfy(isApost))(peekChar3))(parseY$prime2);
   var parseGrubbLetter = /* @__PURE__ */ choice2([parseA2, parseE2, parseI2, parseO2, parseU2, parseK2, parseQ2, parseG2, parseX2, parseP2, parseT2, parseMonly, parseNonly, parseC, parseLonly, parseWonly, parseY2, parseB2, parseD2, parseJonly, parseS2, parseZ2, parseH2]);
   var caseOf2 = function(v) {
     return function(v1) {
@@ -31598,7 +31748,7 @@
     ;
     throw new Error("Failed pattern match at Kwakwala.Parsing.Grubb (line 518, column 1 - line 518, column 67): " + [ltr.constructor.name]);
   };
-  var parseGrubbWord = /* @__PURE__ */ bind18(parseGrubbLetter)(parseGrubbWord$prime);
+  var parseGrubbWord = /* @__PURE__ */ bind19(parseGrubbLetter)(parseGrubbWord$prime);
   var parseGrubbMain = /* @__PURE__ */ function() {
     return alt9(map26(map27(Kwak.create))(parseGrubbWord))(alt9(map26(singleton3)(parsePipe))(alt9(map26(singleton3)(parsePuncts3))(map26(map111(map111(map111(singleton3)(Punct.create))(singleton7))(codePointFromChar))(anyChar))));
   }();
@@ -31608,9 +31758,9 @@
   };
 
   // output/Kwakwala.Parsing.Island/index.js
-  var bind19 = /* @__PURE__ */ bind(bindParserT);
+  var bind20 = /* @__PURE__ */ bind(bindParserT);
   var map28 = /* @__PURE__ */ map(functorParserT);
-  var pure23 = /* @__PURE__ */ pure(applicativeParserT);
+  var pure24 = /* @__PURE__ */ pure(applicativeParserT);
   var peekChar4 = /* @__PURE__ */ peekChar(monadRecIdentity);
   var alt10 = /* @__PURE__ */ alt(altParserT);
   var voidLeft8 = /* @__PURE__ */ voidLeft(functorParserT);
@@ -31631,14 +31781,14 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 417, column 1 - line 417, column 57): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseZ3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseZ3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "z" || (x === "Z" || (x === "\u01F3" || (x === "\u01F1" || x === "\u01F2")));
   })))(function(b2) {
-    return pure23(makeCase(b2)(DZ.value));
+    return pure24(makeCase(b2)(DZ.value));
   });
   var parseY3 = /* @__PURE__ */ discard(discardUnit)(bindParserT)(/* @__PURE__ */ $$void(functorParserT)(/* @__PURE__ */ $$char("%")))(function() {
-    return bind19(map28(tstm(isUpperC))(peekChar4))(function(b2) {
-      return pure23(makeCase(b2)(Y.value));
+    return bind20(map28(tstm(isUpperC))(peekChar4))(function(b2) {
+      return pure24(makeCase(b2)(Y.value));
     });
   });
   var parseU3 = /* @__PURE__ */ function() {
@@ -31668,16 +31818,16 @@
   var parseD$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(D.value));
+        return pure24(makeCase(v)(D.value));
       }
       ;
       if (v1 instanceof Just) {
         if (v1.value0 === "z" || (v1.value0 === "Z" || v1.value0 === "+")) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(DZ.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(DZ.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(D.value));
+          return pure24(makeCase(v)(D.value));
         }
         ;
       }
@@ -31685,13 +31835,13 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 237, column 1 - line 237, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseD3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpper)(/* @__PURE__ */ satisfyCodePoint(/* @__PURE__ */ disj12(/* @__PURE__ */ eqCP("d"))(/* @__PURE__ */ eqCP("D")))))(function(b2) {
-    return bind19(peekChar4)(parseD$prime3(b2));
+  var parseD3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpper)(/* @__PURE__ */ satisfyCodePoint(/* @__PURE__ */ disj12(/* @__PURE__ */ eqCP("d"))(/* @__PURE__ */ eqCP("D")))))(function(b2) {
+    return bind20(peekChar4)(parseD$prime3(b2));
   });
-  var parseB3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseB3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "b" || x === "B";
   })))(function(b2) {
-    return pure23(makeCase(b2)(B.value));
+    return pure24(makeCase(b2)(B.value));
   });
   var parseAU2 = /* @__PURE__ */ function() {
     return voidLeft8($$char("@"))(new Min2(AU.value));
@@ -31740,16 +31890,16 @@
   var parseGU2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(GU.value));
+        return pure24(makeCase(v)(GU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(GUW.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(GUW.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(GU.value));
+          return pure24(makeCase(v)(GU.value));
         }
         ;
       }
@@ -31760,20 +31910,20 @@
   var parseG$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(G.value));
+        return pure24(makeCase(v)(G.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isWedge(v1.value0)) {
-          return bind19(applySecond4(anyChar)(peekChar4))(parseGU2(v));
+          return bind20(applySecond4(anyChar)(peekChar4))(parseGU2(v));
         }
         ;
         if (isW2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(GW.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(GW.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(G.value));
+          return pure24(makeCase(v)(G.value));
         }
         ;
       }
@@ -31781,24 +31931,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 178, column 1 - line 178, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseG3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseG3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "g" || x === "G";
   })))(function(b2) {
-    return bind19(peekChar4)(parseG$prime3(b2));
+    return bind20(peekChar4)(parseG$prime3(b2));
   });
   var parseKY2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(KY.value));
+        return pure24(makeCase(v)(KY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(KWY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(KWY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(KY.value));
+          return pure24(makeCase(v)(KY.value));
         }
         ;
       }
@@ -31809,16 +31959,16 @@
   var parseQY = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(QY.value));
+        return pure24(makeCase(v)(QY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(QWY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(QY.value));
+          return pure24(makeCase(v)(QY.value));
         }
         ;
       }
@@ -31829,16 +31979,16 @@
   var parseXU3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(XU.value));
+        return pure24(makeCase(v)(XU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(XUW.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(XUW.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(XU.value));
+          return pure24(makeCase(v)(XU.value));
         }
         ;
       }
@@ -31849,20 +31999,20 @@
   var parseX$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(X.value));
+        return pure24(makeCase(v)(X.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isWedge(v1.value0)) {
-          return bind19(applySecond4(anyChar)(peekChar4))(parseXU3(v));
+          return bind20(applySecond4(anyChar)(peekChar4))(parseXU3(v));
         }
         ;
         if (isW2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(XW.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(XW.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(X.value));
+          return pure24(makeCase(v)(X.value));
         }
         ;
       }
@@ -31870,10 +32020,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 213, column 1 - line 213, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseX3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseX3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "x" || x === "X";
   })))(function(b2) {
-    return bind19(peekChar4)(parseX$prime3(b2));
+    return bind20(peekChar4)(parseX$prime3(b2));
   });
   var isApostCP2 = /* @__PURE__ */ disj12(/* @__PURE__ */ eqCP("{"))(/* @__PURE__ */ disj12(/* @__PURE__ */ eqCP("`"))(/* @__PURE__ */ eqCP("|")));
   var parsePuncts4 = /* @__PURE__ */ function() {
@@ -31900,16 +32050,16 @@
   var parseC$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(TS.value));
+        return pure24(makeCase(v)(TS.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(TSY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(TSY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(TS.value));
+          return pure24(makeCase(v)(TS.value));
         }
         ;
       }
@@ -31917,24 +32067,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 293, column 1 - line 293, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseC2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseC2 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "c" || x === "C";
   })))(function(b2) {
-    return bind19(peekChar4)(parseC$prime(b2));
+    return bind20(peekChar4)(parseC$prime(b2));
   });
   var parseJ$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(J.value));
+        return pure24(makeCase(v)(J.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(JY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(JY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(J.value));
+          return pure24(makeCase(v)(J.value));
         }
         ;
       }
@@ -31942,24 +32092,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 343, column 1 - line 343, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseJ2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseJ2 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "y" || (x === "Y" || (x === "j" || x === "J"));
   })))(function(b2) {
-    return bind19(peekChar4)(parseJ$prime(b2));
+    return bind20(peekChar4)(parseJ$prime(b2));
   });
   var parseKW3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(KW.value));
+        return pure24(makeCase(v)(KW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(KWY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(KWY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(KW.value));
+          return pure24(makeCase(v)(KW.value));
         }
         ;
       }
@@ -31970,20 +32120,20 @@
   var parseK$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(K.value));
+        return pure24(makeCase(v)(K.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return bind19(applySecond4(anyChar)(peekChar4))(parseKY2(v));
+          return bind20(applySecond4(anyChar)(peekChar4))(parseKY2(v));
         }
         ;
         if (isW2(v1.value0)) {
-          return bind19(applySecond4(anyChar)(peekChar4))(parseKW3(v));
+          return bind20(applySecond4(anyChar)(peekChar4))(parseKW3(v));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(K.value));
+          return pure24(makeCase(v)(K.value));
         }
         ;
       }
@@ -31991,24 +32141,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 120, column 1 - line 120, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseK3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseK3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "k" || x === "K";
   })))(function(b2) {
-    return bind19(peekChar4)(parseK$prime3(b2));
+    return bind20(peekChar4)(parseK$prime3(b2));
   });
   var parseL$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(L.value));
+        return pure24(makeCase(v)(L.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(LY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(LY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(L.value));
+          return pure24(makeCase(v)(L.value));
         }
         ;
       }
@@ -32016,24 +32166,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 356, column 1 - line 356, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseL2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseL2 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "l" || x === "L";
   })))(function(b2) {
-    return bind19(peekChar4)(parseL$prime(b2));
+    return bind20(peekChar4)(parseL$prime(b2));
   });
   var parseM$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(M.value));
+        return pure24(makeCase(v)(M.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(MY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(MY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(M.value));
+          return pure24(makeCase(v)(M.value));
         }
         ;
       }
@@ -32041,24 +32191,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 314, column 1 - line 314, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseM2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseM2 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "m" || x === "M";
   })))(function(b2) {
-    return bind19(peekChar4)(parseM$prime(b2));
+    return bind20(peekChar4)(parseM$prime(b2));
   });
   var parseN$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(N.value));
+        return pure24(makeCase(v)(N.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(NY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(NY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(N.value));
+          return pure24(makeCase(v)(N.value));
         }
         ;
       }
@@ -32066,24 +32216,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 327, column 1 - line 327, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseN2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseN2 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "n" || x === "N";
   })))(function(b2) {
-    return bind19(peekChar4)(parseN$prime(b2));
+    return bind20(peekChar4)(parseN$prime(b2));
   });
   var parseP$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(P.value));
+        return pure24(makeCase(v)(P.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(PY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(PY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(P.value));
+          return pure24(makeCase(v)(P.value));
         }
         ;
       }
@@ -32091,24 +32241,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 267, column 1 - line 267, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseP3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseP3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "p" || x === "P";
   })))(function(b2) {
-    return bind19(peekChar4)(parseP$prime2(b2));
+    return bind20(peekChar4)(parseP$prime2(b2));
   });
   var parseQW2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(QW.value));
+        return pure24(makeCase(v)(QW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(QWY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(QW.value));
+          return pure24(makeCase(v)(QW.value));
         }
         ;
       }
@@ -32119,20 +32269,20 @@
   var parseQ$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(Q.value));
+        return pure24(makeCase(v)(Q.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return bind19(applySecond4(anyChar)(peekChar4))(parseQY(v));
+          return bind20(applySecond4(anyChar)(peekChar4))(parseQY(v));
         }
         ;
         if (isW2(v1.value0)) {
-          return bind19(applySecond4(anyChar)(peekChar4))(parseQW2(v));
+          return bind20(applySecond4(anyChar)(peekChar4))(parseQW2(v));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(Q.value));
+          return pure24(makeCase(v)(Q.value));
         }
         ;
       }
@@ -32140,24 +32290,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 149, column 1 - line 149, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseQ3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseQ3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "q" || x === "Q";
   })))(function(b2) {
-    return bind19(peekChar4)(parseQ$prime2(b2));
+    return bind20(peekChar4)(parseQ$prime2(b2));
   });
   var parseT$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(T.value));
+        return pure24(makeCase(v)(T.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(TY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(TY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(T.value));
+          return pure24(makeCase(v)(T.value));
         }
         ;
       }
@@ -32165,24 +32315,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 280, column 1 - line 280, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseT3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseT3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "t" || x === "T";
   })))(function(b2) {
-    return bind19(peekChar4)(parseT$prime3(b2));
+    return bind20(peekChar4)(parseT$prime3(b2));
   });
   var parseTL$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(TL.value));
+        return pure24(makeCase(v)(TL.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(TLY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(TLY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(TL.value));
+          return pure24(makeCase(v)(TL.value));
         }
         ;
       }
@@ -32190,24 +32340,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 400, column 1 - line 400, column 63): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseTL3 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseTL3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "[";
   })))(function(b2) {
-    return bind19(peekChar4)(parseTL$prime2(b2));
+    return bind20(peekChar4)(parseTL$prime2(b2));
   });
   var parseW$prime = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure23(makeCase(v)(W.value));
+        return pure24(makeCase(v)(W.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost2(v1.value0)) {
-          return applySecond4(anyChar)(pure23(makeCase(v)(WY.value)));
+          return applySecond4(anyChar)(pure24(makeCase(v)(WY.value)));
         }
         ;
         if (otherwise) {
-          return pure23(makeCase(v)(W.value));
+          return pure24(makeCase(v)(W.value));
         }
         ;
       }
@@ -32215,10 +32365,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Island (line 379, column 1 - line 379, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseW2 = /* @__PURE__ */ bind19(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseW2 = /* @__PURE__ */ bind20(/* @__PURE__ */ map28(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "w" || x === "W";
   })))(function(b2) {
-    return bind19(peekChar4)(parseW$prime(b2));
+    return bind20(peekChar4)(parseW$prime(b2));
   });
   var parseIslandLetter = /* @__PURE__ */ choice(foldableArray)([parseA3, parseE3, parseI3, parseO3, parseU3, parseAU2, parseK3, parseQ3, parseG3, parseX3, parseP3, parseT3, parseM2, parseN2, parseL2, parseW2, parseY3, parseB3, parseH3, parseD3, parseLH2, parseJ2, parseS3, parseZ3, parseDL, parseTL3, parseC2]);
   var parseIslandLetter$prime = /* @__PURE__ */ function() {
@@ -32233,8 +32383,8 @@
   };
 
   // output/Kwakwala.Parsing.Napa/index.js
-  var bind20 = /* @__PURE__ */ bind(bindParserT);
-  var pure24 = /* @__PURE__ */ pure(applicativeParserT);
+  var bind21 = /* @__PURE__ */ bind(bindParserT);
+  var pure25 = /* @__PURE__ */ pure(applicativeParserT);
   var map29 = /* @__PURE__ */ map(functorParserT);
   var peekCode2 = /* @__PURE__ */ peekCode(monadRecIdentity);
   var alt11 = /* @__PURE__ */ alt(altParserT);
@@ -32244,11 +32394,11 @@
   var disj13 = /* @__PURE__ */ disj(/* @__PURE__ */ heytingAlgebraFunction(heytingAlgebraBoolean));
   var eq15 = /* @__PURE__ */ eq(eqCodePoint);
   var map113 = /* @__PURE__ */ map(functorFn);
-  var parseZ4 = /* @__PURE__ */ bind20(/* @__PURE__ */ satisfy(function(x) {
+  var parseZ4 = /* @__PURE__ */ bind21(/* @__PURE__ */ satisfy(function(x) {
     return x === "z" || (x === "Z" || (x === "\u01F3" || (x === "\u01F1" || x === "\u01F2")));
   }))(function(c) {
-    return bind20(pure24(isUpper(codePointFromChar(c))))(function(b2) {
-      return pure24(makeCase(b2)(DZ.value));
+    return bind21(pure25(isUpper(codePointFromChar(c))))(function(b2) {
+      return pure25(makeCase(b2)(DZ.value));
     });
   });
   var parseY4 = /* @__PURE__ */ function() {
@@ -32266,8 +32416,8 @@
       };
     };
     return discard(discardUnit)(bindParserT)($$void(functorParserT)($$char("\u0294")))(function() {
-      return bind20(map29(tstm2(isUpper))(peekCode2))(function(b2) {
-        return pure24(makeCase(b2)(Y.value));
+      return bind21(map29(tstm2(isUpper))(peekCode2))(function(b2) {
+        return pure25(makeCase(b2)(Y.value));
       });
     });
   }();
@@ -32300,16 +32450,16 @@
   var parseD$prime4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(D.value));
+        return pure25(makeCase(v)(D.value));
       }
       ;
       if (v1 instanceof Just) {
         if (v1.value0 === "z" || (v1.value0 === "Z" || v1.value0 === "\u1DBB")) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(DZ.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(DZ.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(D.value));
+          return pure25(makeCase(v)(D.value));
         }
         ;
       }
@@ -32317,15 +32467,15 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 222, column 1 - line 222, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseD4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseD4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "d" || x === "D";
   })))(function(b2) {
-    return bind20(peekChar5)(parseD$prime4(b2));
+    return bind21(peekChar5)(parseD$prime4(b2));
   });
-  var parseB4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseB4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "b" || x === "B";
   })))(function(b2) {
-    return pure24(makeCase(b2)(B.value));
+    return pure25(makeCase(b2)(B.value));
   });
   var parseAU3 = /* @__PURE__ */ function() {
     return alt11(voidLeft9($$char("\u0259"))(new Min2(AU.value)))(voidLeft9($$char("\u018F"))(new Maj(AU.value)));
@@ -32367,16 +32517,16 @@
   var parseGU3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(GU.value));
+        return pure25(makeCase(v)(GU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(GUW.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(GUW.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(GU.value));
+          return pure25(makeCase(v)(GU.value));
         }
         ;
       }
@@ -32387,20 +32537,20 @@
   var parseG$prime4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(G.value));
+        return pure25(makeCase(v)(G.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isWedge2(v1.value0)) {
-          return bind20(applySecond5(anyChar)(peekChar5))(parseGU3(v));
+          return bind21(applySecond5(anyChar)(peekChar5))(parseGU3(v));
         }
         ;
         if (isW3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(GW.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(GW.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(G.value));
+          return pure25(makeCase(v)(G.value));
         }
         ;
       }
@@ -32408,29 +32558,29 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 159, column 1 - line 159, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseG4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseG4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "g" || x === "G";
   })))(function(b2) {
-    return bind20(peekChar5)(parseG$prime4(b2));
+    return bind21(peekChar5)(parseG$prime4(b2));
   });
-  var parseGUB = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseGUB = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "\u01E7" || x === "\u01E6";
   })))(function(b2) {
-    return bind20(peekChar5)(parseGU3(b2));
+    return bind21(peekChar5)(parseGU3(b2));
   });
   var parseKY3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(KY.value));
+        return pure25(makeCase(v)(KY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(KWY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(KWY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(KY.value));
+          return pure25(makeCase(v)(KY.value));
         }
         ;
       }
@@ -32441,16 +32591,16 @@
   var parseQY2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(QY.value));
+        return pure25(makeCase(v)(QY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(QWY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(QY.value));
+          return pure25(makeCase(v)(QY.value));
         }
         ;
       }
@@ -32461,16 +32611,16 @@
   var parseXU4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(XU.value));
+        return pure25(makeCase(v)(XU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(XUW.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(XUW.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(XU.value));
+          return pure25(makeCase(v)(XU.value));
         }
         ;
       }
@@ -32481,20 +32631,20 @@
   var parseX$prime4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(X.value));
+        return pure25(makeCase(v)(X.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isWedge2(v1.value0)) {
-          return bind20(applySecond5(anyChar)(peekChar5))(parseXU4(v));
+          return bind21(applySecond5(anyChar)(peekChar5))(parseXU4(v));
         }
         ;
         if (isW3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(XW.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(XW.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(X.value));
+          return pure25(makeCase(v)(X.value));
         }
         ;
       }
@@ -32502,10 +32652,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 198, column 1 - line 198, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseX4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseX4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "x" || x === "X";
   })))(function(b2) {
-    return bind20(peekChar5)(parseX$prime4(b2));
+    return bind21(peekChar5)(parseX$prime4(b2));
   });
   var isApostCode = /* @__PURE__ */ disj13(/* @__PURE__ */ eq15(/* @__PURE__ */ codePointFromChar("'")))(/* @__PURE__ */ disj13(/* @__PURE__ */ eq15(/* @__PURE__ */ codePointFromChar("`")))(/* @__PURE__ */ disj13(/* @__PURE__ */ eq15(/* @__PURE__ */ codePointFromChar("\u0315")))(/* @__PURE__ */ eq15(/* @__PURE__ */ codePointFromChar("\u0313")))));
   var parsePuncts5 = /* @__PURE__ */ function() {
@@ -32536,16 +32686,16 @@
   var parseC$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(TS.value));
+        return pure25(makeCase(v)(TS.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(TSY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(TSY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(TS.value));
+          return pure25(makeCase(v)(TS.value));
         }
         ;
       }
@@ -32553,24 +32703,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 282, column 1 - line 282, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseC3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseC3 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "c" || x === "C";
   })))(function(b2) {
-    return bind20(peekChar5)(parseC$prime2(b2));
+    return bind21(peekChar5)(parseC$prime2(b2));
   });
   var parseJ$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(J.value));
+        return pure25(makeCase(v)(J.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(JY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(JY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(J.value));
+          return pure25(makeCase(v)(J.value));
         }
         ;
       }
@@ -32578,24 +32728,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 335, column 1 - line 335, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseJ3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseJ3 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "y" || (x === "Y" || (x === "j" || x === "J"));
   })))(function(b2) {
-    return bind20(peekChar5)(parseJ$prime2(b2));
+    return bind21(peekChar5)(parseJ$prime2(b2));
   });
   var parseKW4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(KW.value));
+        return pure25(makeCase(v)(KW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(KWY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(KWY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(KW.value));
+          return pure25(makeCase(v)(KW.value));
         }
         ;
       }
@@ -32606,20 +32756,20 @@
   var parseK$prime4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(K.value));
+        return pure25(makeCase(v)(K.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return bind20(applySecond5(anyChar)(peekChar5))(parseKY3(v));
+          return bind21(applySecond5(anyChar)(peekChar5))(parseKY3(v));
         }
         ;
         if (isW3(v1.value0)) {
-          return bind20(applySecond5(anyChar)(peekChar5))(parseKW4(v));
+          return bind21(applySecond5(anyChar)(peekChar5))(parseKW4(v));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(K.value));
+          return pure25(makeCase(v)(K.value));
         }
         ;
       }
@@ -32627,24 +32777,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 91, column 1 - line 91, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseK4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseK4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "k" || x === "K";
   })))(function(b2) {
-    return bind20(peekChar5)(parseK$prime4(b2));
+    return bind21(peekChar5)(parseK$prime4(b2));
   });
   var parseL$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(L.value));
+        return pure25(makeCase(v)(L.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(LY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(LY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(L.value));
+          return pure25(makeCase(v)(L.value));
         }
         ;
       }
@@ -32652,24 +32802,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 349, column 1 - line 349, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseL3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseL3 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "l" || x === "L";
   })))(function(b2) {
-    return bind20(peekChar5)(parseL$prime2(b2));
+    return bind21(peekChar5)(parseL$prime2(b2));
   });
   var parseM$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(M.value));
+        return pure25(makeCase(v)(M.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(MY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(MY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(M.value));
+          return pure25(makeCase(v)(M.value));
         }
         ;
       }
@@ -32677,24 +32827,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 304, column 1 - line 304, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseM3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseM3 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "m" || x === "M";
   })))(function(b2) {
-    return bind20(peekChar5)(parseM$prime2(b2));
+    return bind21(peekChar5)(parseM$prime2(b2));
   });
   var parseN$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(N.value));
+        return pure25(makeCase(v)(N.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(NY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(NY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(N.value));
+          return pure25(makeCase(v)(N.value));
         }
         ;
       }
@@ -32702,24 +32852,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 318, column 1 - line 318, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseN3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseN3 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "n" || x === "N";
   })))(function(b2) {
-    return bind20(peekChar5)(parseN$prime2(b2));
+    return bind21(peekChar5)(parseN$prime2(b2));
   });
   var parseP$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(P.value));
+        return pure25(makeCase(v)(P.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(PY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(PY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(P.value));
+          return pure25(makeCase(v)(P.value));
         }
         ;
       }
@@ -32727,24 +32877,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 254, column 1 - line 254, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseP4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseP4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "p" || x === "P";
   })))(function(b2) {
-    return bind20(peekChar5)(parseP$prime3(b2));
+    return bind21(peekChar5)(parseP$prime3(b2));
   });
   var parseQW3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(QW.value));
+        return pure25(makeCase(v)(QW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(QWY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(QW.value));
+          return pure25(makeCase(v)(QW.value));
         }
         ;
       }
@@ -32755,20 +32905,20 @@
   var parseQ$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(Q.value));
+        return pure25(makeCase(v)(Q.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return bind20(applySecond5(anyChar)(peekChar5))(parseQY2(v));
+          return bind21(applySecond5(anyChar)(peekChar5))(parseQY2(v));
         }
         ;
         if (isW3(v1.value0)) {
-          return bind20(applySecond5(anyChar)(peekChar5))(parseQW3(v));
+          return bind21(applySecond5(anyChar)(peekChar5))(parseQW3(v));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(Q.value));
+          return pure25(makeCase(v)(Q.value));
         }
         ;
       }
@@ -32776,24 +32926,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 126, column 1 - line 126, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseQ4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseQ4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "q" || x === "Q";
   })))(function(b2) {
-    return bind20(peekChar5)(parseQ$prime3(b2));
+    return bind21(peekChar5)(parseQ$prime3(b2));
   });
   var parseT$prime4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(T.value));
+        return pure25(makeCase(v)(T.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(TY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(TY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(T.value));
+          return pure25(makeCase(v)(T.value));
         }
         ;
       }
@@ -32801,24 +32951,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 268, column 1 - line 268, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseT4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseT4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "t" || x === "T";
   })))(function(b2) {
-    return bind20(peekChar5)(parseT$prime4(b2));
+    return bind21(peekChar5)(parseT$prime4(b2));
   });
   var parseTL$prime3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(TL.value));
+        return pure25(makeCase(v)(TL.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(TLY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(TLY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(TL.value));
+          return pure25(makeCase(v)(TL.value));
         }
         ;
       }
@@ -32826,24 +32976,24 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 394, column 1 - line 394, column 63): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseTL4 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseTL4 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "\u019B";
   })))(function(b2) {
-    return bind20(peekChar5)(parseTL$prime3(b2));
+    return bind21(peekChar5)(parseTL$prime3(b2));
   });
   var parseW$prime2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure24(makeCase(v)(W.value));
+        return pure25(makeCase(v)(W.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost3(v1.value0)) {
-          return applySecond5(anyChar)(pure24(makeCase(v)(WY.value)));
+          return applySecond5(anyChar)(pure25(makeCase(v)(WY.value)));
         }
         ;
         if (otherwise) {
-          return pure24(makeCase(v)(W.value));
+          return pure25(makeCase(v)(W.value));
         }
         ;
       }
@@ -32851,10 +33001,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Napa (line 371, column 1 - line 371, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseW3 = /* @__PURE__ */ bind20(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseW3 = /* @__PURE__ */ bind21(/* @__PURE__ */ map29(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "w" || x === "W";
   })))(function(b2) {
-    return bind20(peekChar5)(parseW$prime2(b2));
+    return bind21(peekChar5)(parseW$prime2(b2));
   });
   var parseNapaLetter = /* @__PURE__ */ choice(foldableArray)([parseA4, parseE4, parseI4, parseO4, parseU4, parseAU3, parseK4, parseQ4, parseG4, parseGUB, parseX4, parseP4, parseT4, parseM3, parseN3, parseL3, parseW3, parseY4, parseB4, parseH4, parseD4, parseLH3, parseJ3, parseS4, parseZ4, parseDL2, parseTL4, parseC3]);
   var parseNapaCharNew = /* @__PURE__ */ function() {
@@ -32866,9 +33016,9 @@
   };
 
   // output/Kwakwala.Parsing.Umista/index.js
-  var pure25 = /* @__PURE__ */ pure(applicativeParserT);
+  var pure26 = /* @__PURE__ */ pure(applicativeParserT);
   var applySecond6 = /* @__PURE__ */ applySecond(applyParserT);
-  var bind21 = /* @__PURE__ */ bind(bindParserT);
+  var bind22 = /* @__PURE__ */ bind(bindParserT);
   var map30 = /* @__PURE__ */ map(functorParserT);
   var alt12 = /* @__PURE__ */ alt(altParserT);
   var voidLeft10 = /* @__PURE__ */ voidLeft(functorParserT);
@@ -32881,42 +33031,42 @@
   var map210 = /* @__PURE__ */ map(functorList);
   var parseY$prime3 = function(v) {
     if (v instanceof Nothing) {
-      return pure25(new Min2(Y.value));
+      return pure26(new Min2(Y.value));
     }
     ;
     if (v instanceof Just) {
       if (v.value0 === "m" || v.value0 === "M") {
-        return applySecond6(anyChar)(pure25(makeCase(isUpperC(v.value0))(MY.value)));
+        return applySecond6(anyChar)(pure26(makeCase(isUpperC(v.value0))(MY.value)));
       }
       ;
       if (v.value0 === "n" || v.value0 === "N") {
-        return applySecond6(anyChar)(pure25(makeCase(isUpperC(v.value0))(NY.value)));
+        return applySecond6(anyChar)(pure26(makeCase(isUpperC(v.value0))(NY.value)));
       }
       ;
       if (v.value0 === "l" || v.value0 === "L") {
-        return applySecond6(anyChar)(pure25(makeCase(isUpperC(v.value0))(LY.value)));
+        return applySecond6(anyChar)(pure26(makeCase(isUpperC(v.value0))(LY.value)));
       }
       ;
       if (v.value0 === "y" || v.value0 === "Y") {
-        return applySecond6(anyChar)(pure25(makeCase(isUpperC(v.value0))(JY.value)));
+        return applySecond6(anyChar)(pure26(makeCase(isUpperC(v.value0))(JY.value)));
       }
       ;
       if (v.value0 === "w" || v.value0 === "W") {
-        return applySecond6(anyChar)(pure25(makeCase(isUpperC(v.value0))(WY.value)));
+        return applySecond6(anyChar)(pure26(makeCase(isUpperC(v.value0))(WY.value)));
       }
       ;
       if (otherwise) {
-        return pure25(makeCase(isUpperC(v.value0))(Y.value));
+        return pure26(makeCase(isUpperC(v.value0))(Y.value));
       }
       ;
     }
     ;
     throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 374, column 1 - line 374, column 53): " + [v.constructor.name]);
   };
-  var parseWonly2 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseWonly2 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "w" || x === "W";
   })))(function(b2) {
-    return pure25(makeCase(b2)(W.value));
+    return pure26(makeCase(b2)(W.value));
   });
   var parseU5 = /* @__PURE__ */ function() {
     return alt12(voidLeft10($$char("u"))(new Min2(U.value)))(voidLeft10($$char("U"))(new Maj(U.value)));
@@ -32924,20 +33074,20 @@
   var parseTY3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(TY.value));
+        return pure26(makeCase(v)(TY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (v1.value0 === "s" || v1.value0 === "S") {
-          return applySecond6(anyChar)(pure25(makeCase(v)(TSY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(TSY.value)));
         }
         ;
         if (v1.value0 === "l" || (v1.value0 === "L" || (v1.value0 === "\u0142" || (v1.value0 === "\u019A" || (v1.value0 === "\u026B" || (v1.value0 === "\u026C" || v1.value0 === "\u0141")))))) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(TLY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(TLY.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(TY.value));
+          return pure26(makeCase(v)(TY.value));
         }
         ;
       }
@@ -32951,30 +33101,30 @@
   var parseO5 = /* @__PURE__ */ function() {
     return alt12(voidLeft10($$char("o"))(new Min2(O.value)))(voidLeft10($$char("O"))(new Maj(O.value)));
   }();
-  var parseNonly2 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseNonly2 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "n" || x === "N";
   })))(function(b2) {
-    return pure25(makeCase(b2)(N.value));
+    return pure26(makeCase(b2)(N.value));
   });
-  var parseMonly2 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseMonly2 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "m" || x === "M";
   })))(function(b2) {
-    return pure25(makeCase(b2)(M.value));
+    return pure26(makeCase(b2)(M.value));
   });
-  var parseLonly2 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseLonly2 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "l" || x === "L";
   })))(function(b2) {
-    return pure25(makeCase(b2)(L.value));
+    return pure26(makeCase(b2)(L.value));
   });
   var parseLH4 = /* @__PURE__ */ function() {
     return alt12(voidLeft10(satisfy(function(x) {
       return x === "\u0142" || (x === "\u019A" || (x === "\u026B" || x === "\u026C"));
     }))(new Min2(LH.value)))(voidLeft10($$char("\u0141"))(new Maj(LH.value)));
   }();
-  var parseJonly2 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseJonly2 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "j" || (x === "J" || (x === "y" || x === "Y"));
   })))(function(b2) {
-    return pure25(makeCase(b2)(J.value));
+    return pure26(makeCase(b2)(J.value));
   });
   var parseI5 = /* @__PURE__ */ function() {
     return alt12(voidLeft10($$char("i"))(new Min2(I.value)))(voidLeft10($$char("I"))(new Maj(I.value)));
@@ -32985,28 +33135,28 @@
   var parseE5 = /* @__PURE__ */ function() {
     return alt12(voidLeft10($$char("e"))(new Min2(E.value)))(voidLeft10($$char("E"))(new Maj(E.value)));
   }();
-  var parseDZ = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseDZ = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "z" || (x === "Z" || (x === "\u01F3" || (x === "\u01F1" || x === "\u01F2")));
   })))(function(b2) {
-    return pure25(makeCase(b2)(DZ.value));
+    return pure26(makeCase(b2)(DZ.value));
   });
   var parseD$prime5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(T.value));
+        return pure26(makeCase(v)(T.value));
       }
       ;
       if (v1 instanceof Just) {
         if (v1.value0 === "z" || v1.value0 === "Z") {
-          return applySecond6(anyChar)(pure25(makeCase(v)(DZ.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(DZ.value)));
         }
         ;
         if (v1.value0 === "l" || (v1.value0 === "L" || (v1.value0 === "\u0142" || (v1.value0 === "\u019A" || (v1.value0 === "\u026B" || (v1.value0 === "\u026C" || v1.value0 === "\u0141")))))) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(DL.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(DL.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(D.value));
+          return pure26(makeCase(v)(D.value));
         }
         ;
       }
@@ -33014,10 +33164,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 316, column 1 - line 316, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseD5 = /* @__PURE__ */ bind21(/* @__PURE__ */ satisfy(function(x) {
+  var parseD5 = /* @__PURE__ */ bind22(/* @__PURE__ */ satisfy(function(x) {
     return x === "d" || x === "D";
   }))(function(x) {
-    return bind21(peekChar6)(parseD$prime5(isUpperC(x)));
+    return bind22(peekChar6)(parseD$prime5(isUpperC(x)));
   });
   var parseB5 = /* @__PURE__ */ function() {
     return alt12(voidLeft10($$char("b"))(new Min2(B.value)))(voidLeft10($$char("B"))(new Maj(B.value)));
@@ -33032,35 +33182,35 @@
     ;
     return false;
   };
-  var parseA5 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseA5 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "a" || x === "A";
   })))(function(b2) {
-    return bind21(peekChar6)(function(x) {
+    return bind22(peekChar6)(function(x) {
       if (x instanceof Just) {
         var $66 = isUnderline(x.value0);
         if ($66) {
-          return applySecond6(anyChar)(pure25(makeCase(b2)(AU.value)));
+          return applySecond6(anyChar)(pure26(makeCase(b2)(AU.value)));
         }
         ;
-        return pure25(makeCase(b2)(A.value));
+        return pure26(makeCase(b2)(A.value));
       }
       ;
-      return pure25(makeCase(b2)(A.value));
+      return pure26(makeCase(b2)(A.value));
     });
   });
   var parseXW2 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(XW.value));
+        return pure26(makeCase(v)(XW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isUnderline(v1.value0)) {
-          return applySecond6(peekChar6)(pure25(makeCase(v)(XUW.value)));
+          return applySecond6(peekChar6)(pure26(makeCase(v)(XUW.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(XW.value));
+          return pure26(makeCase(v)(XW.value));
         }
         ;
       }
@@ -33091,16 +33241,16 @@
   var parseGU4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(GU.value));
+        return pure26(makeCase(v)(GU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(GUW.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(GUW.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(GU.value));
+          return pure26(makeCase(v)(GU.value));
         }
         ;
       }
@@ -33111,20 +33261,20 @@
   var parseG$prime5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(G.value));
+        return pure26(makeCase(v)(G.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isUnderline(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseGU4(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseGU4(v));
         }
         ;
         if (isW4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(GW.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(GW.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(G.value));
+          return pure26(makeCase(v)(G.value));
         }
         ;
       }
@@ -33132,29 +33282,29 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 160, column 1 - line 160, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseG5 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseG5 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "g" || x === "G";
   })))(function(b2) {
-    return bind21(peekChar6)(parseG$prime5(b2));
+    return bind22(peekChar6)(parseG$prime5(b2));
   });
-  var parseGUN = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseGUN = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "\u01E5" || x === "\u01E4";
   })))(function(b2) {
-    return bind21(peekChar6)(parseGU4(b2));
+    return bind22(peekChar6)(parseGU4(b2));
   });
   var parseKY4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(KY.value));
+        return pure26(makeCase(v)(KY.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(KWY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(KWY.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(KY.value));
+          return pure26(makeCase(v)(KY.value));
         }
         ;
       }
@@ -33165,16 +33315,16 @@
   var parseQY3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(QW.value));
+        return pure26(makeCase(v)(QW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(QWY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(QY.value));
+          return pure26(makeCase(v)(QY.value));
         }
         ;
       }
@@ -33185,16 +33335,16 @@
   var parseXU5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(XU.value));
+        return pure26(makeCase(v)(XU.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isW4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(XUW.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(XUW.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(XU.value));
+          return pure26(makeCase(v)(XU.value));
         }
         ;
       }
@@ -33205,20 +33355,20 @@
   var parseX$prime5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(X.value));
+        return pure26(makeCase(v)(X.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isUnderline(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseXU5(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseXU5(v));
         }
         ;
         if (isW4(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseXW2(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseXW2(v));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(X.value));
+          return pure26(makeCase(v)(X.value));
         }
         ;
       }
@@ -33226,10 +33376,10 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 333, column 1 - line 333, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseX5 = /* @__PURE__ */ bind21(/* @__PURE__ */ satisfy(function(x) {
+  var parseX5 = /* @__PURE__ */ bind22(/* @__PURE__ */ satisfy(function(x) {
     return x === "x" || x === "X";
   }))(function(x) {
-    return bind21(peekChar6)(parseX$prime5(isUpperC(x)));
+    return bind22(peekChar6)(parseX$prime5(isUpperC(x)));
   });
   var isApostCP3 = /* @__PURE__ */ disj14(/* @__PURE__ */ eqCP("'"))(/* @__PURE__ */ disj14(/* @__PURE__ */ eqCP("`"))(/* @__PURE__ */ disj14(/* @__PURE__ */ eqCP("\u0315"))(/* @__PURE__ */ disj14(/* @__PURE__ */ eqCP("\u0313"))(/* @__PURE__ */ disj14(/* @__PURE__ */ eqCP("\u2019"))(/* @__PURE__ */ eqCP("\u02BC"))))));
   var parsePuncts6 = /* @__PURE__ */ function() {
@@ -33268,16 +33418,16 @@
   var parseKW5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(KW.value));
+        return pure26(makeCase(v)(KW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(KWY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(KWY.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(KW.value));
+          return pure26(makeCase(v)(KW.value));
         }
         ;
       }
@@ -33285,35 +33435,35 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 127, column 1 - line 127, column 62): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseP5 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseP5 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "p" || x === "P";
   })))(function(b2) {
-    return bind21(peekChar6)(function(x) {
+    return bind22(peekChar6)(function(x) {
       if (x instanceof Just) {
         var $111 = isApost4(x.value0);
         if ($111) {
-          return applySecond6(anyChar)(pure25(makeCase(b2)(PY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(b2)(PY.value)));
         }
         ;
-        return pure25(makeCase(b2)(P.value));
+        return pure26(makeCase(b2)(P.value));
       }
       ;
-      return pure25(makeCase(b2)(P.value));
+      return pure26(makeCase(b2)(P.value));
     });
   });
   var parseQW4 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(QW.value));
+        return pure26(makeCase(v)(QW.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(QWY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(QWY.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(QW.value));
+          return pure26(makeCase(v)(QW.value));
         }
         ;
       }
@@ -33324,20 +33474,20 @@
   var parseQ5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(Q.value));
+        return pure26(makeCase(v)(Q.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost4(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseQY3(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseQY3(v));
         }
         ;
         if (isW4(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseQW4(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseQW4(v));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(Q.value));
+          return pure26(makeCase(v)(Q.value));
         }
         ;
       }
@@ -33348,24 +33498,24 @@
   var parseK$prime5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(K.value));
+        return pure26(makeCase(v)(K.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isUnderline(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseQ5(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseQ5(v));
         }
         ;
         if (isApost4(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseKY4(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseKY4(v));
         }
         ;
         if (isW4(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseKW5(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseKW5(v));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(K.value));
+          return pure26(makeCase(v)(K.value));
         }
         ;
       }
@@ -33373,29 +33523,29 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 108, column 1 - line 108, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseK5 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseK5 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "k" || x === "K";
   })))(function(b2) {
-    return bind21(peekChar6)(parseK$prime5(b2));
+    return bind22(peekChar6)(parseK$prime5(b2));
   });
-  var parseKUN = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseKUN = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "\u1E35" || (x === "\u1E34" || (x === "q" || x === "Q"));
   })))(function(b2) {
-    return bind21(peekChar6)(parseQ5(b2));
+    return bind22(peekChar6)(parseQ5(b2));
   });
   var parseTL5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(TS.value));
+        return pure26(makeCase(v)(TS.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(TLY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(TLY.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(TL.value));
+          return pure26(makeCase(v)(TL.value));
         }
         ;
       }
@@ -33406,16 +33556,16 @@
   var parseTS3 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(TS.value));
+        return pure26(makeCase(v)(TS.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost4(v1.value0)) {
-          return applySecond6(anyChar)(pure25(makeCase(v)(TSY.value)));
+          return applySecond6(anyChar)(pure26(makeCase(v)(TSY.value)));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(TS.value));
+          return pure26(makeCase(v)(TS.value));
         }
         ;
       }
@@ -33426,24 +33576,24 @@
   var parseT$prime5 = function(v) {
     return function(v1) {
       if (v1 instanceof Nothing) {
-        return pure25(makeCase(v)(T.value));
+        return pure26(makeCase(v)(T.value));
       }
       ;
       if (v1 instanceof Just) {
         if (isApost4(v1.value0)) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseTY3(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseTY3(v));
         }
         ;
         if (v1.value0 === "s" || v1.value0 === "S") {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseTS3(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseTS3(v));
         }
         ;
         if (v1.value0 === "l" || (v1.value0 === "L" || (v1.value0 === "\u0142" || (v1.value0 === "\u019A" || (v1.value0 === "\u026B" || (v1.value0 === "\u026C" || v1.value0 === "\u0141")))))) {
-          return bind21(applySecond6(anyChar)(peekChar6))(parseTL5(v));
+          return bind22(applySecond6(anyChar)(peekChar6))(parseTL5(v));
         }
         ;
         if (otherwise) {
-          return pure25(makeCase(v)(T.value));
+          return pure26(makeCase(v)(T.value));
         }
         ;
       }
@@ -33451,13 +33601,13 @@
       throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 201, column 1 - line 201, column 64): " + [v.constructor.name, v1.constructor.name]);
     };
   };
-  var parseT5 = /* @__PURE__ */ bind21(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
+  var parseT5 = /* @__PURE__ */ bind22(/* @__PURE__ */ map30(isUpperC)(/* @__PURE__ */ satisfy(function(x) {
     return x === "t" || x === "T";
   })))(function(b2) {
-    return bind21(peekChar6)(parseT$prime5(b2));
+    return bind22(peekChar6)(parseT$prime5(b2));
   });
-  var parseTS$prime = /* @__PURE__ */ bind21(/* @__PURE__ */ applySecond6(/* @__PURE__ */ $$char("\u02A6"))(peekChar6))(/* @__PURE__ */ parseTS3(false));
-  var parseY5 = /* @__PURE__ */ bind21(/* @__PURE__ */ applySecond6(/* @__PURE__ */ satisfy(isApost4))(peekChar6))(parseY$prime3);
+  var parseTS$prime = /* @__PURE__ */ bind22(/* @__PURE__ */ applySecond6(/* @__PURE__ */ $$char("\u02A6"))(peekChar6))(/* @__PURE__ */ parseTS3(false));
+  var parseY5 = /* @__PURE__ */ bind22(/* @__PURE__ */ applySecond6(/* @__PURE__ */ satisfy(isApost4))(peekChar6))(parseY$prime3);
   var parseUmistaLetterNew = /* @__PURE__ */ choice3([parseA5, parseAU4, parseE5, parseI5, parseO5, parseU5, parseK5, parseG5, parseKUN, parseGUN, parseX5, parseP5, parseT5, parseMonly2, parseNonly2, parseLonly2, parseWonly2, parseY5, parseB5, parseH5, parseD5, parseLH4, parseJonly2, parseS5, parseDZ, parseTS$prime]);
   var caseOf3 = function(v) {
     return function(v1) {
@@ -33483,7 +33633,7 @@
     ;
     throw new Error("Failed pattern match at Kwakwala.Parsing.Umista (line 431, column 1 - line 431, column 69): " + [ltr.constructor.name]);
   };
-  var parseUmistaWordX = /* @__PURE__ */ bind21(parseUmistaLetterNew)(parseUmistaWordX$prime);
+  var parseUmistaWordX = /* @__PURE__ */ bind22(parseUmistaLetterNew)(parseUmistaWordX$prime);
   var parseUmistaMainNew = /* @__PURE__ */ function() {
     return alt12(map30(map210(Kwak.create))(parseUmistaWordX))(alt12(map30(singleton3)(parsePipe))(alt12(map30(singleton3)(parsePuncts6))(map30(map114(map114(singleton3)(Punct.create))(singleton7))(anyCodePoint))));
   }();
@@ -33555,12 +33705,12 @@
 
   // output/Kwakwala.GUI.Components/index.js
   var slot3 = /* @__PURE__ */ slot();
-  var slot1 = /* @__PURE__ */ slot3({
+  var slot12 = /* @__PURE__ */ slot3({
     reflectSymbol: function() {
       return "orthOptions";
     }
   })(ordUnit);
-  var slot22 = /* @__PURE__ */ slot3({
+  var slot23 = /* @__PURE__ */ slot3({
     reflectSymbol: function() {
       return "inputSelect";
     }
@@ -33583,13 +33733,13 @@
     }
   })(ordUnit);
   var modify_4 = /* @__PURE__ */ modify_2(monadStateHalogenM);
-  var bind22 = /* @__PURE__ */ bind(bindHalogenM);
-  var modify6 = /* @__PURE__ */ modify2(monadStateHalogenM);
-  var pure26 = /* @__PURE__ */ pure(applicativeHalogenM);
+  var bind23 = /* @__PURE__ */ bind(bindHalogenM);
+  var modify7 = /* @__PURE__ */ modify2(monadStateHalogenM);
+  var pure27 = /* @__PURE__ */ pure(applicativeHalogenM);
   var discard11 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var $$void9 = /* @__PURE__ */ $$void(functorHalogenM);
   var query3 = /* @__PURE__ */ query();
-  var query1 = /* @__PURE__ */ query3(outputTextIsSymbol)(ordUnit);
+  var query12 = /* @__PURE__ */ query3(outputTextIsSymbol)(ordUnit);
   var ChangeOrthIn = /* @__PURE__ */ function() {
     function ChangeOrthIn2(value0) {
       this.value0 = value0;
@@ -33639,99 +33789,125 @@
     var inputTextComp2 = inputTextComp(Monad0);
     var outputTextComp2 = outputTextComp(Monad0);
     return function(st) {
-      return div_([h1_([text5("Kwak'wala Orthography Conversion (Text)")]), p_([slot1(_orthOptions)(unit)(orthComp2)(unit)(ChangeOrthOpts.create)]), p_([text5("Input Orthography")]), p_([slot22(_inputSelect)(unit)(inputComp2)(st.inputSelect)(ChangeOrthIn.create)]), p_([text5("Output Orthography")]), p_([slot32(_outputSelect)(unit)(outputComp2)(st.outputSelect)(ChangeOrthOut.create)]), p_([slot5(_inputText)(unit)(inputTextComp2)(st.inputText)(ConvertText.create)]), p_([slot_1(_outputText)(unit)(outputTextComp2)(st.outputText)])]);
+      return div_([h1_([text5("Kwak'wala Orthography Conversion (Text)")]), p_([slot12(_orthOptions)(unit)(orthComp2)(unit)(ChangeOrthOpts.create)]), p_([text5("Input Orthography")]), p_([slot23(_inputSelect)(unit)(inputComp2)(st.inputSelect)(ChangeOrthIn.create)]), p_([text5("Output Orthography")]), p_([slot32(_outputSelect)(unit)(outputComp2)(st.outputSelect)(ChangeOrthOut.create)]), p_([slot5(_inputText)(unit)(inputTextComp2)(st.inputText)(ConvertText.create)]), p_([slot_1(_outputText)(unit)(outputTextComp2)(st.outputText)])]);
     };
   };
   var handleConvertAction = function(x) {
     if (x instanceof ChangeOrthIn) {
       return modify_4(function(st) {
-        var $96 = {};
-        for (var $97 in st) {
-          if ({}.hasOwnProperty.call(st, $97)) {
-            $96[$97] = st[$97];
+        var $106 = {};
+        for (var $107 in st) {
+          if ({}.hasOwnProperty.call(st, $107)) {
+            $106[$107] = st[$107];
           }
           ;
         }
         ;
-        $96.inputSelect = x.value0;
-        return $96;
+        $106.inputSelect = x.value0;
+        return $106;
       });
     }
     ;
     if (x instanceof ChangeOrthOut) {
       return modify_4(function(st) {
-        var $100 = {};
-        for (var $101 in st) {
-          if ({}.hasOwnProperty.call(st, $101)) {
-            $100[$101] = st[$101];
+        var $110 = {};
+        for (var $111 in st) {
+          if ({}.hasOwnProperty.call(st, $111)) {
+            $110[$111] = st[$111];
           }
           ;
         }
         ;
-        $100.outputSelect = x.value0;
-        return $100;
+        $110.outputSelect = x.value0;
+        return $110;
       });
     }
     ;
-    if (x instanceof ChangeOrthOpts) {
+    if (x instanceof ChangeOrthOpts && x.value0 instanceof OrthGrubbOptions) {
       return modify_4(function(st) {
-        var $107 = {};
-        for (var $108 in st) {
-          if ({}.hasOwnProperty.call(st, $108)) {
-            $107[$108] = st[$108];
+        var $117 = {};
+        for (var $118 in st) {
+          if ({}.hasOwnProperty.call(st, $118)) {
+            $117[$118] = st[$118];
           }
           ;
         }
         ;
-        $107.orthOptions = function() {
-          var $104 = {};
-          for (var $105 in st.orthOptions) {
-            if ({}.hasOwnProperty.call(st.orthOptions, $105)) {
-              $104[$105] = st["orthOptions"][$105];
+        $117.orthOptions = function() {
+          var $114 = {};
+          for (var $115 in st.orthOptions) {
+            if ({}.hasOwnProperty.call(st.orthOptions, $115)) {
+              $114[$115] = st["orthOptions"][$115];
             }
             ;
           }
           ;
-          $104.grubbOrthOptions = x.value0.value0;
-          return $104;
+          $114.grubbOrthOptions = x.value0.value0;
+          return $114;
         }();
-        return $107;
+        return $117;
       });
     }
     ;
-    if (x instanceof ConvertText) {
-      return bind22(modify6(function(st) {
-        var $112 = {};
-        for (var $113 in st) {
-          if ({}.hasOwnProperty.call(st, $113)) {
-            $112[$113] = st[$113];
+    if (x instanceof ChangeOrthOpts && x.value0 instanceof OrthIPAOptions) {
+      return modify_4(function(st) {
+        var $125 = {};
+        for (var $126 in st) {
+          if ({}.hasOwnProperty.call(st, $126)) {
+            $125[$126] = st[$126];
           }
           ;
         }
         ;
-        $112.inputText = x.value0;
-        return $112;
+        $125.orthOptions = function() {
+          var $122 = {};
+          for (var $123 in st.orthOptions) {
+            if ({}.hasOwnProperty.call(st.orthOptions, $123)) {
+              $122[$123] = st["orthOptions"][$123];
+            }
+            ;
+          }
+          ;
+          $122.ipaOrthOptions = x.value0.value0;
+          return $122;
+        }();
+        return $125;
+      });
+    }
+    ;
+    if (x instanceof ConvertText) {
+      return bind23(modify7(function(st) {
+        var $130 = {};
+        for (var $131 in st) {
+          if ({}.hasOwnProperty.call(st, $131)) {
+            $130[$131] = st[$131];
+          }
+          ;
+        }
+        ;
+        $130.inputText = x.value0;
+        return $130;
       }))(function(stt) {
-        return bind22(pure26(convertOrthography(stt.inputSelect)(stt.outputSelect)(stt.orthOptions.grubbOrthOptions)(x.value0)))(function(newStr) {
-          return discard11($$void9(query1(_outputText)(unit)(new OutputString(newStr, unit))))(function() {
+        return bind23(pure27(convertOrthography(stt.inputSelect)(stt.outputSelect)(stt.orthOptions.grubbOrthOptions)(x.value0)))(function(newStr) {
+          return discard11($$void9(query12(_outputText)(unit)(new OutputString(newStr, unit))))(function() {
             return modify_4(function(st) {
-              var $115 = {};
-              for (var $116 in st) {
-                if ({}.hasOwnProperty.call(st, $116)) {
-                  $115[$116] = st[$116];
+              var $133 = {};
+              for (var $134 in st) {
+                if ({}.hasOwnProperty.call(st, $134)) {
+                  $133[$134] = st[$134];
                 }
                 ;
               }
               ;
-              $115.outputText = newStr;
-              return $115;
+              $133.outputText = newStr;
+              return $133;
             });
           });
         });
       });
     }
     ;
-    throw new Error("Failed pattern match at Kwakwala.GUI.Components (line 130, column 25 - line 144, column 50): " + [x.constructor.name]);
+    throw new Error("Failed pattern match at Kwakwala.GUI.Components (line 130, column 25 - line 148, column 50): " + [x.constructor.name]);
   };
   var defParentState = /* @__PURE__ */ function() {
     return {

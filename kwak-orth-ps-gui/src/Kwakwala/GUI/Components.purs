@@ -134,6 +134,10 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {outputSelect = kot})
   (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
+  (ChangeOrthOpts (OrthIPAOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
+  -- (ChangeOrthOpts (OrthGeorgianOptions ops)) -> do
+  --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
   (ConvertText str) -> do
     stt <- Hal.modify (\st -> st {inputText = str})
     -- stt.inputSelect
@@ -229,6 +233,10 @@ handleConvertAction2 x = case x of
     Hal.modify_ (\st -> st {outputSelect = kot})
   (ChangeOrthOpts2 (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
+  (ChangeOrthOpts2 (OrthIPAOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
+  -- (ChangeOrthOpts2 (OrthGeorgianOptions ops)) -> do
+  --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
   (ConvertText2 fdt) -> do
     stt <- Hal.modify (\st -> st {inputFile = fdt})
     -- stt.inputSelect
