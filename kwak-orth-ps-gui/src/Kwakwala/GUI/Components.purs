@@ -27,6 +27,7 @@ import Kwakwala.GUI.Components.InputFile
 import Kwakwala.GUI.Components.OutputFile
 import Kwakwala.GUI.Components.OrthOptions
 
+import Control.Applicative (when)
 
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
@@ -129,7 +130,12 @@ renderConverter st
 handleConvertAction :: forall m. ParentAction -> Hal.HalogenM ParentState _ ParentSlots _ m Unit
 handleConvertAction x = case x of
   (ChangeOrthIn  kit) -> do
+    old <- Hal.gets _.inputSelect
     Hal.modify_ (\st -> st {inputSelect  = kit })
+    when (kit == InIsland && old /= InIsland) $ do
+      void $ HQ.query _inputText unit (InputSetIsland unit)
+    when (old == InIsland && kit /= InIsland) $ do
+      void $ HQ.query _inputText unit (InputSetNonIsland unit)
   (ChangeOrthOut kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
   (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do

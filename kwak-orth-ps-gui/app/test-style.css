@@ -1,3 +1,8 @@
+/* Changing the font when input text is in Island */
+textarea.island {
+  font-family: island, sans-serif;
+}
+
 /* Taken from https://www.w3schools.com/howto/howto_js_collapsible.asp */
 /* Style the button that is used to open and close the collapsible content */
 .collapsible {
@@ -75,8 +80,8 @@
 }
 
 .orth-options label:has( input[type="checkbox"]:checked) {
-  background-color:#bfb;
-  border-color: #4c4;
+  background-color:#bbf;
+  border-color: #44c;
 }
 
 .orth-options label:has(input[type="checkbox"]:focus) {
@@ -93,13 +98,9 @@
 }
 */
 
-
 .orth-options label:hover {
-  background-color: #dfd;
+  background-color: #ddf;
 } 
-
-
-
 
 /* Version that sort of works in some browsers */
 /*
