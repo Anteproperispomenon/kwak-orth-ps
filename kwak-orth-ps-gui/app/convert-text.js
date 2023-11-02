@@ -10096,7 +10096,7 @@
   var discard5 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var put2 = /* @__PURE__ */ put(monadStateHalogenM);
   var radioButtonsI = function(kwk) {
-    return div_([input2([type_19(InputRadio.value), id2("grubb-in"), name15("RInput"), value13("uh1"), onClick(function(v) {
+    return div2([class_("radio-in")])([input2([type_19(InputRadio.value), id2("grubb-in"), name15("RInput"), value13("uh1"), onClick(function(v) {
       return InGrubb.value;
     }), checked2(eq3(kwk)(InGrubb.value))]), label4([$$for("grubb-in")])([text5("Grubb")]), input2([type_19(InputRadio.value), id2("umista-in"), name15("RInput"), value13("uh2"), onClick(function(v) {
       return InUmista.value;
@@ -10596,11 +10596,11 @@
   var discard6 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
   var put4 = /* @__PURE__ */ put(monadStateHalogenM);
   var radioButtonsO = function(kwk) {
-    return div_([input2([type_24(InputRadio.value), id2("grubb-out"), name15("ROutput"), value16("guh1"), onClick(function(v) {
+    return div2([class_("radio-in")])([input2([type_24(InputRadio.value), id2("grubb-out"), name15("ROutput"), value16("guh1"), onClick(function(v) {
       return OutGrubb.value;
     }), checked2(eq4(kwk)(OutGrubb.value))]), label4([$$for("grubb-out")])([text5("Grubb")]), input2([type_24(InputRadio.value), id2("umista-out"), name15("ROutput"), value16("guh2"), onClick(function(v) {
       return OutUmista.value;
-    }), checked2(eq4(kwk)(OutUmista.value))]), label4([$$for("Umista-out")])([text5("Umista")]), input2([type_24(InputRadio.value), id2("napa-out"), name15("ROutput"), value16("guh3"), onClick(function(v) {
+    }), checked2(eq4(kwk)(OutUmista.value))]), label4([$$for("umista-out")])([text5("Umista")]), input2([type_24(InputRadio.value), id2("napa-out"), name15("ROutput"), value16("guh3"), onClick(function(v) {
       return OutNapa.value;
     }), checked2(eq4(kwk)(OutNapa.value))]), label4([$$for("napa-out")])([text5("NAPA")]), input2([type_24(InputRadio.value), id2("ipa-out"), name15("ROutput"), value16("guh4"), onClick(function(v) {
       return OutIPA.value;

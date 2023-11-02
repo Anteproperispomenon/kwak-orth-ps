@@ -24,3 +24,33 @@
   overflow: hidden;
   background-color: #f1f1f1;
 }
+
+/* from https://markheath.net/post/customize-radio-button-css */
+.radio-in input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.radio-in label {
+  display: inline-block;
+  background-color: #ddd;
+  padding: 10px 20px;
+  font-family: sans-serif, Arial;
+  font-size: 16px;
+  border: 2px solid #444;
+  border-radius: 4px;
+}
+
+.radio-in input[type="radio"]:checked + label {
+  background-color:#bfb;
+  border-color: #4c4;
+}
+
+.radio-in input[type="radio"]:focus + label {
+  border: 2px dashed #444;
+}
+
+.radio-in label:hover {
+  background-color: #dfd;
+} 
