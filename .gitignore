@@ -7,3 +7,7 @@ node_modules
 # Generated files
 .psci
 /output
+
+# Output Javascript
+/kwak-orth-ps-gui/app/convert-file.js
+/kwak-orth-ps-gui/app/convert-text.js
