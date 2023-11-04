@@ -4,13 +4,15 @@ module Kwakwala.GUI.Components.OrthOptions
   , OrthOptions(..)
   , OrthSlot
   , OrthQuery(..)
-  , AllOrthOptions
-  , defAllOrthOptions
+  -- , AllOrthOptions
+  -- , defAllOrthOptions
   ) where
 
+import Prelude
 
 import Kwakwala.GUI.Components.GrubbOptions
-import Prelude
+import Kwakwala.GUI.Components.IPAOptions
+import Kwakwala.GUI.Types (AllOrthOptions, defAllOrthOptions)
 
 import Data.Maybe (Maybe(..))
 import Effect.Class (class MonadEffect)
@@ -22,6 +24,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.Query as HQ
 import Halogen.Query.HalogenM as HM
 import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
+import Kwakwala.Output.IPA (IPAOptions, defIPAOptions)
 import Type.Proxy (Proxy(..))
 import Web.HTML.Common (ClassName(..))
 
@@ -38,14 +41,14 @@ type OrthSlot x = Hal.Slot OrthQuery OrthOptions x
 
 type OrthSlots
   = ( grubbOptions :: GrubbSlot Unit
-    -- , ipaOptions :: IPASlot Unit
+    , ipaOptions :: IPASlot Unit
     -- , georgianOptions :: GeorgianSlot Unit
     )
 
 data OrthQuery a
   = OrthGetGrubb (GrubbOptions -> a)
   -- | OrthSetGrubb GrubbOptions a
-  -- | OrthGetIPA (IPAOptions -> a)
+  | OrthGetIPA (IPAOptions -> a)
   -- | OrthSetIPA IPAOptions a
   -- | OrthGetGeorgian (GeorgianOptions -> a)
   -- | OrthSetGeorgian GeorgianOptions a
@@ -57,23 +60,16 @@ data OrthAction
 orthRaiseGrubb :: GrubbOptions -> OrthAction
 orthRaiseGrubb = OrthGrubbOptions >>> OrthRaiseOptions
 
+orthRaiseIPA :: IPAOptions -> OrthAction
+orthRaiseIPA = OrthIPAOptions >>> OrthRaiseOptions
+
+-- orthRaiseGeorgian :: GeorgianOptions -> OrthAction
+-- orthRaiseGeorgian = OrthGeorgianOptions >>> OrthRaiseOptions
+
 data OrthOptions
   = OrthGrubbOptions GrubbOptions
-  -- | OrthIPAOptions IPAOptions
+  | OrthIPAOptions IPAOptions
   -- | OrthGeorgianOptions GeorgianOptions
-
-type AllOrthOptions
-  = { grubbOrthOptions :: GrubbOptions
-    -- , ipaOrthOptions :: IPAOptions
-    -- , georgianOrthOptions :: GeorgianOptions
-    }
-
-defAllOrthOptions :: AllOrthOptions
-defAllOrthOptions
-  = { grubbOrthOptions : defGrubbOptions
-    -- , ipaOrthOptions : defIPAOrthOptions
-    -- , georgianOrthOptions : defGeorgianOrthOptions
-    }
 
 type OrthState
   = { orthOpen :: Boolean
@@ -94,8 +90,8 @@ orthComp
   = Hal.mkComponent
     { initialState : \_ -> {orthOpen : false}
     , render : \st -> orthOptionsGUI st
-    , eval : HC.mkEval $ HC.defaultEval 
-       { handleAction = handleOrthChange_ 
+    , eval : HC.mkEval $ HC.defaultEval
+       { handleAction = handleOrthChange_
        , handleQuery  = handleOrthQuery
        }
     }
@@ -106,9 +102,9 @@ orthOptionsGUI orst
       [ Html.button [HP.class_ (ClassName "collapsible"), HE.onClick (\_ -> OrthToggleBox) ] [Html.text $ buttonText orst ]
       , Html.div [HP.class_ (ClassName "hid-content"), HP.style (blockStyle orst)]
         [ Html.p_ [Html.text "Grubb Options"]
-        , Html.p_ [Html.slot  _grubbOptions unit grubbComp {-orst.orthGrubb-} defGrubbOptions orthRaiseGrubb]
-        -- , Html.p_ [Html.txt "IPA Options"]
-        -- , Html.p_ [Html.slot  _ipaOptions unit ipaComp defIPAOptions OrthIPAOptions]
+        , Html.p_ [Html.slot  _grubbOptions unit grubbComp defGrubbOptions orthRaiseGrubb]
+        , Html.p_ [Html.text "IPA Options"]
+        , Html.p_ [Html.slot  _ipaOptions unit ipaComp defIPAOptions orthRaiseIPA]
         ]
       ]
 
@@ -128,3 +124,11 @@ handleOrthQuery :: forall a m. Monad m => OrthQuery a -> Hal.HalogenM OrthState 
 handleOrthQuery (OrthGetGrubb reply) = do
   rslt <- HQ.query _grubbOptions unit (GetGrubb (\x -> x))
   pure $ reply <$> rslt
+handleOrthQuery (OrthGetIPA reply) = do
+  rslt <- HQ.query _ipaOptions unit (GetIPA (\x -> x))
+  pure $ reply <$> rslt
+-- handleOrthQuery (OrthGetGeorgian reply) = do
+--   rslt <- HQ.query _georgianOptions unit (GetGeorgian (\x -> x))
+--   pure $ reply <$> rslt
+
+

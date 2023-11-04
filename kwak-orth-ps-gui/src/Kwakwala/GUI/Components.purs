@@ -27,13 +27,14 @@ import Kwakwala.GUI.Components.InputFile
 import Kwakwala.GUI.Components.OutputFile
 import Kwakwala.GUI.Components.OrthOptions
 
+import Control.Applicative (when)
 
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Aff.Class (class MonadAff)
 
 import Kwakwala.GUI.Convert
-import Kwakwala.GUI.Types (FileData)
+import Kwakwala.GUI.Types (FileData, AllOrthOptions, defAllOrthOptions)
 
 import Control.Monad.State.Class (class MonadState, get)
 import Control.Monad.Trans.Class (lift)
@@ -129,17 +130,26 @@ renderConverter st
 handleConvertAction :: forall m. ParentAction -> Hal.HalogenM ParentState _ ParentSlots _ m Unit
 handleConvertAction x = case x of
   (ChangeOrthIn  kit) -> do
+    old <- Hal.gets _.inputSelect
     Hal.modify_ (\st -> st {inputSelect  = kit })
+    when (kit == InIsland && old /= InIsland) $ do
+      void $ HQ.query _inputText unit (InputSetIsland unit)
+    when (old == InIsland && kit /= InIsland) $ do
+      void $ HQ.query _inputText unit (InputSetNonIsland unit)
   (ChangeOrthOut kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
   (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
+  (ChangeOrthOpts (OrthIPAOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
+  -- (ChangeOrthOpts (OrthGeorgianOptions ops)) -> do
+  --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
   (ConvertText str) -> do
     stt <- Hal.modify (\st -> st {inputText = str})
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions.grubbOrthOptions str
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
     void $ HQ.query _outputText unit (OutputString newStr unit)
     Hal.modify_ (\st -> st {outputText = newStr})
 
@@ -224,17 +234,26 @@ renderConverter2 st
 handleConvertAction2 :: forall m. ParentAction2 -> Hal.HalogenM ParentState2 _ ParentSlots2 _ m Unit
 handleConvertAction2 x = case x of
   (ChangeOrthIn2  kit) -> do
+    old <- Hal.gets _.inputSelect
     Hal.modify_ (\st -> st {inputSelect  = kit })
+    when (kit == InIsland && old /= InIsland) $ do
+      void $ HQ.query _inputFile unit (InputFileIsland unit)
+    when (old == InIsland && kit /= InIsland) $ do
+      void $ HQ.query _inputFile unit (InputFileNonIsland unit)
   (ChangeOrthOut2 kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
   (ChangeOrthOpts2 (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
+  (ChangeOrthOpts2 (OrthIPAOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
+  -- (ChangeOrthOpts2 (OrthGeorgianOptions ops)) -> do
+  --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
   (ConvertText2 fdt) -> do
     stt <- Hal.modify (\st -> st {inputFile = fdt})
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions.grubbOrthOptions fdt.fileStr
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
     Hal.modify_ (\st -> st {outputText = newStr})

@@ -1,3 +1,8 @@
+/* Changing the font when input text is in Island */
+textarea.island {
+  font-family: island, sans-serif;
+}
+
 /* Taken from https://www.w3schools.com/howto/howto_js_collapsible.asp */
 /* Style the button that is used to open and close the collapsible content */
 .collapsible {
@@ -24,3 +29,97 @@
   overflow: hidden;
   background-color: #f1f1f1;
 }
+
+/* from https://markheath.net/post/customize-radio-button-css */
+.radio-in input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.radio-in label {
+  display: inline-block;
+  background-color: #ddd;
+  padding: 10px 20px;
+  font-family: sans-serif, Arial;
+  font-size: 16px;
+  border: 2px solid #444;
+  border-radius: 4px;
+}
+
+.radio-in input[type="radio"]:checked + label {
+  background-color:#bfb;
+  border-color: #4c4;
+}
+
+.radio-in input[type="radio"]:focus + label {
+  border: 2px dashed #444;
+}
+
+.radio-in label:hover {
+  background-color: #dfd;
+} 
+
+/* from https://markheath.net/post/customize-radio-button-css */
+/*
+.orth-options-in input[type="checkbox"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}*/
+
+
+.orth-options label {
+  display: inline-block;
+  background-color: #ddd;
+  padding: 10px 20px;
+  font-family: sans-serif, Arial;
+  font-size: 16px;
+  border: 2px solid #444;
+  border-radius: 4px;
+}
+
+.orth-options label:has( input[type="checkbox"]:checked) {
+  background-color:#bbf;
+  border-color: #44c;
+}
+
+.orth-options label:has(input[type="checkbox"]:focus) {
+  border: 2px dashed #444;
+}
+
+/*
+.orth-options input[type="checkbox"]:checked + label {
+  background-color:#bfb;
+  border-color: #4c4;
+}
+.orth-options input[type="checkbox"]:focus + label {
+  border: 2px dashed #444;
+}
+*/
+
+.orth-options label:hover {
+  background-color: #ddf;
+} 
+
+/* Version that sort of works in some browsers */
+/*
+span.orth-span {
+  display: inline-block;
+  background-color: #ddd;
+  padding: 10px 20px;
+  font-family: sans-serif, Arial;
+  font-size: 16px;
+  border: 2px solid #444;
+  border-radius: 10px;
+}
+
+span.orth-span:has(input[type="checkbox"]:checked + label) {
+  background-color:#bfb;
+  border-color: #4c4;
+}
+
+span.orth-span:has(input[type="checkbox"]:focus + label) {
+  border: 2px dashed #444;
+}
+*/

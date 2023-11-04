@@ -18,6 +18,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.Query.HalogenM as HM
 import Kwakwala.GUI.Types (KwakInputType(..))
 import Type.Proxy (Proxy(..))
+import Web.HTML.Common (ClassName(..))
 
 --------------------------------
 -- Input Select Component
@@ -41,11 +42,11 @@ inputComp
 
 radioButtonsI :: forall x. KwakInputType -> Html.HTML x KwakInputType
 radioButtonsI kwk
-  = Html.div_
+  = Html.div [HP.class_ (ClassName "radio-in")]
       [ Html.input [HP.type_ HP.InputRadio, HP.id "grubb-in",  HP.name "RInput", HP.value "uh1", HE.onClick (\_ -> InGrubb),  HP.checked (kwk == InGrubb)]
       , Html.label [HP.for "grubb-in"] [Html.text "Grubb"]
       , Html.input [HP.type_ HP.InputRadio, HP.id "umista-in", HP.name "RInput", HP.value "uh2", HE.onClick (\_ -> InUmista), HP.checked (kwk == InUmista)]
-      , Html.label [HP.for "Umista-in"] [Html.text "Umista"]
+      , Html.label [HP.for "umista-in"] [Html.text "Umista"]
       , Html.input [HP.type_ HP.InputRadio, HP.id "napa-in",   HP.name "RInput", HP.value "uh3", HE.onClick (\_ -> InNapa),   HP.checked (kwk == InNapa)]
       , Html.label [HP.for "napa-in"] [Html.text "NAPA"]
       , Html.input [HP.type_ HP.InputRadio, HP.id "boas-in",   HP.name "RInput", HP.value "uh4", HE.onClick (\_ -> InBoas),   HP.checked (kwk == InBoas)]

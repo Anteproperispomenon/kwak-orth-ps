@@ -34,6 +34,7 @@ import Kwakwala.GUI.Types (FileData)
 import Type.Proxy (Proxy(..))
 import Web.File.File as File
 import Web.File.FileReader.Aff as FR
+import Web.HTML.Common (ClassName(..))
 
 --------------------------------
 -- Input File Dialog/Box
@@ -47,6 +48,8 @@ type InputFileSlot x = Hal.Slot InputFileQuery FileData x
 
 data InputFileQuery a
   = InputString (FileData -> a)
+  | InputFileIsland a
+  | InputFileNonIsland a
 
 -- | Because we can only change the text
 -- | by uploading a file, there's no real
@@ -64,7 +67,7 @@ data InputFileAction
 inputFileComp :: forall m. (MonadAff m) => HC.Component InputFileQuery String FileData m
 inputFileComp
   = Hal.mkComponent
-    { initialState : \x -> {input : x, error : Nothing, ftype : Nothing}
+    { initialState : \x -> {input : x, error : Nothing, ftype : Nothing, style : "normal"}
     , render : inputFileGUI
     , eval : HC.mkEval $ HC.defaultEval
       { handleQuery  = handleInputFileQuery
@@ -76,6 +79,7 @@ type InputFileState
   = { input :: String
     , error :: Maybe String
     , ftype :: Maybe MediaType
+    , style :: String
     }
 
 inputFileGUI :: forall m s. Monad m => InputFileState -> Hal.ComponentHTML InputFileAction s m
@@ -83,7 +87,15 @@ inputFileGUI stt
   = Html.div_
       [ Html.p_ [Html.text "Input"]
       , Html.p_ [Html.input [HP.type_ HP.InputFile, HP.accept inputTypes, HP.multiple false, HE.onFileUpload handleUpload]]
-      , Html.p_ [Html.textarea [HP.rows 12, HP.cols 100, HP.id "output-box", HP.name "output-box", HP.readOnly true, HP.value stt.input]]
+      , Html.p_ [Html.textarea 
+        [ HP.rows 12
+        , HP.cols 100
+        , HP.id "output-box"
+        , HP.name "output-box"
+        , HP.readOnly true
+        , HP.value stt.input
+        , HP.class_ (ClassName stt.style)
+        ]]
       -- , Html.p_ [Html.textarea [HP.autofocus true, HP.rows 12, HP.cols 100, HP.id "input-box", HP.name "input-box", HP.placeholder "Input Text", HE.onValueInput (\x -> ChangeInput x)]]
       -- , Html.p_ [Html.button [HP.id "convert-button", HP.name "convert-button", HE.onClick (\_ -> SendInput)] [Html.text "Convert"] ]
       , Html.p_ [Html.text "Errors"]
@@ -107,6 +119,14 @@ handleInputFileQuery :: forall a s m. Monad m => InputFileQuery a -> Hal.Halogen
 handleInputFileQuery (InputString reply) = do
   stt <- get
   pure $ Just $ reply $ makeFileData stt
+handleInputFileQuery (InputFileIsland x) = do
+  stt <- get
+  Hal.put $ stt {style = "island"}
+  pure $ Just x
+handleInputFileQuery (InputFileNonIsland x) = do
+  stt <- get
+  Hal.put $ stt {style = "normal"}
+  pure $ Just x
 
 handleInputFileAction :: forall m s. (MonadAff m) => InputFileAction -> Hal.HalogenM InputFileState InputFileAction s FileData m Unit 
 handleInputFileAction (DoNothing) = pure unit
@@ -120,8 +140,9 @@ handleInputFileAction (ChangeFile fl) = do
       -- Won't overwrite the previous string
       Hal.put $ stt { error = Just (message err)}
     Right str -> do
-      Hal.put { input : str , error : Nothing, ftype : ftyp}
-      Hal.raise { fileStr : str, fileTyp : ftyp}
+      sty <- Hal.gets _.style
+      Hal.put   { input   : str, error   : Nothing, ftype : ftyp, style : sty }
+      Hal.raise { fileStr : str, fileTyp : ftyp }
 handleInputFileAction Reconvert = do
   str <- Hal.gets _.input
   typ <- Hal.gets _.ftype
