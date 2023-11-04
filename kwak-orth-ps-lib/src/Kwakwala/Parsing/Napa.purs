@@ -4,14 +4,16 @@ Description : Parser for the Southern/NAPA Orthography.
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This is the module for parsing the "Southern"
-Kwak'wala orthography, commonly referred to 
-as the NAPA orthography. For more information
-on this orthography, see
-<http://www.languagegeek.com/wakashan/kwakwala.html>.
-
-Based on the Haskell version of kwak-orth.
 -}
+
+-- | This is the module for parsing the "Southern"
+-- | Kwak'wala orthography, commonly referred to 
+-- | as the NAPA orthography. For more information
+-- | on this orthography, see
+-- | <http://www.languagegeek.com/wakashan/kwakwala.html>.
+-- | 
+-- | Based on the Haskell version of kwak-orth.
+
 
 module Kwakwala.Parsing.Napa 
   ( encodeFromNapa

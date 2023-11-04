@@ -4,20 +4,20 @@ Description : Output for an ASCII-compatible orthography.
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This module has output functions for an
-orthography for Kwak'wala based on the
-Grubb orthography, but modified to be
-usable for ASCII. 
-
-You can configure the output by using 
-the type `GrubbOptions`, which can let
-you do the following things:
-
-  - Use 'J'/'j' instead of standalone "H"/'h'
-  - Use '7' instead of apostrophes.
-  - Use Omit glottal stop marks at the beginnings of words.
-
 -}
+
+-- | This module has output functions for an
+-- | orthography for Kwak'wala based on the
+-- | Grubb orthography, but modified to be
+-- | usable for ASCII. 
+-- | 
+-- | You can configure the output by using 
+-- | the type `GrubbOptions`, which can let
+-- | you do the following things:
+-- | 
+-- |   - Use 'J'/'j' instead of standalone "H"/'h'
+-- |   - Use '7' instead of apostrophes.
+-- |   - Use Omit glottal stop marks at the beginnings of words.
 
 module Kwakwala.Output.Grubb
   ( GrubbOptions
@@ -31,11 +31,16 @@ module Kwakwala.Output.Grubb
   where
 
 import Prelude
+import Data.List (List(..), foldMap)
 
-import Kwakwala.Types
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord(..)
+  , KwakLetter(..)
+  , isCharLetter
+  )
 
-import Data.Foldable
-import Data.List
 
 type GrubbOptions
   = { grbUseJ :: Boolean

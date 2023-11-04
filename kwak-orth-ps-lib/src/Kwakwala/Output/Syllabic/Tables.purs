@@ -1,3 +1,26 @@
+{-|
+Module      : Kwakwala.Output.Syllabic.Tables
+Description : Functions for combining phonemes into syllables
+Copyright   : (c) David Wilson, 2023
+License     : BSD-3
+
+-}
+
+-- | This module is for converting phonemes
+-- | into syllables. The structure of a syllable
+-- | in this writing system is
+-- |
+-- | ```
+-- | Onset + Coda
+-- | ```
+-- |
+-- | Where the onset is (usually)
+-- | a single character representing
+-- | a consonant followed by a vowel
+-- | (or sometimes just a vowel), and
+-- | the coda is zero or more consonants
+-- | before the next syllable.
+
 module Kwakwala.Output.Syllabic.Tables
   ( makeVowel
   , mergeLetters
@@ -5,10 +28,13 @@ module Kwakwala.Output.Syllabic.Tables
   )
   where
 
-import Prelude
+-- import Prelude
 
-import Kwakwala.Types
+import Kwakwala.Types (KwakConsonant(..), KwakVowel(..))
 
+-- | Convert a single vowel into
+-- | a syllable that starts without
+-- | consonant.
 makeVowel :: KwakVowel -> String
 makeVowel Av  = "ᐊ"
 makeVowel Ev  = "ᐈ"
@@ -17,6 +43,9 @@ makeVowel Ov  = "ᐃ"
 makeVowel Uv  = "ᐁ"
 makeVowel AUv = "ᐅ"
 
+-- | Combine a consonant and a vowel
+-- | together into a single syllable
+-- | (not including the syllable coda).
 mergeLetters :: KwakConsonant -> KwakVowel -> String
 mergeLetters cns vwl = case cns of
    -- Nasal Sounds
@@ -335,6 +364,9 @@ mergeLetters cns vwl = case cns of
      Uv  -> "ᐯ"
      AUv -> "ᐳ"
 
+-- | Get the version of a consonant
+-- | used at the end of a syllable
+-- | or word.
 letterCoda :: KwakConsonant -> String
 letterCoda kwc = case kwc of
    Mc   -> "ᑦ"  -- Voiced Bilabial Nasal
@@ -416,8 +448,6 @@ H -> H
 
 J   (tʃ)  -> Q
 CH' (tʃʼ) -> Q'
-
-
 
 -}
 

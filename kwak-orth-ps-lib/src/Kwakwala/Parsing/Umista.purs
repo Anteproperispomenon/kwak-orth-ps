@@ -4,11 +4,13 @@ Description : Parser for the U'mista Orthography for Kwak'wala.
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This is the module for parsing the U'mista
-orthography. Note that there are two versions
-for each function. Try using the "-old" functions
-if you're having issues with parsing text.
 -}
+
+-- | This is the module for parsing the U'mista
+-- | orthography. Note that there are two versions
+-- | for each function. Try using the "-old" functions
+-- | if you're having issues with parsing text.
+
 
 module Kwakwala.Parsing.Umista
     -- * Parsers
@@ -21,33 +23,38 @@ module Kwakwala.Parsing.Umista
 
 
 import Prelude
-import Parsing (Parser, runParser, fail)
+import Parsing (Parser, runParser)
 import Parsing.String
   ( char
-  , string
   , anyChar
   , anyCodePoint
   , satisfy
-  , satisfyCodePoint
-  , eof
   )
 import Parsing.String.Basic (takeWhile1)
 import Parsing.Combinators (many1, choice, many)
 
-import Control.Alt (alt, (<|>))
+import Control.Alt ((<|>))
 
 import Data.List (List(Nil, Cons), (:), concat)
 import Data.List as List
 -- import Data.List.NonEmpty (toList)
 import Data.Either (fromRight)
-import Data.Maybe
+import Data.Maybe (Maybe(..))
 
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Data.CodePoint.Unicode
+import Data.CodePoint.Unicode (isAlpha)
 import Data.List.Types (toList)
 
-import Kwakwala.Types
-import Kwakwala.Parsing.Helpers
+import Kwakwala.Parsing.Helpers (eqCP, isUpperC, parsePipe, peekChar)
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord(..)
+  , KwakLetter(..)
+  , isKwkVow'
+  , makeCase
+  )
+
 
 -----------------------------------------
 -- a̱

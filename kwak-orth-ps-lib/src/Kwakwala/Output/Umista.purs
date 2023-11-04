@@ -4,19 +4,20 @@ Description : U'mista output for Kwak'wala.
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This module contains output functions for
-the U'mista orthography for Kwak'wala. 
-U'mista is the most commonly used orthography
-for northern dialects of Kwak'wala. This is
-one of the most commonly used output modules
-in this library.
-
-For more information about the U'mista orthography,
-see <http://www.languagegeek.com/wakashan/kwakwala.html>.
-
-Converted from code from kwak-orth.
-
 -}
+
+-- | This module contains output functions for
+-- | the U'mista orthography for Kwak'wala. 
+-- | U'mista is the most commonly used orthography
+-- | for northern dialects of Kwak'wala. This is
+-- | one of the most commonly used output modules
+-- | in this library.
+-- | 
+-- | For more information about the U'mista orthography,
+-- | see <http://www.languagegeek.com/wakashan/kwakwala.html>.
+-- | 
+-- | Converted from code from kwak-orth.
+
 
 module Kwakwala.Output.Umista
   ( outputUmistaChar
@@ -30,10 +31,16 @@ module Kwakwala.Output.Umista
 
 import Prelude
 
-import Data.Foldable
+-- import Data.Foldable
 
-import Data.List
-import Kwakwala.Types
+import Data.List (List(..), foldMap)
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord(..)
+  , KwakLetter(..)
+  , isCharLetter
+  )
 
 -------------------------------------------
 -- Standard Output

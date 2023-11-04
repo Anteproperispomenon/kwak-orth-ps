@@ -4,13 +4,25 @@ Description : Syllabic Output for Kwak'wala using Carrier Syllabics.
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This module is based on an experimental
-syllabic/abugida orthography that uses
-Carrier syllabics as the basis. Carrier
-was chosen owing to the large amount of
-overlap in phonemes.
-
 -}
+
+-- | This module is based on an experimental
+-- | syllabic/abugida orthography that uses
+-- | Carrier syllabics as the basis. Carrier
+-- | was chosen owing to the large amount of
+-- | overlap in phonemes.
+-- | 
+-- | Note that since syllabics requires that
+-- | multiple phonemes be encoded in a single
+-- | grapheme, it cannot be implemented as
+-- | simply as other orthographies for output.
+-- | Instead, it is implemented as a `Parser`
+-- | over `CasedChar`s.
+-- | 
+-- | This also means that, unlike other
+-- | emitters, the syllabic emitter can
+-- | fail (at least in theory).
+
 
 module Kwakwala.Output.Syllabic
   ( outputSyllabics
@@ -19,29 +31,27 @@ module Kwakwala.Output.Syllabic
 
 import Prelude
 
-import Kwakwala.Output.Syllabic.Tables
+import Kwakwala.Output.Syllabic.Tables (letterCoda, makeVowel, mergeLetters)
 
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
--- import Data.Identity (Identity(..))
-import Data.Foldable (fold, foldr)
+import Data.Foldable (foldr)
 
-import Parsing
+import Parsing (ParseError, Parser, ParserT, fail, initialPos, runParser)
 import Parsing.Combinators as PC
 import Parsing.Combinators ((<|>))
 import Parsing.Token as PT
 
-import Data.List (List(..), (:), manyRec, someRec)
-import Data.List as List
+import Data.List (List, someRec)
+-- import Data.List as List
 -- import Data.List.NonEmpty (toList)
 
-import Kwakwala.Types
-import Kwakwala.Types.Tables
+import Kwakwala.Types (CasedChar(..), KwakConsonant, KwakVowel)
+import Kwakwala.Types.Tables (tryConsCC, tryVowelCC)
 
 -- import Control.Monad
 import Control.Monad.Trans.Class (lift)
-import Control.Monad.State.Trans (StateT, evalStateT, get, put, modify_)
-
+import Control.Monad.State.Trans (StateT, evalStateT, get, put)
 
 ------------------------------------
 -- Specialised Types
@@ -63,9 +73,24 @@ runSyllabicEmitter chrs sem = runParser chrs (evalStateT sem WordStart)
 liftEmit :: forall a. (Parser (List CasedChar) a) -> SyllabicEmitter a
 liftEmit = lift
 
+-- | Convert a list of `CasedChar`s into
+-- | a `String` of syllables. Note that
+-- | this will ignore case, as case
+-- | works differently in syllabaics.
+-- |
+-- | If the emitter encounters an error,
+-- | this will instead return a `ParseError`.
 outputSyllabicsE :: (List CasedChar) -> Either ParseError String
 outputSyllabicsE lst = runSyllabicEmitter lst emitSyllabics
 
+-- | Convert a list of `CasedChar`s into
+-- | a `String` of syllables. Note that
+-- | this will ignore case, as case
+-- | works differently in syllabaics.
+-- |
+-- | Also note that this will not give
+-- | an error if the emitter can't 
+-- | output the syllables.
 outputSyllabics :: (List CasedChar) -> String
 outputSyllabics lst = case (runSyllabicEmitter lst emitSyllabics) of
   (Left  pe) -> show pe

@@ -4,35 +4,44 @@ Description : Parser for texts written in Boas's orthographies.
 Copyright   : (c) David Wilson, 2022
 License     : BSD-3
 
-This module has parsers that should cover
-most orthographies that Franz Boas has used.
-Since Boas's orthography isn't as phonemic
-as most other orthographies, it has more
-characters than others. This makes it more
-difficult to convert to Boas than converting
-from Boas.
 -}
+
+-- | This module has parsers that should cover
+-- | most orthographies that Franz Boas has used.
+-- | Since Boas's orthography isn't as phonemic
+-- | as most other orthographies, it has more
+-- | characters than others. This makes it more
+-- | difficult to convert to Boas than converting
+-- | from Boas.
 
 module Kwakwala.Parsing.Boas
     ( encodeFromBoas
     , parseBoas
     ) where
 
-import Data.CodePoint.Unicode
-import Data.Maybe
-import Kwakwala.Parsing.Helpers
-import Kwakwala.Types
 import Prelude
 
-import Control.Alt (alt, (<|>))
+import Data.CodePoint.Unicode (isAlpha)
+import Data.Maybe (Maybe(..), maybe)
+import Kwakwala.Parsing.Helpers (eqCP, isUpperC, parsePipe, peekChar, satisfyMaybe)
+import Kwakwala.Types
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , KwakLetter(..)
+  , isKwkVow'
+  , isKwkVow''
+  , makeCase
+  )
+
+import Control.Alt ((<|>))
 import Data.Either (fromRight)
 import Data.List (List(Nil, Cons), (:), concat)
-import Data.List as List
+-- import Data.List as List
 import Data.List.Types (toList)
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Parsing (Parser, runParser, fail)
+import Parsing (Parser, runParser)
 import Parsing.Combinators (many1, choice, many)
-import Parsing.String (anyChar, anyCodePoint, char, eof, satisfy, satisfyCodePoint, string)
+import Parsing.String (anyChar, anyCodePoint, char, satisfy)
 import Parsing.String.Basic (takeWhile1)
 
 -------------------------------------------

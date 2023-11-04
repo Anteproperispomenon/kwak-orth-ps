@@ -4,16 +4,18 @@ Description : IPA output for Kwak'wala.
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This module has output functions for IPA
-from Kwak'wala. IPA is not frequently used
-to write Kwak'wala, so this is mainly used
-to produce IPA pronunciations of Kwak'wala
-text, usually for an academic audience not
-well-versed in Kwak'wala.
-
-Note that IPA has no casing, so upper and
-lower case characters are treated the same.
 -}
+
+-- | This module has output functions for IPA
+-- | from Kwak'wala. IPA is not frequently used
+-- | to write Kwak'wala, so this is mainly used
+-- | to produce IPA pronunciations of Kwak'wala
+-- | text, usually for an academic audience not
+-- | well-versed in Kwak'wala.
+-- | 
+-- | Note that IPA has no casing, so upper and
+-- | lower case characters are treated the same.
+
 
 module Kwakwala.Output.IPA
     -- * IPA Output options
@@ -31,23 +33,15 @@ module Kwakwala.Output.IPA
 
 import Prelude
 
-{-
-import qualified Data.Text          as T
-import qualified Data.Text.IO       as T
-import qualified Data.Text.Encoding as T
+-- import Data.Foldable
+import Data.List (List, foldMap)
 
-import qualified Data.Text.Lazy         as TL
-import qualified Data.Text.Lazy.Builder as TL
--}
-
--- import Control.Monad
--- import Data.Char
--- import Data.String
-
-import Data.Foldable
-import Data.List
-
-import Kwakwala.Types
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord(..)
+  , KwakLetter(..)
+  )
 
 -------------------------------------------
 -- IPA Options

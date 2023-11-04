@@ -4,10 +4,11 @@ Description : Parser for the Island Font Orthography.
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This is the module for parsing the "Southern"
-or NAPA orthography, encoded for the "Island"
-font.
 -}
+
+-- | This is the module for parsing the "Southern"
+-- | or NAPA orthography, encoded for the "Island"
+-- | font.
 
 module Kwakwala.Parsing.Island
     -- * Direct Encoder

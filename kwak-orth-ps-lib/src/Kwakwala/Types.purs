@@ -3,16 +3,16 @@ Module      : Kwakwala.Sounds
 Description : Kwak'wala phonology codes
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
-
-This module contains the types that
-are used internally to represent 
-Kwak'wala phonemes. Note that there
-are no stress markers, since most written
-Kwak'wala lacks them.
-
-Mostly copied from the Haskell version
-of kwak-orth
 -}
+
+-- | This module contains the types that
+-- | are used internally to represent 
+-- | Kwak'wala phonemes. Note that there
+-- | are no stress markers, since most written
+-- | Kwak'wala lacks them.
+-- | 
+-- | Mostly copied from the Haskell version
+-- | of kwak-orth.
 
 module Kwakwala.Types
     -- * Types
@@ -63,6 +63,12 @@ import Data.Foldable (intercalate)
 -- |  * Palatalisation of velar consonants is not 
 -- |  notated, as is the case with most orthographies.
 -- |
+-- Note that at the moment, the documentation
+-- does not show up on individual constructors.
+-- This is because doing it properly results in
+-- a large indented block below each constructor,
+-- rather than a small line of text next to the
+-- constructor, as it would in haddock.
 data KwakLetter
 
    -- Nasal Sounds
@@ -250,8 +256,8 @@ mapChar2 :: forall b.
          -> (CasedLetter -> b) -- ^ The mapping over `CasedLetter`s.
          -> CasedChar          -- ^ The input.
          -> b                  -- ^ The output value.
-mapChar2 f g (Kwak  x) = g x
-mapChar2 f g (Punct x) = f x
+mapChar2 _ g (Kwak  x) = g x
+mapChar2 f _ (Punct x) = f x
 
 -- | Convert a `KwakLetter` to a `CasedLetter`
 -- depending on the value of a `Bool`.
@@ -268,8 +274,8 @@ stripCase (Maj x) = x
 -- using different functions depending on whether
 -- the letter is upper or lower case.
 mapCase :: forall b. (KwakLetter -> b) -> (KwakLetter -> b) -> CasedLetter -> b
-mapCase f g (Maj x) = f x
-mapCase f g (Min x) = g x
+mapCase f _ (Maj x) = f x
+mapCase _ g (Min x) = g x
 
 -- | Check whether a `CasedLetter` is upper-case.
 isMaj :: CasedLetter -> Boolean
@@ -323,6 +329,19 @@ isKwakWord _         = false
 ---------------------------------------------------------------
 -- Separate Vowels/Consonants
 
+-- | A subset of `KwakLetter`s that only
+-- | includes vowels. This is to make
+-- | it easier to combine letters into
+-- | syllables, since a function with
+-- | the signature
+-- |
+-- | ```purescript
+-- | KwakConsonant -> KwakVowel -> String
+-- | ```
+-- | 
+-- | can be written, which greatly 
+-- | reduces the number of possibly
+-- | matching cases.
 data KwakVowel
    = Av  -- ^ Open Front Unrounded Vowel
    | Ev  -- ^ Close-Mid Front Unrounded Vowel
@@ -342,6 +361,17 @@ instance showKwakVowel :: Show KwakVowel where
 derive instance  eqKwakVowel :: Eq  KwakVowel
 derive instance ordKwakVowel :: Ord KwakVowel
 
+-- | A subset of `KwakLetter`s that only
+-- | includes consonants. This is to make
+-- | it easier to combine letters into
+-- | syllables, since a function with
+-- | the signature
+-- |
+-- | ```purescript
+-- | KwakConsonant -> KwakVowel -> String
+-- | ```
+-- | 
+-- | can be written. 
 data KwakConsonant
 
    -- Nasal Sounds

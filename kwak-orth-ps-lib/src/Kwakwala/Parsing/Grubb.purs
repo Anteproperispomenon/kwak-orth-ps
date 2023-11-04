@@ -4,22 +4,24 @@ Description : Parser for the Grubb-ASCII orthography
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This is the module for parsing the Grubb-ASCII
-orthography. This orthography is a modified
-version of the original Grubb orthography
-(which is related to the U'mista orthography),
-that has been changed to make it encodeable in
-pure ASCII. This makes it useful for applications
-where using non-ASCII characters is considerably
-more difficult or even impossible.
-
-Inspired by Grubb's usage of "eh" to represent
-/a/ and ASCII encodings of Esperanto, characters
-that are usually written with diacritics are
-instead written with an "h" following them. In
-newer versions, the "h" sound is instead written
-as "j" to prevent overlap/clashes.
 -}
+
+-- | This is the module for parsing the Grubb-ASCII
+-- | orthography. This orthography is a modified
+-- | version of the original Grubb orthography
+-- | (which is related to the U'mista orthography),
+-- | that has been changed to make it encodeable in
+-- | pure ASCII. This makes it useful for applications
+-- | where using non-ASCII characters is considerably
+-- | more difficult or even impossible.
+-- | 
+-- | Inspired by Grubb's usage of "eh" to represent
+-- | /a/ and ASCII encodings of Esperanto, characters
+-- | that are usually written with diacritics are
+-- | instead written with an "h" following them. In
+-- | newer versions, the "h" sound is instead written
+-- | as "j" to prevent overlap/clashes.
+
 
 module Kwakwala.Parsing.Grubb
     -- * Newer Parsers
@@ -32,32 +34,31 @@ module Kwakwala.Parsing.Grubb
 
 import Prelude
 import Parsing (Parser, runParser, fail)
-import Parsing.String
-  ( char
-  , string
-  , anyChar
-  , anyCodePoint
-  , satisfy
-  , satisfyCodePoint
-  , eof
-  )
+import Parsing.String (char, anyChar, satisfy)
 import Parsing.String.Basic (takeWhile1)
 import Parsing.Combinators (many1, choice, many)
 
-import Control.Alt (alt, (<|>))
+import Control.Alt ((<|>))
 
 import Data.List (List(Nil, Cons), (:), concat)
 import Data.List as List
 -- import Data.List.NonEmpty (toList)
 import Data.Either (fromRight)
-import Data.Maybe
+import Data.Maybe (Maybe(..))
 
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Data.CodePoint.Unicode
+import Data.CodePoint.Unicode (isAlpha)
 import Data.List.Types (toList)
 
-import Kwakwala.Types
-import Kwakwala.Parsing.Helpers
+import Kwakwala.Parsing.Helpers (eqCP, isUpperC, liftP, parsePipe, peekChar)
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord(..)
+  , KwakLetter(..)
+  , isKwkVow'
+  , makeCase
+  )
 
 -- These aren't really necessary;
 -- They're just extras.

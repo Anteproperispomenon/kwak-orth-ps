@@ -4,13 +4,14 @@ Description : Output for the usual Kwak'wala NAPA orthography
 Copyright   : (c) David Wilson, 2023
 License     : BSD-3
 
-This module contains output functions for
-the variant of NAPA that is most commonly
-used for Kwak'wala. It's also known as the
-\"Southern\" Orthography, as can be seen at
-<http://www.languagegeek.com/wakashan/kwakwala.html>
-
 -}
+
+-- | This module contains output functions for
+-- | the variant of NAPA that is most commonly
+-- | used for Kwak'wala. It's also known as the
+-- | \"Southern\" Orthography, as can be seen at
+-- | <http://www.languagegeek.com/wakashan/kwakwala.html>
+
 
 module Kwakwala.Output.Napa
   ( outputNapaChar
@@ -20,12 +21,17 @@ module Kwakwala.Output.Napa
   , outputNapaLetter
   ) where
 
-import Prelude
+-- import Prelude
 
-import Kwakwala.Types
 import Data.List (List)
+import Data.Foldable (foldMap)
 
-import Data.Foldable
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord(..)
+  , KwakLetter(..)
+  )
 
 -------------------------------------------
 -- Main Output
