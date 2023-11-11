@@ -14,8 +14,10 @@ import Halogen.VDom.Driver (runUI)
 -- import Type.Proxy (Proxy(..))
 
 import Kwakwala.GUI.Components (convertComp2, ParentAction2(..))
+import Kwakwala.GUI.Loading (removeLoader)
 
 main :: Effect Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
+  removeLoader
   runUI convertComp2 (ConvertText2 { fileStr : "" , fileTyp : Nothing} ) body
