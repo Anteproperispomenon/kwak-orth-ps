@@ -41,6 +41,8 @@ import Control.Monad.Trans.Class (lift)
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
 import Data.MediaType.Common (textPlain)
+import Effect.Aff (joinFiber, forkAff)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Halogen (ComponentHTML)
 import Halogen as Hal
 import Halogen.Component as HC
@@ -88,6 +90,7 @@ data ParentAction
   | ChangeOrthOut  KwakOutputType
   | ChangeOrthOpts OrthOptions
   | ConvertText    String
+  | ConvertPull
 
 defParentState :: ParentState
 defParentState = 
@@ -120,14 +123,18 @@ renderConverter st
     , Html.p_ [Html.text "Output Orthography"]
     , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut]
     -- , Html.p_ [Html.text "Input Text"]
-    , Html.p_ [Html.slot  _inputText    unit inputTextComp  st.inputText ConvertText]
+    , Html.p_ [Html.slot  _inputText    unit inputTextComp  st.inputText handleInputText]
     -- , Html.p_ [Html.text "Output Text"]
     , Html.p_ [Html.slot_ _outputText   unit outputTextComp st.outputText]
     -- , Html.p_ [Html.text "Test"]
     -- , Html.p_ [Html.slot_ _inputFile unit inputFileComp st.inputFile]
     ]
 
-handleConvertAction :: forall m. ParentAction -> Hal.HalogenM ParentState _ ParentSlots _ m Unit
+handleInputText :: InputTextRaise -> ParentAction
+handleInputText (RaiseInput str) = ConvertText str
+handleInputText PullInput = ConvertPull
+
+handleConvertAction :: forall m. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState _ ParentSlots _ m Unit
 handleConvertAction x = case x of
   (ChangeOrthIn  kit) -> do
     old <- Hal.gets _.inputSelect
@@ -136,8 +143,10 @@ handleConvertAction x = case x of
       void $ HQ.query _inputText unit (InputSetIsland unit)
     when (old == InIsland && kit /= InIsland) $ do
       void $ HQ.query _inputText unit (InputSetNonIsland unit)
+    void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOut kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
+    void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ChangeOrthOpts (OrthIPAOptions ops)) -> do
@@ -150,10 +159,28 @@ handleConvertAction x = case x of
     -- stt.outputSelect
     -- stt.grubbOptions
     newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
-    void $ HQ.query _outputText unit (OutputString newStr unit)
+    -- fib <- liftAff $ forkAff $ pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
+    -- newStr <- liftAff $ joinFiber fib
     Hal.modify_ (\st -> st {outputText = newStr})
-    void $ HQ.query _inputText unit (InputSetButtonDone unit)
+    void $ HQ.query _outputText unit (OutputString newStr unit)
+    void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
+  (ConvertPull) -> do
+    stt  <- Hal.get
+    mstr <- HQ.query _inputText unit (InputStringQ (\x -> x))
+    {-
+    fib  <- forkAff $ liftAff $ do
+      case mstr of
+        Nothing    -> pure Nothing
+        (Just str) -> pure $ Just $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
+    -}
+    str <- case mstr of
+      Nothing  -> pure ""
+      (Just s) -> pure s
 
+    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
+    Hal.modify_ (\st -> st {outputText = newStr, inputText = str})
+    void $ HQ.query _outputText unit (OutputString newStr unit)
+    void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
 
 -- type Node r p i = Array (IProp r i) -> Array (HTML p i) -> HTML p i
 
@@ -215,7 +242,6 @@ convertComp2
        }
      }
 
-
 renderConverter2 :: forall m. MonadAff m => ParentState2 -> Hal.ComponentHTML ParentAction2 ParentSlots2 m
 renderConverter2 st
   = Html.div_
@@ -258,5 +284,4 @@ handleConvertAction2 x = case x of
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
     Hal.modify_ (\st -> st {outputText = newStr})
-
 

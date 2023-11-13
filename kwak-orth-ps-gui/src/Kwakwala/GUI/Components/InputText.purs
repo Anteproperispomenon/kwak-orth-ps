@@ -3,12 +3,14 @@ module Kwakwala.GUI.Components.InputText
   , _inputText
   , InputTextQuery(..)
   , InputTextSlot
+  , InputTextRaise(..)
   ) where
 
 import Prelude
 
 import Control.Monad.State.Class (get)
 import Data.Maybe (Maybe(..))
+import Effect.Aff.Class (class MonadAff)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
@@ -26,7 +28,7 @@ _inputText = Proxy
 
 type InputTextX r = {inputText :: String | r}
 
-type InputTextSlot x = Hal.Slot InputTextQuery String x
+type InputTextSlot x = Hal.Slot InputTextQuery InputTextRaise x
 
 type InputTextState
   = { itString :: String
@@ -35,18 +37,25 @@ type InputTextState
     }
 
 data InputTextQuery a
-  = InputString (String -> a)
+  = InputStringQ (String -> a)
   | InputSetIsland a
   | InputSetNonIsland a
   | InputSetButtonDone a
+  | InputReset a
 
 data InputTextAction
   = ChangeInput String
   | SendInput
+  | SendInputPull
+  | SetInProgress
   | DoneButton
   | RevertButton
 
-inputTextComp :: forall m. (Monad m) => HC.Component InputTextQuery String String m
+data InputTextRaise
+  = RaiseInput String
+  | PullInput
+
+inputTextComp :: forall m. (MonadAff m) => HC.Component InputTextQuery String InputTextRaise m
 inputTextComp
   = Hal.mkComponent
     { initialState : \x -> { itString : x, itStyle : "normal", itConvert : ConvertReady }
@@ -76,9 +85,15 @@ inputTextGUI st
           [ HP.id "convert-button"
           , HP.name "convert-button"
           , HE.onClick (\_ -> SendInput)
+          -- , HE.onClick (\_ -> SendInputPull)
+          -- , HE.onMouseDown (\_ -> SetInProgress)
           , HP.class_ (getConvertClass st)
-          , HP.disabled (st.itConvert == ConvertProgress)
-          ] 
+          -- Note: if the call stack size is exceded,
+          -- The button will be stuck in the ConvertProgress
+          -- state. Thus, we don't disable the button
+          -- while in that state.
+          -- , HP.disabled (st.itConvert == ConvertProgress)
+          ]
           [ Html.text (getButtonText st.itConvert) ] ]
       ]
 
@@ -90,8 +105,8 @@ getButtonText ConvertReady    = "Convert"
 getButtonText ConvertProgress = "Converting..."
 getButtonText ConvertDone     = "Conversion Complete"
 
-handleInputTextQuery :: forall a s m. Monad m => InputTextQuery a -> Hal.HalogenM InputTextState InputTextAction s String m (Maybe a)
-handleInputTextQuery (InputString reply) = do
+handleInputTextQuery :: forall a s m. Monad m => InputTextQuery a -> Hal.HalogenM InputTextState InputTextAction s InputTextRaise m (Maybe a)
+handleInputTextQuery (InputStringQ reply) = do
   st <- get
   pure $ Just (reply st.itString)
 handleInputTextQuery (InputSetIsland x) = do
@@ -105,16 +120,26 @@ handleInputTextQuery (InputSetNonIsland x) = do
 handleInputTextQuery (InputSetButtonDone x) = do
   Hal.modify_ $ \st -> st { itConvert = ConvertDone }
   pure $ Just x
+handleInputTextQuery (InputReset x) = do
+  cvt <- Hal.gets _.itConvert
+  when (cvt == ConvertDone) $ Hal.modify_ $ \st -> st { itConvert = ConvertReady }
+  pure $ Just x
 
-handleInputTextAction :: forall m s. InputTextAction -> Hal.HalogenM InputTextState InputTextAction s String m Unit 
+handleInputTextAction :: forall m s. MonadAff m => InputTextAction -> Hal.HalogenM InputTextState InputTextAction s InputTextRaise m Unit 
 handleInputTextAction (ChangeInput str) = do
   stx <- Hal.modify $ \st -> st { itString = str }
   when (stx.itConvert == ConvertDone) (Hal.modify_ $ \st -> st { itConvert = ConvertReady })
   -- Might want to check whether st.itConvert is in progress first.
   -- = Hal.modify_ $ \st -> st { itString = str , itConvert = ConvertReady }
+handleInputTextAction SetInProgress = do
+  Hal.modify_ $ \st -> st { itConvert = ConvertProgress }
 handleInputTextAction SendInput = do
   Hal.modify_ $ \st -> st { itConvert = ConvertProgress }
   str <- Hal.gets _.itString
-  Hal.raise str
+  Hal.raise (RaiseInput str)
+handleInputTextAction SendInputPull = do
+  Hal.modify_ $ \st -> st { itConvert = ConvertProgress }
+  -- str <- Hal.gets _.itString
+  Hal.raise PullInput
 handleInputTextAction DoneButton   = Hal.modify_ $ \st -> st { itConvert = ConvertDone  }
 handleInputTextAction RevertButton = Hal.modify_ $ \st -> st { itConvert = ConvertReady }
