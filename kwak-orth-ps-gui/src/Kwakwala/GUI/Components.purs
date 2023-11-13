@@ -152,6 +152,7 @@ handleConvertAction x = case x of
     newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
     void $ HQ.query _outputText unit (OutputString newStr unit)
     Hal.modify_ (\st -> st {outputText = newStr})
+    void $ HQ.query _inputText unit (InputSetButtonDone unit)
 
 
 -- type Node r p i = Array (IProp r i) -> Array (HTML p i) -> HTML p i

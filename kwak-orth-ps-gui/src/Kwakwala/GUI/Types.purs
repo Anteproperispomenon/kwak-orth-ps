@@ -12,6 +12,8 @@ module Kwakwala.GUI.Types
   , toolaboveFC
   , toolbelowFC
   , tooltiptextC
+  , ConvertState(..)
+  , convertStateC
   -- , GrubbOptions
   )
   where
@@ -100,4 +102,15 @@ toolaboveFC = ClassName "tooltip toolabove toolfirst"
 toolbelowFC :: ClassName
 toolbelowFC = ClassName "tooltip toolbelow toolfirst"
 
+data ConvertState 
+  = ConvertReady
+  | ConvertProgress
+  | ConvertDone
 
+derive instance  eqConvertState :: Eq  ConvertState
+derive instance ordConvertState :: Ord ConvertState
+
+convertStateC :: ConvertState -> ClassName
+convertStateC ConvertReady    = ClassName "convert-ready"
+convertStateC ConvertProgress = ClassName "convert-progress"
+convertStateC ConvertDone     = ClassName "convert-done"
