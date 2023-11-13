@@ -17,6 +17,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Query.HalogenM as HM
 import Kwakwala.Output.Grubb (GrubbOptions)
+import Kwakwala.GUI.Types (checkboxC)
 import Type.Proxy (Proxy(..))
 import Web.HTML.Common (ClassName(..))
 
@@ -72,25 +73,27 @@ grubbOptionsGUI grb
   = Html.div [HP.class_ (ClassName "orth-options")]
     [ Html.p_
       [ Html.label [HP.for "grubb-j", HP.class_ (ClassName "orth-span")]
-        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-j", HP.name "CGrubb", HP.value "grb1", HE.onClick (\_ -> GrbTogJ), HP.checked grb.grbUseJ]
+        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-j", HP.name "CGrubb", HP.class_ checkboxC, HP.value "grb1", HE.onClick (\_ -> GrbTogJ), HP.checked grb.grbUseJ]
         , Html.text "Use J for /h/"
         ]
       ]
 
     , Html.p_
       [ Html.label [HP.for "grubb-e", HP.class_ (ClassName "orth-span")]
-        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-e", HP.name "CGrubb", HP.value "grb2", HE.onClick (\_ -> GrbTog'), HP.checked grb.grbUse']
+        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-e", HP.name "CGrubb", HP.class_ checkboxC, HP.value "grb2", HE.onClick (\_ -> GrbTog'), HP.checked grb.grbUse']
         , Html.text "Include apostrophes at word start"
         ]
       ]
     
     , Html.p_
       [ Html.label [HP.for "grubb-7"]
-        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-7", HP.name "CGrubb", HP.value "grb3", HE.onClick (\_ -> GrbTog7), HP.checked grb.grbUse7]
+        [ Html.input [HP.type_ HP.InputCheckbox, HP.id "grubb-7", HP.name "CGrubb", HP.class_ checkboxC, HP.value "grb3", HE.onClick (\_ -> GrbTog7), HP.checked grb.grbUse7]
         , Html.text "Replace apostrophes with 7s"
         ]
       ]
     ]
+
+
 
 data GrubbToggle
   = GrbTogJ

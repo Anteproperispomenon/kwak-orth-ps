@@ -4,6 +4,8 @@ module Kwakwala.GUI.Types
   , AllOrthOptions
   , defAllOrthOptions
   , FileData
+  , checkboxC
+  , containerC
   -- , GrubbOptions
   )
   where
@@ -14,6 +16,7 @@ import Data.Maybe (Maybe)
 import Data.MediaType (MediaType)
 import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
 import Kwakwala.Output.IPA   (IPAOptions  , defIPAOptions)
+import Web.HTML.Common (ClassName(..))
 
 data KwakOutputType
   = OutGrubb -- GrubbOptions
@@ -66,3 +69,9 @@ defAllOrthOptions
     , ipaOrthOptions : defIPAOptions
     -- , georgianOrthOptions : defGeorgianOptions
     }
+
+checkboxC :: ClassName
+checkboxC = ClassName "checkbox"
+
+containerC :: ClassName
+containerC = ClassName "container"

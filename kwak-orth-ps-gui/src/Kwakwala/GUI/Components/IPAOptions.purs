@@ -16,6 +16,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Query.HalogenM as HM
 import Kwakwala.Output.IPA (IPAOptions)
+import Kwakwala.GUI.Types (checkboxC, containerC)
 import Type.Proxy (Proxy(..))
 import Web.HTML.Common (ClassName(..))
 
@@ -56,7 +57,7 @@ ipaComp
     { initialState : \x -> x
     , render : \st -> grubbOptionsGUI st
     , eval : HC.mkEval $ HC.defaultEval 
-       { handleAction = handleIPAChange_ 
+       { handleAction = handleIPAChange_
        , handleQuery  = handleIPAQuery
        }
     }
@@ -66,16 +67,20 @@ grubbOptionsGUI ops
   = Html.div [HP.class_ (ClassName "orth-options")]
     [ Html.p_
       [ Html.span [HP.class_ (ClassName "orth-span")]
-        [ Html.label [HP.for "ipa-tie"]
+        [ Html.label [HP.for "ipa-tie", HP.class_ containerC]
+          -- [ Html.input  [HP.type_ HP.InputCheckbox, HP.id "ipa-tie", HP.name "CIPA", HP.class_ checkboxC, HP.value "ipa1", HE.onClick (\_ -> IpaTogTie), HP.checked ops.ipaUseTies] 
           [ Html.input  [HP.type_ HP.InputCheckbox, HP.id "ipa-tie", HP.name "CIPA", HP.value "ipa1", HE.onClick (\_ -> IpaTogTie), HP.checked ops.ipaUseTies] 
+          , Html.span [HP.class_ checkboxC] []
           , Html.text "Include ties in the middle of affricates"
           ]
         ]
       ]
     , Html.p_
       [ Html.span [HP.class_ (ClassName "orth-span")]
-        [ Html.label [HP.for "ipa-pal"]
+        [ Html.label [HP.for "ipa-pal", HP.class_ containerC]
+          -- [ Html.input  [HP.type_ HP.InputCheckbox, HP.id "ipa-pal", HP.name "CIPA", HP.class_ checkboxC,  HP.value "ipa2", HE.onClick (\_ -> IpaTogPal), HP.checked ops.ipaShowPal] 
           [ Html.input  [HP.type_ HP.InputCheckbox, HP.id "ipa-pal", HP.name "CIPA", HP.value "ipa2", HE.onClick (\_ -> IpaTogPal), HP.checked ops.ipaShowPal] 
+          , Html.span [HP.class_ checkboxC] []
           , Html.text "Include palatalisation marks for velar consonants"
           ]
         ]
