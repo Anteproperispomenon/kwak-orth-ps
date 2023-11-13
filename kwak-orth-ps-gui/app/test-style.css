@@ -92,6 +92,9 @@ textarea.island {
   padding-left: 10px;
 }
 
+/* Unfortunately, the 'has' attribute doesn't work in Firefox. */
+/* It still looks fine in Firefox, but it doesn't have the same */
+/* effect as in Chrome etc... */
 .orth-options label:has( input[type="checkbox"]:checked) {
   background-color:#bbf;
   border-color: #44c;
@@ -114,3 +117,77 @@ textarea.island {
 .orth-options label:hover {
   background-color: #ddf;
 } 
+
+/* Taken from https://www.w3schools.com/css/css_tooltip.asp */
+/* Modified to use a mixture of both up and down arrows */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 360px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  /* bottom: 150%; */
+  left: 50%;
+  margin-left: -60px;
+}
+
+/* Position the first tooltip further right */
+/* so it doesn't overflow to the left. */
+.toolfirst .tooltiptext {
+  left: 75%
+}
+
+/* Position 'above' tooltips above the hover element. */
+.toolabove .tooltiptext {
+  bottom: 150%
+}
+
+/* Position 'below' tooltips below the hover element. */
+.toolbelow .tooltiptext {
+  top: 150%
+}
+
+/* Styling the arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  /* top: 100%; */
+  left: 50%;
+  /* margin-left: -5px; */
+  margin-left: -120px;
+  border-width: 5px;
+  border-style: solid;
+  /* border-color: black transparent transparent transparent; */
+}
+
+/* Specific styling for 'above' arrows. */
+.toolabove .tooltiptext::after {
+  top: 100%;
+  border-color: black transparent transparent transparent;
+}
+
+/* Specific styling for 'below' arrows. */
+.toolbelow .tooltiptext::after {
+  bottom: 100%;
+  border-color: transparent transparent black transparent;
+}
+
+/* Specific styling for the first tooltip arrow in the row. */
+.toolfirst .tooltiptext::after {
+  margin-left: -135px;
+}
+
+/* Only show the tooltips when hovered. */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}

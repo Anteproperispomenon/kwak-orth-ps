@@ -6,6 +6,12 @@ module Kwakwala.GUI.Types
   , FileData
   , checkboxC
   , containerC
+  -- , tooltipC
+  , toolaboveC
+  , toolbelowC
+  , toolaboveFC
+  , toolbelowFC
+  , tooltiptextC
   -- , GrubbOptions
   )
   where
@@ -15,7 +21,7 @@ import Prelude
 import Data.Maybe (Maybe)
 import Data.MediaType (MediaType)
 import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
-import Kwakwala.Output.IPA   (IPAOptions  , defIPAOptions)
+import Kwakwala.Output.IPA (IPAOptions, defIPAOptions)
 import Web.HTML.Common (ClassName(..))
 
 data KwakOutputType
@@ -75,3 +81,23 @@ checkboxC = ClassName "checkbox"
 
 containerC :: ClassName
 containerC = ClassName "container"
+
+-- tooltipC :: ClassName
+-- tooltipC = ClassName "tooltip"
+
+toolaboveC :: ClassName
+toolaboveC = ClassName "tooltip toolabove"
+
+toolbelowC :: ClassName
+toolbelowC = ClassName "tooltip toolbelow"
+
+tooltiptextC :: ClassName
+tooltiptextC = ClassName "tooltiptext"
+
+toolaboveFC :: ClassName
+toolaboveFC = ClassName "tooltip toolabove toolfirst"
+
+toolbelowFC :: ClassName
+toolbelowFC = ClassName "tooltip toolbelow toolfirst"
+
+
