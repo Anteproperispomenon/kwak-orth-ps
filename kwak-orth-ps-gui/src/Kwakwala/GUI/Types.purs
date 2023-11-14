@@ -111,6 +111,6 @@ derive instance  eqConvertState :: Eq  ConvertState
 derive instance ordConvertState :: Ord ConvertState
 
 convertStateC :: ConvertState -> ClassName
-convertStateC ConvertReady    = ClassName "convert-ready"
-convertStateC ConvertProgress = ClassName "convert-progress"
-convertStateC ConvertDone     = ClassName "convert-done"
+convertStateC ConvertReady    = ClassName "cvb convert-ready"
+convertStateC ConvertProgress = ClassName "cvb convert-progress"
+convertStateC ConvertDone     = ClassName "cvb convert-done"

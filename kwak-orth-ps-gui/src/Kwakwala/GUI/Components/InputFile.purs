@@ -100,7 +100,16 @@ inputFileGUI stt
       -- , Html.p_ [Html.button [HP.id "convert-button", HP.name "convert-button", HE.onClick (\_ -> SendInput)] [Html.text "Convert"] ]
       , Html.p_ [Html.text "Errors"]
       , Html.p_ [Html.textarea [HP.rows 3, HP.cols 100, HP.id "error-box", HP.name "error-box", HP.readOnly true, HP.value (renderError stt.error)]]
-      , Html.p_ [Html.button [HP.id "convert-button", HP.name "convert-button", HE.onClick (\_ -> Reconvert), HP.disabled (null stt.input)] [Html.text "Reconvert"]]
+      , Html.p_ 
+         [ Html.button 
+           [ HP.id "convert-button"
+           , HP.name "convert-button"
+           , HE.onClick (\_ -> Reconvert)
+           , HP.disabled (null stt.input)
+           , HP.class_ (ClassName "cvb convert-ready") -- basic
+           ] 
+           [ Html.text "Reconvert" ]
+         ]
       ]
 
 renderError :: Maybe String -> String

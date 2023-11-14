@@ -15,6 +15,10 @@ textarea.island {
   font-family: islandregular, sans-serif;
 }
 
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+
 /* Taken from https://www.w3schools.com/howto/howto_js_collapsible.asp */
 /* Style the button that is used to open and close the collapsible content */
 .collapsible {
@@ -72,6 +76,10 @@ textarea.island {
   background-color: #dfd;
 } 
 
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+
 /* from https://markheath.net/post/customize-radio-button-css */
 /*
 .orth-options-in input[type="checkbox"] {
@@ -117,6 +125,10 @@ textarea.island {
 .orth-options label:hover {
   background-color: #ddf;
 } 
+
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
 
 /* Taken from https://www.w3schools.com/css/css_tooltip.asp */
 /* Modified to use a mixture of both up and down arrows */
@@ -190,4 +202,70 @@ textarea.island {
 /* Only show the tooltips when hovered. */
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+
+/*
+  background-color:#bfb;
+  border-color: #4c4;
+
+.radio-in label:hover {
+  background-color: #dfd;
+} 
+
+*/
+
+/* Used https://www.w3schools.com/css/css3_buttons.asp for reference */
+/* Convert Button base style */
+.cvb {
+  border: none;
+  border-radius: 8px;
+  border-width: 2px;
+  border-style: solid;
+  padding: 12px 20px; 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+}
+
+.convert-ready {
+  background-color: #ddf;
+  border-color: #44c;
+}
+
+.convert-ready:hover {
+  background-color: #bbf;
+}
+
+.convert-done {
+  background-color: #dfd;
+  border-color: #4c4;
+}
+
+.convert-done:hover {
+  background-color: #bfb;
+}
+
+.convert-progress {
+  background-color: #ddd;
+  border-color: #444;
+}
+
+.convert-progress:hover {
+  background-color: #bbb;
+}
+
+cvb:disabled {
+  background-color: #fed;
+  border-color: #c74;
+}
+
+cvb:disabled:hover {
+  background-color: #fdb;
+  border-color: #c74;
 }
