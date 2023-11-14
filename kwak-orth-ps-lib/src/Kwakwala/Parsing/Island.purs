@@ -25,14 +25,14 @@ import Kwakwala.Parsing.Helpers
 import Kwakwala.Types
 import Prelude
 
-import Control.Alt (alt, (<|>))
+import Control.Alt ((<|>))
 import Data.Either (fromRight)
-import Data.List (List(Nil, Cons), (:), concat)
+import Data.List (List(..)) -- , (:), concat)
 import Data.List as List
 import Data.List.Types (toList)
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Parsing (Parser, runParser, fail)
-import Parsing.Combinators (many1, choice, many)
+import Parsing (Parser, runParser) -- , fail)
+import Parsing.Combinators (many1, choice) -- , many)
 import Parsing.String (anyChar, anyCodePoint, char, eof, satisfy, satisfyCodePoint, string)
 import Parsing.String.Basic (takeWhile1)
 
