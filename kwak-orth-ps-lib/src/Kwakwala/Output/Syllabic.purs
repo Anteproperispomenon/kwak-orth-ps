@@ -27,6 +27,7 @@ License     : BSD-3
 module Kwakwala.Output.Syllabic
   ( outputSyllabics
   , outputSyllabicsE
+  , outputSyllabicsWords
   ) where
 
 import Prelude
@@ -35,7 +36,7 @@ import Kwakwala.Output.Syllabic.Tables (letterCoda, makeVowel, mergeLetters)
 
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Data.Foldable (foldr)
+import Data.Foldable (foldr, foldMap)
 
 import Parsing (ParseError, Parser, ParserT, fail, initialPos, runParser)
 import Parsing.Combinators as PC
@@ -46,7 +47,7 @@ import Data.List (List, someRec)
 -- import Data.List as List
 -- import Data.List.NonEmpty (toList)
 
-import Kwakwala.Types (CasedChar(..), KwakConsonant, KwakVowel)
+import Kwakwala.Types (CasedChar(..), KwakConsonant, KwakVowel, CasedWord(..))
 import Kwakwala.Types.Tables (tryConsCC, tryVowelCC)
 
 -- import Control.Monad
@@ -95,6 +96,28 @@ outputSyllabics :: (List CasedChar) -> String
 outputSyllabics lst = case (runSyllabicEmitter lst emitSyllabics) of
   (Left  pe) -> show pe
   (Right sy) -> sy
+
+-- There should be a better way to do this.
+-- Probably a separate "individual word"
+-- parser that works only on `CasedLetter`s.
+outputSyllabicsWord :: CasedWord -> String
+outputSyllabicsWord (PunctW x) = x
+outputSyllabicsWord (KwakW  x) = outputSyllabics (map Kwak x)
+
+-- | Convert a list of `CasedChar`s into
+-- | a `String` of syllables. Note that
+-- | this will ignore case, as case
+-- | works differently in syllabaics.
+-- |
+-- | Also note that this will not give
+-- | an error if the emitter can't 
+-- | output the syllables.
+-- | 
+-- | Unsure how well this version will
+-- | perform, since it runs a parser
+-- | on each individual Word.
+outputSyllabicsWords :: (List CasedWord) -> String
+outputSyllabicsWords = foldMap outputSyllabicsWord
 
 ------------------------------------
 -- Helper Functions
