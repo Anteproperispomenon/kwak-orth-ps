@@ -18,11 +18,11 @@ import Kwakwala.Output.Umista   (outputUmistaChars)
 import Kwakwala.Output.IPA      (outputIPAChars, IPAOptions)
 import Kwakwala.Output.Syllabic (outputSyllabics)
 
-import Kwakwala.Parsing.Boas   (encodeFromBoas)
-import Kwakwala.Parsing.Grubb  (encodeFromGrubbAscii)
-import Kwakwala.Parsing.Island (encodeFromIsland)
-import Kwakwala.Parsing.Napa   (encodeFromNapa)
-import Kwakwala.Parsing.Umista (encodeFromUmista)
+import Kwakwala.Parsing.Boas   (encodeFromBoas, encodeFromBoasChunk)
+import Kwakwala.Parsing.Grubb  (encodeFromGrubbAscii, encodeFromGrubbAsciiChunk)
+import Kwakwala.Parsing.Island (encodeFromIsland, encodeFromIslandChunk)
+import Kwakwala.Parsing.Napa   (encodeFromNapa, encodeFromNapaChunk)
+import Kwakwala.Parsing.Umista (encodeFromUmista, encodeFromUmistaChunk)
 
 import Kwakwala.Types (CasedChar)
 
@@ -31,11 +31,11 @@ convertOrthography kit kot ops = (encodeByType kit) >>> (outputByType kot ops)
 
 encodeByType :: KwakInputType -> String -> List CasedChar
 encodeByType kit str = case kit of
-  InGrubb  -> encodeFromGrubbAscii str
-  InNapa   -> encodeFromNapa   str
-  InUmista -> encodeFromUmista str
-  InIsland -> encodeFromIsland str
-  InBoas   -> encodeFromBoas   str
+  InGrubb  -> encodeFromGrubbAsciiChunk str -- encodeFromGrubbAscii str
+  InNapa   -> encodeFromNapaChunk   str -- encodeFromNapa   str
+  InUmista -> encodeFromUmistaChunk str -- encodeFromUmista str
+  InIsland -> encodeFromIslandChunk str -- encodeFromIsland str
+  InBoas   -> encodeFromBoasChunk   str -- encodeFromBoas   str
 
 outputByType :: KwakOutputType -> AllOrthOptions -> List CasedChar -> String
 outputByType kot ops lst = case kot of

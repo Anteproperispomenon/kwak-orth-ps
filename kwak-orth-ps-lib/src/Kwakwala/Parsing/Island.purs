@@ -14,6 +14,9 @@ module Kwakwala.Parsing.Island
     -- * Direct Encoder
     ( encodeFromIsland
     , encodeFromIslandOld
+    , encodeFromIslandChunk
+    , encodeFromIslandWordsL
+    , encodeFromIslandWordsR
     -- * Parser
     , parseIsland
     , parseIslandOld
@@ -27,12 +30,14 @@ import Prelude
 
 import Control.Alt ((<|>))
 import Data.Either (fromRight)
-import Data.List (List(..)) -- , (:), concat)
+import Data.List (List(..))
 import Data.List as List
 import Data.List.Types (toList)
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Parsing (Parser, runParser) -- , fail)
-import Parsing.Combinators (many1, choice) -- , many)
+import Parsing (Parser, runParser)
+import Parsing.Chunkified (runParserChunk)
+import Parsing.Chunking (chunkifyText)
+import Parsing.Combinators (many1, choice)
 import Parsing.String (anyChar, anyCodePoint, char, eof, satisfy, satisfyCodePoint, string)
 import Parsing.String.Basic (takeWhile1)
 
@@ -505,4 +510,11 @@ encodeFromIsland txt = fromRight Nil $ runParser txt parseIsland
 encodeFromIslandOld :: String -> (List CasedChar)
 encodeFromIslandOld txt = fromRight Nil $ runParser txt parseIslandOld
 
+encodeFromIslandChunk :: String -> (List CasedChar)
+encodeFromIslandChunk txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseIsland
 
+encodeFromIslandWordsL :: String -> (List CasedWord)
+encodeFromIslandWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsL <$> parseIsland)
+
+encodeFromIslandWordsR :: String -> (List CasedWord)
+encodeFromIslandWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <$> parseIsland)

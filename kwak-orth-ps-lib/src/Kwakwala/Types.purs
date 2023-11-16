@@ -40,11 +40,15 @@ module Kwakwala.Types
     , isSameCaseType
     , isCharLetter
     , isKwakWord
+    -- ** Conversion Functions
+    , toWordsL
+    , toWordsR
     )
   where
 
 import Prelude
-import Data.List (List)
+import Data.List (List(..), reverse, (:))
+import Data.Maybe (Maybe(..))
 import Data.Foldable (intercalate)
 
 
@@ -325,6 +329,57 @@ isCharLetter _ _              = false
 isKwakWord :: CasedWord -> Boolean
 isKwakWord (KwakW _) = true
 isKwakWord _         = false
+
+isLetter :: CasedChar -> Boolean
+isLetter (Kwak _) = true
+isLetter _ = false
+
+-- nullWord :: CasedWord -> Boolean
+-- nullWord (KwakW x) = null x
+-- nullWord 
+
+---------------------------------------------------------------
+-- Converting to `CasedWord`s.
+
+{-
+-- From Data.List
+takeWhile :: forall a. (a -> Boolean) -> List a -> List a
+takeWhile p = go Nil
+  where
+  go acc (x : xs) | p x = go (x : acc) xs
+  go acc _ = reverse acc
+-}
+
+takeLetters :: List CasedChar -> Maybe ({chrs :: CasedWord, rst :: (List CasedChar)})
+takeLetters Nil = Nothing
+takeLetters (Cons (Punct x) lst) = Just {chrs : (PunctW x), rst : lst}
+takeLetters lst = go Nil lst
+  where
+    go acc (Cons (Kwak c) cs) = go (c : acc) cs
+    go acc lst = Just {chrs : (KwakW $ reverse acc), rst : lst}
+
+-- | Convert a `List` of `CasedChar`s
+-- | into a `List` of `CasedWord`s. This
+-- | version uses an accumulator; try
+-- | both this and `toWordsR` to see which
+-- | has better performance.
+toWordsL :: List CasedChar -> List CasedWord
+toWordsL Nil = Nil
+toWordsL lst = go Nil lst
+  where
+    go acc xlst = case (takeLetters xlst) of
+      Nothing -> reverse acc
+      (Just rslt) -> go (rslt.chrs : acc) rslt.rst
+
+-- | Convert a `List` of `CasedChar`s
+-- | into a `List` of `CasedWord`s. This
+-- | version uses structural recursion; try
+-- | both this and `toWordsL` to see which
+-- | has better performance.
+toWordsR :: List CasedChar -> List CasedWord
+toWordsR lst = case (takeLetters lst) of
+  Nothing -> Nil
+  (Just rslt) -> (rslt.chrs) : (toWordsR rslt.rst)
 
 ---------------------------------------------------------------
 -- Separate Vowels/Consonants

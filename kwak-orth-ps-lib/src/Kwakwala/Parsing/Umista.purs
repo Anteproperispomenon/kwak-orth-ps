@@ -18,7 +18,10 @@ module Kwakwala.Parsing.Umista
     , parseUmistaOld
     -- * Direct Encoders
     , encodeFromUmista
+    , encodeFromUmistaChunk
     , encodeFromUmistaOld
+    , encodeFromUmistaWordsL
+    , encodeFromUmistaWordsR
     ) where
 
 
@@ -53,8 +56,12 @@ import Kwakwala.Types
   , KwakLetter(..)
   , isKwkVow'
   , makeCase
+  , toWordsL
+  , toWordsR
   )
 
+import Parsing.Chunking   (chunkifyText)
+import Parsing.Chunkified (runParserChunk)
 
 -----------------------------------------
 -- a̱
@@ -518,35 +525,66 @@ parseUmistaWordsNew :: Parser String (List CasedWord)
 parseUmistaWordsNew = toList <$> many1 (parseUmistaWordAX <|> parsePunctsA <|> (PunctW <$> singleton <$> anyCodePoint))
 
 -- | The main parser for U'mista. Non-U'mista characters
--- are parsed with `AT.takeWhile1`, so this version is
--- more efficient.
+-- | are parsed with `takeWhile1`, so this version is
+-- | more efficient.
 parseUmista :: Parser String (List CasedChar)
 parseUmista = concat <$> toList <$> many1 parseUmistaMainNew
 -- parseUmista = AT.many1 parseUmistaCharNew
 
 -- | Directly convert some U'mista text to a
--- list of `CasedChar`. Note that if the
--- parser fails, this just returns an empty
--- list. If you want actual error handling,
--- use `parseUmista` together with `AT.parseOnly`.
+-- | list of `CasedChar`. Note that if the
+-- | parser fails, this just returns an empty
+-- | list. If you want actual error handling,
+-- | use `parseUmista` together with `runParser`.
 encodeFromUmista :: String -> (List CasedChar)
 encodeFromUmista txt = fromRight Nil $ runParser txt parseUmista
 
 -- | An alternate parser for U'mista. Non-U'mista
--- characters are parsed one at a time. Use this
--- if `parseUmista` is having issues.
+-- | characters are parsed one at a time. Use this
+-- | if `parseUmista` is having issues.
 parseUmistaOld :: Parser String (List CasedChar)
 parseUmistaOld = toList <$> many1 parseUmistaChar
 
 -- | Directly convert some U'mista text to a
--- list of `CasedChar`. Like `parseUmistaOld`,
--- this parses non-U'mista characters one
--- at a time. Note that if the parser fails,
--- this just returns an empty list. If you
--- want actual error handling, use `parseUmista`
--- together with `AT.parseOnly`.
+-- | list of `CasedChar`. Like `parseUmistaOld`,
+-- | this parses non-U'mista characters one
+-- | at a time. Note that if the parser fails,
+-- | this just returns an empty list. If you
+-- | want actual error handling, use `parseUmista`
+-- | together with `runParser`.
 encodeFromUmistaOld :: String -> (List CasedChar)
 encodeFromUmistaOld txt = fromRight Nil $ runParser txt parseUmistaOld
 -- Əə
 
+-- | Directly convert some U'mista text to a
+-- | list of `CasedChar`. Note that if the
+-- | parser fails, this just returns an empty
+-- | list. If you want actual error handling,
+-- | use `parseUmista` together with `runParser`.
+-- |
+-- | This chunks the Strings first, hopefully
+-- | improving performance for larger inputs.
+encodeFromUmistaChunk :: String -> (List CasedChar)
+encodeFromUmistaChunk txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseUmista
 
+-- | Directly convert some U'mista text to a
+-- | list of `CasedWord`s. Note that if the
+-- | parser fails, this just returns an empty
+-- | list. If you want actual error handling,
+-- | use `parseUmista` together with `runParser`.
+-- |
+-- | This chunks the Strings first, hopefully
+-- | improving performance for larger inputs.
+encodeFromUmistaWordsL :: String -> (List CasedWord)
+encodeFromUmistaWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsL <$> parseUmista)
+
+-- | Directly convert some U'mista text to a
+-- | list of `CasedWord`s. Note that if the
+-- | parser fails, this just returns an empty
+-- | list. If you want actual error handling,
+-- | use `parseUmista` together with `runParser`.
+-- |
+-- | This chunks the Strings first, hopefully
+-- | improving performance for larger inputs.
+encodeFromUmistaWordsR :: String -> (List CasedWord)
+encodeFromUmistaWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <$> parseUmista)
