@@ -158,7 +158,10 @@ handleConvertAction x = case x of
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
+    
+    -- newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
+    newStr <- pure $ convertOrthographyWL stt.inputSelect stt.outputSelect stt.orthOptions str
+    
     -- fib <- liftAff $ forkAff $ pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
     -- newStr <- liftAff $ joinFiber fib
     Hal.modify_ (\st -> st {outputText = newStr})
@@ -177,7 +180,10 @@ handleConvertAction x = case x of
       Nothing  -> pure ""
       (Just s) -> pure s
 
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
+    -- newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
+    newStr <- pure $ convertOrthographyWL  stt.inputSelect stt.outputSelect stt.orthOptions str
+    
+    
     Hal.modify_ (\st -> st {outputText = newStr, inputText = str})
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
