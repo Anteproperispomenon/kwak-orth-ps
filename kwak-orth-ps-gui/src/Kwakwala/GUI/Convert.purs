@@ -2,10 +2,14 @@ module Kwakwala.GUI.Convert
   ( convertOrthography
   , convertOrthographyWL
   , convertOrthographyWR
+  , convertOrthographyParL
+  , convertOrthographyParR
   ) where
 
 import Prelude
 
+import Control.Monad ((>=>))
+import Control.Parallel.Class (class Parallel)
 import Data.List (List)
 import Kwakwala.GUI.Types (KwakInputType(..), KwakOutputType(..), AllOrthOptions)
 
@@ -21,6 +25,9 @@ import Kwakwala.Parsing.Island (encodeFromIsland, encodeFromIslandChunk, encodeF
 import Kwakwala.Parsing.Napa (encodeFromNapa, encodeFromNapaChunk, encodeFromNapaWordsL, encodeFromNapaWordsR)
 import Kwakwala.Parsing.Umista (encodeFromUmista, encodeFromUmistaChunk, encodeFromUmistaWordsL, encodeFromUmistaWordsR)
 
+import Kwakwala.Output.Parallel
+import Kwakwala.Parsing.Parallel
+
 import Kwakwala.Types (CasedChar, CasedWord)
 
 convertOrthography :: KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> String
@@ -31,6 +38,12 @@ convertOrthographyWL kit kot ops = (encodeByTypeWL kit) >>> (outputByTypeW kot o
 
 convertOrthographyWR :: KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> String
 convertOrthographyWR kit kot ops = (encodeByTypeWR kit) >>> (outputByTypeW kot ops)
+
+convertOrthographyParL :: forall f m. Parallel f m => Applicative f => Monad m => KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> m String
+convertOrthographyParL kit kot ops = (encodeByTypeParL kit) >=> (outputByTypePar kot ops)
+
+convertOrthographyParR :: forall f m. Parallel f m => Applicative f => Monad m => KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> m String
+convertOrthographyParR kit kot ops = (encodeByTypeParR kit) >=> (outputByTypePar kot ops)
 
 encodeByType :: KwakInputType -> String -> List CasedChar
 encodeByType kit str = case kit of
@@ -71,3 +84,28 @@ outputByTypeW kot ops lst = case kot of
   OutUmista   -> outputUmistaWords lst
   OutIPA      -> outputIPAWords ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabicsWords lst
+
+encodeByTypeParL :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> String -> m (List (List CasedWord))
+encodeByTypeParL kit str = case kit of
+  InGrubb  -> encodeFromGrubbWordsParL str
+  InNapa   -> encodeFromNapaWordsParL str
+  InUmista -> encodeFromUmistaWordsParL str
+  InIsland -> encodeFromIslandWordsParL str
+  InBoas   -> encodeFromBoasWordsParL str
+  
+encodeByTypeParR :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> String -> m (List (List CasedWord))
+encodeByTypeParR kit str = case kit of
+  InGrubb  -> encodeFromGrubbWordsParR str
+  InNapa   -> encodeFromNapaWordsParR str
+  InUmista -> encodeFromUmistaWordsParR str
+  InIsland -> encodeFromIslandWordsParR str
+  InBoas   -> encodeFromBoasWordsParR str
+
+outputByTypePar :: forall f m. Parallel f m => Applicative f => Applicative m => KwakOutputType -> AllOrthOptions -> List (List CasedWord) -> m String
+outputByTypePar kot ops lst = case kot of
+  OutGrubb    -> outputGrubbWordsParC ops.grubbOrthOptions lst
+  OutNapa     -> outputNapaWordsParC   lst
+  OutUmista   -> outputUmistaWordsParC lst
+  OutIPA      -> outputIPAWordsParC ops.ipaOrthOptions lst
+  OutSyllabic -> outputSyllabicsWordsParC lst
+

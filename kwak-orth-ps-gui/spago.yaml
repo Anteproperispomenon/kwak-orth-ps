@@ -8,6 +8,7 @@ package:
     - parsing
     - tailrec
     - halogen
+    - halogen-subscriptions
     # - halogen-formless
     - kwak-orth-ps-lib
     - web-html

@@ -31,7 +31,10 @@ import Control.Applicative (when)
 
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Aff (forkAff, joinFiber)
 import Effect.Aff.Class (class MonadAff)
+import Effect.Console (debug)
+import Effect.Console as Console
 
 import Kwakwala.GUI.Convert
 import Kwakwala.GUI.Types (FileData, AllOrthOptions, defAllOrthOptions)
@@ -52,6 +55,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Query as HQ
 import Halogen.Query.HalogenM as HM
+import Halogen.Subscription as HS
 import Kwakwala.Output.Grubb (GrubbOptions(..), GrubbOptions, defGrubbOptions)
 import Type.Proxy (Proxy(..))
 
@@ -82,6 +86,9 @@ type ParentState
     , orthOptions  :: AllOrthOptions
     , inputText  :: String
     , outputText :: String
+    , parentListener :: Maybe (HS.Listener String)
+    , parentEmitter  :: Maybe (HS.Emitter  String)
+    , parentSubscription :: Maybe (Hal.SubscriptionId)
     -- , inputFile :: String
     }
 
@@ -91,6 +98,9 @@ data ParentAction
   | ChangeOrthOpts OrthOptions
   | ConvertText    String
   | ConvertPull
+  | ConvertedString String
+  | ParentInitialize
+  | ParentFinalize
 
 defParentState :: ParentState
 defParentState = 
@@ -99,6 +109,9 @@ defParentState =
   , orthOptions : defAllOrthOptions
   , inputText  : ""
   , outputText : ""
+  , parentListener : Nothing
+  , parentEmitter  : Nothing
+  , parentSubscription : Nothing
   -- , inputFile : ""
   }
 
@@ -110,6 +123,8 @@ convertComp
      , eval : HC.mkEval $ HC.defaultEval
        { receive = Just
        , handleAction = handleConvertAction
+       , initialize = Just ParentInitialize
+       , finalize   = Just ParentFinalize
        }
      }
 
@@ -123,7 +138,7 @@ renderConverter st
     , Html.p_ [Html.text "Output Orthography"]
     , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut]
     -- , Html.p_ [Html.text "Input Text"]
-    , Html.p_ [Html.slot  _inputText    unit inputTextComp  st.inputText handleInputText]
+    , Html.p_ [Html.slot  _inputText    unit inputTextComp  (SetInString "") handleInputText]
     -- , Html.p_ [Html.text "Output Text"]
     , Html.p_ [Html.slot_ _outputText   unit outputTextComp st.outputText]
     -- , Html.p_ [Html.text "Test"]
@@ -134,8 +149,27 @@ handleInputText :: InputTextRaise -> ParentAction
 handleInputText (RaiseInput str) = ConvertText str
 handleInputText PullInput = ConvertPull
 
-handleConvertAction :: forall m. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState _ ParentSlots _ m Unit
+handleConvertAction :: forall m. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots _ m Unit
 handleConvertAction x = case x of
+  ParentInitialize -> do
+    emtPair <- Hal.liftEffect HS.create
+    sbsc    <- Hal.subscribe (ConvertedString <$> emtPair.emitter)
+      -- Console.debug "Hello?"
+      -- pure $ ConvertedString str
+    Hal.modify_ $ \st -> st 
+      { parentListener = Just emtPair.listener 
+      , parentEmitter  = Just emtPair.emitter
+      , parentSubscription = Just sbsc
+      }
+  ParentFinalize -> do
+    pure unit
+    -- Subscriptions auto end when finalized.
+    {-
+    msbs <- Hal.gets _.parentEmitter
+    case msbs of
+      Nothing -> pure unit
+      (Just sbs) -> HS.unsubscribe sbs
+    -}
   (ChangeOrthIn  kit) -> do
     old <- Hal.gets _.inputSelect
     Hal.modify_ (\st -> st {inputSelect  = kit })
@@ -158,15 +192,24 @@ handleConvertAction x = case x of
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
+    liftEffect $ Console.debug "help."
     
-    -- newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
-    newStr <- pure $ convertOrthographyWL stt.inputSelect stt.outputSelect stt.orthOptions str
+    case stt.parentListener of
+      Nothing      -> liftEffect $ Console.error "Parent Listener not found."
+      (Just lstnr) -> forkConverter lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
+
+    -- newStr <- pure $ convertOrthography   stt.inputSelect stt.outputSelect stt.orthOptions str
+    -- newStr <- pure $ convertOrthographyWL stt.inputSelect stt.outputSelect stt.orthOptions str
     
     -- fib <- liftAff $ forkAff $ pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
     -- newStr <- liftAff $ joinFiber fib
-    Hal.modify_ (\st -> st {outputText = newStr})
-    void $ HQ.query _outputText unit (OutputString newStr unit)
-    void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
+    -- Hal.modify_ (\st -> st {outputText = newStr})
+    -- void $ HQ.query _outputText unit (OutputString newStr unit)
+    -- void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
+  (ConvertedString str) -> do
+    Hal.modify_ (\st -> st {outputText = str})
+    void $ HQ.query _outputText unit (OutputString   str unit)
+    void $ HQ.query _inputText  unit (InputSetButtonDone unit)
   (ConvertPull) -> do
     stt  <- Hal.get
     mstr <- HQ.query _inputText unit (InputStringQ (\x -> x))
@@ -192,6 +235,14 @@ handleConvertAction x = case x of
 
 -- form :: forall i p. Node HTMLform p i
 -- form :: forall i p Array (IProp HTMLform i) -> Array (HTML p i) -> HTML p i
+
+forkConverter :: forall m. MonadAff m => HS.Listener String -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM ParentState _ _ _ m Unit
+-- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
+forkConverter lstnr kin kout oops str = liftAff $ void $ forkAff $ do
+  liftEffect $ debug "Feeding the converter..."
+  newStr <- convertOrthographyParL kin kout oops str
+  liftEffect $ debug "Finished conversion..."
+  liftEffect $ HS.notify lstnr newStr
 
 --------------------------------
 -- Parent Component (File)
