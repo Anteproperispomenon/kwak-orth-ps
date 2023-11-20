@@ -18,6 +18,8 @@ import Prelude
 import Kwakwala.GUI.Types
 import Type.Row
 
+import Data.Time.Duration (Milliseconds(..))
+
 import Kwakwala.GUI.Components.InSelect
 import Kwakwala.GUI.Components.OutSelect
 import Kwakwala.GUI.Components.GrubbOptions
@@ -31,8 +33,8 @@ import Control.Applicative (when)
 
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
-import Effect.Aff (forkAff, joinFiber)
-import Effect.Aff.Class (class MonadAff)
+import Effect.Aff (forkAff, joinFiber, delay)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Console (debug)
 import Effect.Console as Console
 
@@ -84,7 +86,7 @@ type ParentState
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
-    , inputText  :: String
+    -- , inputText  :: String
     , outputText :: String
     , parentListener :: Maybe (HS.Listener String)
     , parentEmitter  :: Maybe (HS.Emitter  String)
@@ -107,7 +109,7 @@ defParentState =
   { inputSelect  : InGrubb
   , outputSelect : OutGrubb
   , orthOptions : defAllOrthOptions
-  , inputText  : ""
+  -- , inputText  : ""
   , outputText : ""
   , parentListener : Nothing
   , parentEmitter  : Nothing
@@ -188,24 +190,12 @@ handleConvertAction x = case x of
   -- (ChangeOrthOpts (OrthGeorgianOptions ops)) -> do
   --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
   (ConvertText str) -> do
-    stt <- Hal.modify (\st -> st {inputText = str})
-    -- stt.inputSelect
-    -- stt.outputSelect
-    -- stt.grubbOptions
-    liftEffect $ Console.debug "help."
-    
+    -- Removing this portion to reduce memory usage.
+    -- stt <- Hal.modify (\st -> st {inputText = str})
+    stt <- Hal.get
     case stt.parentListener of
       Nothing      -> liftEffect $ Console.error "Parent Listener not found."
       (Just lstnr) -> forkConverter lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
-
-    -- newStr <- pure $ convertOrthography   stt.inputSelect stt.outputSelect stt.orthOptions str
-    -- newStr <- pure $ convertOrthographyWL stt.inputSelect stt.outputSelect stt.orthOptions str
-    
-    -- fib <- liftAff $ forkAff $ pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
-    -- newStr <- liftAff $ joinFiber fib
-    -- Hal.modify_ (\st -> st {outputText = newStr})
-    -- void $ HQ.query _outputText unit (OutputString newStr unit)
-    -- void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
   (ConvertedString str) -> do
     Hal.modify_ (\st -> st {outputText = str})
     void $ HQ.query _outputText unit (OutputString   str unit)
@@ -227,7 +217,7 @@ handleConvertAction x = case x of
     newStr <- pure $ convertOrthographyWL  stt.inputSelect stt.outputSelect stt.orthOptions str
     
     
-    Hal.modify_ (\st -> st {outputText = newStr, inputText = str})
+    Hal.modify_ (\st -> st {outputText = newStr}) -- , inputText = str})
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
 
@@ -236,10 +226,16 @@ handleConvertAction x = case x of
 -- form :: forall i p. Node HTMLform p i
 -- form :: forall i p Array (IProp HTMLform i) -> Array (HTML p i) -> HTML p i
 
-forkConverter :: forall m. MonadAff m => HS.Listener String -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM ParentState _ _ _ m Unit
+-- If I keep the type general enough, I may be able to
+-- reuse this function for both Text input and File input.
+forkConverter :: forall m pstate. MonadAff m => HS.Listener String -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate _ _ _ m Unit
 -- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
 forkConverter lstnr kin kout oops str = liftAff $ void $ forkAff $ do
   liftEffect $ debug "Feeding the converter..."
+  -- Need to insert a slight delay for the other
+  -- parts of the javascript to fire first. Otherwise,
+  -- the HTML won't be updated first.
+  delay $ Milliseconds 2.0
   newStr <- convertOrthographyParL kin kout oops str
   liftEffect $ debug "Finished conversion..."
   liftEffect $ HS.notify lstnr newStr
@@ -271,6 +267,9 @@ type ParentState2
     , orthOptions  :: AllOrthOptions
     , inputFile  :: FileData
     , outputText :: String
+    , parentListener :: Maybe (HS.Listener String)
+    , parentEmitter  :: Maybe (HS.Emitter  String)
+    , parentSubscription :: Maybe (Hal.SubscriptionId)
     }
 
 defParentState2 :: ParentState2
@@ -280,6 +279,9 @@ defParentState2 =
   , orthOptions  : defAllOrthOptions
   , inputFile  : { fileStr : "", fileTyp : Nothing}
   , outputText : ""
+  , parentListener : Nothing
+  , parentEmitter : Nothing
+  , parentSubscription : Nothing
   }
 
 data ParentAction2
@@ -287,6 +289,9 @@ data ParentAction2
   | ChangeOrthOut2  KwakOutputType
   | ChangeOrthOpts2 OrthOptions
   | ConvertText2    FileData
+  | ConvertedString2 String
+  | ParentInitialize2
+  | ParentFinalize2
 
 convertComp2 :: forall m. (MonadAff m) => HC.Component _ ParentAction2 _ m
 convertComp2 
@@ -296,6 +301,8 @@ convertComp2
      , eval : HC.mkEval $ HC.defaultEval
        { receive = Just
        , handleAction = handleConvertAction2
+       , initialize = Just ParentInitialize2
+       , finalize   = Just ParentFinalize2
        }
      }
 
@@ -315,7 +322,7 @@ renderConverter2 st
     , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : st.outputText , fileTyp : st.inputFile.fileTyp} ]
     ]
 
-handleConvertAction2 :: forall m. ParentAction2 -> Hal.HalogenM ParentState2 _ ParentSlots2 _ m Unit
+handleConvertAction2 :: forall m outp. (MonadAff m) => ParentAction2 -> Hal.HalogenM ParentState2 ParentAction2 ParentSlots2 outp m Unit
 handleConvertAction2 x = case x of
   (ChangeOrthIn2  kit) -> do
     old <- Hal.gets _.inputSelect
@@ -324,8 +331,10 @@ handleConvertAction2 x = case x of
       void $ HQ.query _inputFile unit (InputFileIsland unit)
     when (old == InIsland && kit /= InIsland) $ do
       void $ HQ.query _inputFile unit (InputFileNonIsland unit)
+    void $ HQ.query _inputFile unit (InputFileButtonReset unit)
   (ChangeOrthOut2 kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
+    void $ HQ.query _inputFile unit (InputFileButtonReset unit)
   (ChangeOrthOpts2 (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ChangeOrthOpts2 (OrthIPAOptions ops)) -> do
@@ -337,8 +346,35 @@ handleConvertAction2 x = case x of
     -- stt.inputSelect
     -- stt.outputSelect
     -- stt.grubbOptions
-    newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
-    void $ HQ.query _outputText unit (OutputString newStr unit)
-    void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
-    Hal.modify_ (\st -> st {outputText = newStr})
+    
+    
+    -- newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
+    -- void $ HQ.query _outputText unit (OutputString newStr unit)
+    -- void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
+
+    case stt.parentListener of
+      Nothing      -> liftEffect $ Console.error "Parent Listener not found."
+      (Just lstnr) -> forkConverter lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
+
+
+    -- Hal.modify_ (\st -> st {outputText = newStr})
+    
+  ParentInitialize2 -> do
+    emtPair <- Hal.liftEffect HS.create
+    sbsc    <- Hal.subscribe (ConvertedString2 <$> emtPair.emitter)
+      -- Console.debug "Hello?"
+      -- pure $ ConvertedString str
+    Hal.modify_ $ \st -> st 
+      { parentListener = Just emtPair.listener 
+      , parentEmitter  = Just emtPair.emitter
+      , parentSubscription = Just sbsc
+      }
+  ParentFinalize2 -> do
+    pure unit
+  (ConvertedString2 str) -> do
+    Hal.modify_ (\st -> st {outputText = str})
+    void $ HQ.query _outputText unit (OutputString   str unit)
+    void $ HQ.query _inputFile  unit (InputFileButtonDone unit)
+  -- Fallback
+  -- _ -> pure unit
 

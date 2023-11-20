@@ -51,6 +51,7 @@ data InputTextAction
   | SetInProgress
   | DoneButton
   | RevertButton
+  | ErrorButton
 
 data InputTextRaise
   = RaiseInput String
@@ -75,6 +76,7 @@ inputTextComp
          (SetConvStatus ConvertReady) -> Just RevertButton
          (SetConvStatus ConvertDone)  -> Just DoneButton
          (SetConvStatus ConvertProgress) -> Just SetInProgress
+         (SetConvStatus ConvertError) -> Just ErrorButton
       }
     }
 
@@ -117,6 +119,7 @@ getButtonText :: ConvertState -> String
 getButtonText ConvertReady    = "Convert"
 getButtonText ConvertProgress = "Converting..."
 getButtonText ConvertDone     = "Conversion Complete"
+getButtonText ConvertError    = "Error Converting"
 
 handleInputTextQuery :: forall a s m. Monad m => InputTextQuery a -> Hal.HalogenM InputTextState InputTextAction s InputTextRaise m (Maybe a)
 handleInputTextQuery (InputStringQ reply) = do
@@ -156,3 +159,4 @@ handleInputTextAction SendInputPull = do
   Hal.raise PullInput
 handleInputTextAction DoneButton   = Hal.modify_ $ \st -> st { itConvert = ConvertDone  }
 handleInputTextAction RevertButton = Hal.modify_ $ \st -> st { itConvert = ConvertReady }
+handleInputTextAction ErrorButton  = Hal.modify_ $ \st -> st { itConvert = ConvertError }

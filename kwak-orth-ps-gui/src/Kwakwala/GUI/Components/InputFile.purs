@@ -1,6 +1,7 @@
 module Kwakwala.GUI.Components.InputFile
   ( InputFileAction(..)
   , InputFileQuery(..)
+  -- , InputFileInput(..)
   , InputFileSlot
   , InputFileX
   , _inputFile
@@ -30,7 +31,7 @@ import Halogen.HTML as Html
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties (InputAcceptType)
 import Halogen.HTML.Properties as HP
-import Kwakwala.GUI.Types (FileData)
+import Kwakwala.GUI.Types (FileData, ConvertState(..), convertStateC)
 import Type.Proxy (Proxy(..))
 import Web.File.File as File
 import Web.File.FileReader.Aff as FR
@@ -50,6 +51,8 @@ data InputFileQuery a
   = InputString (FileData -> a)
   | InputFileIsland a
   | InputFileNonIsland a
+  | InputFileButtonDone a
+  | InputFileButtonReset a
 
 -- | Because we can only change the text
 -- | by uploading a file, there's no real
@@ -58,28 +61,34 @@ data InputFileQuery a
 data InputFileAction
   = ChangeFile File.File
   | Reconvert
+  | ResetButton
   | DoNothing
   -- | ReceiveInput String
   -- | ReceiveError String
   -- = ChangeInput String
   -- x | SendInput
 
-inputFileComp :: forall m. (MonadAff m) => HC.Component InputFileQuery String FileData m
-inputFileComp
-  = Hal.mkComponent
-    { initialState : \x -> {input : x, error : Nothing, ftype : Nothing, style : "normal"}
-    , render : inputFileGUI
-    , eval : HC.mkEval $ HC.defaultEval
-      { handleQuery  = handleInputFileQuery
-      , handleAction = handleInputFileAction
-      }
-    }
-
 type InputFileState
   = { input :: String
     , error :: Maybe String
     , ftype :: Maybe MediaType
     , style :: String
+    , cvrtr :: ConvertState
+    }
+
+-- data InputFileInput
+--   = ResetConvertButton
+
+inputFileComp :: forall m. (MonadAff m) => HC.Component InputFileQuery String FileData m
+inputFileComp
+  = Hal.mkComponent
+    { initialState : \_ -> {input : "", error : Nothing, ftype : Nothing, style : "normal", cvrtr : ConvertReady}
+    , render : inputFileGUI
+    , eval : HC.mkEval $ HC.defaultEval
+      { handleQuery  = handleInputFileQuery
+      , handleAction = handleInputFileAction
+      -- , receive = \_ -> Just ResetButton
+      }
     }
 
 inputFileGUI :: forall m s. Monad m => InputFileState -> Hal.ComponentHTML InputFileAction s m
@@ -87,7 +96,7 @@ inputFileGUI stt
   = Html.div_
       [ Html.p_ [Html.text "Input"]
       , Html.p_ [Html.input [HP.type_ HP.InputFile, HP.accept inputTypes, HP.multiple false, HE.onFileUpload handleUpload]]
-      , Html.p_ [Html.textarea 
+      , Html.p_ [Html.textarea
         [ HP.rows 12
         , HP.cols 100
         , HP.id "output-box"
@@ -105,12 +114,21 @@ inputFileGUI stt
            [ HP.id "convert-button"
            , HP.name "convert-button"
            , HE.onClick (\_ -> Reconvert)
-           , HP.disabled (null stt.input)
-           , HP.class_ (ClassName "cvb convert-ready") -- basic
+           , HP.disabled (null stt.input || stt.cvrtr == ConvertError)
+           , HP.class_ (getConvertClass stt)
            ] 
-           [ Html.text "Reconvert" ]
+           [ Html.text (getButtonText stt.cvrtr) ]
          ]
       ]
+
+getConvertClass :: InputFileState -> ClassName
+getConvertClass = _.cvrtr >>> convertStateC
+
+getButtonText :: ConvertState -> String
+getButtonText ConvertReady    = "Reconvert"
+getButtonText ConvertProgress = "Converting..."
+getButtonText ConvertDone     = "Conversion Complete"
+getButtonText ConvertError    = "Parsing Error"
 
 renderError :: Maybe String -> String
 renderError Nothing  = "No Errors"
@@ -136,25 +154,34 @@ handleInputFileQuery (InputFileNonIsland x) = do
   stt <- get
   Hal.put $ stt {style = "normal"}
   pure $ Just x
+handleInputFileQuery (InputFileButtonDone x) = do
+  Hal.modify_ $ \st -> st { cvrtr = ConvertDone }
+  pure $ Just x
+handleInputFileQuery (InputFileButtonReset x) = do
+  Hal.modify_ $ \st -> st { cvrtr = ConvertReady }
+  pure $ Just x
 
 handleInputFileAction :: forall m s. (MonadAff m) => InputFileAction -> Hal.HalogenM InputFileState InputFileAction s FileData m Unit 
 handleInputFileAction (DoNothing) = pure unit
+handleInputFileAction (ResetButton) = do
+  Hal.modify_ $ \st -> st {cvrtr = ConvertReady}
 handleInputFileAction (ChangeFile fl) = do
-  -- pure unit
+  Hal.modify_ $ \st -> st { cvrtr = ConvertProgress }
   estr <- liftAff $ attempt $ FR.readAsText $ File.toBlob fl
   ftyp <- pure $ File.type_ fl
   case estr of
     Left err -> do
       stt <- Hal.get
       -- Won't overwrite the previous string
-      Hal.put $ stt { error = Just (message err)}
+      Hal.put $ stt { error = Just (message err), cvrtr = ConvertError }
     Right str -> do
       sty <- Hal.gets _.style
-      Hal.put   { input   : str, error   : Nothing, ftype : ftyp, style : sty }
+      Hal.put   { input   : str, error   : Nothing, ftype : ftyp, style : sty, cvrtr : ConvertProgress }
       Hal.raise { fileStr : str, fileTyp : ftyp }
 handleInputFileAction Reconvert = do
   str <- Hal.gets _.input
   typ <- Hal.gets _.ftype
+  Hal.modify_ $ \st -> st {cvrtr = ConvertProgress}
   Hal.raise { fileStr : str, fileTyp : typ}
 
 makeFileData :: InputFileState -> FileData

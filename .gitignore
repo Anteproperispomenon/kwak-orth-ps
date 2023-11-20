@@ -12,3 +12,5 @@ node_modules
 # Output Javascript
 /kwak-orth-ps-gui/app/convert-file.js
 /kwak-orth-ps-gui/app/convert-text.js
+/kwak-orth-ps-gui/app/convert-file.min.js
+/kwak-orth-ps-gui/app/convert-text.min.js
