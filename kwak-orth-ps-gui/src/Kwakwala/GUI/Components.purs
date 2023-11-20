@@ -13,7 +13,6 @@ module Kwakwala.GUI.Components
   )
   where
 
-
 import Prelude
 import Kwakwala.GUI.Types
 import Type.Row
@@ -200,24 +199,22 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {outputText = str})
     void $ HQ.query _outputText unit (OutputString   str unit)
     void $ HQ.query _inputText  unit (InputSetButtonDone unit)
+  -- Alternative way to convert text. Instead of
+  -- being provided an action with the input `String`
+  -- in it, it instead queries the Input component
+  -- for its current String, and then converts that
+  -- `String`. Also note that this portion was written
+  -- before changing to subscriber-style code, so it
+  -- performs the conversion all in this block.
   (ConvertPull) -> do
     stt  <- Hal.get
-    mstr <- HQ.query _inputText unit (InputStringQ (\x -> x))
-    {-
-    fib  <- forkAff $ liftAff $ do
-      case mstr of
-        Nothing    -> pure Nothing
-        (Just str) -> pure $ Just $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
-    -}
+    mstr <- HQ.query _inputText unit (InputStringQ (\z -> z))
     str <- case mstr of
       Nothing  -> pure ""
       (Just s) -> pure s
-
-    -- newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions str
-    newStr <- pure $ convertOrthographyWL  stt.inputSelect stt.outputSelect stt.orthOptions str
+    newStr <- pure $ convertOrthographyWL stt.inputSelect stt.outputSelect stt.orthOptions str
     
-    
-    Hal.modify_ (\st -> st {outputText = newStr}) -- , inputText = str})
+    Hal.modify_ (\st -> st {outputText = newStr})
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
 
@@ -284,6 +281,8 @@ defParentState2 =
   , parentSubscription : Nothing
   }
 
+-- | The Action type used by the
+-- | File Output `Component`.
 data ParentAction2
   = ChangeOrthIn2   KwakInputType
   | ChangeOrthOut2  KwakOutputType
@@ -293,7 +292,8 @@ data ParentAction2
   | ParentInitialize2
   | ParentFinalize2
 
-convertComp2 :: forall m. (MonadAff m) => HC.Component _ ParentAction2 _ m
+-- | The main `Component` for file output.
+convertComp2 :: forall m qr slt. (MonadAff m) => HC.Component qr ParentAction2 slt m
 convertComp2 
   = Hal.mkComponent
      { initialState : (\_ -> defParentState2)
@@ -324,6 +324,8 @@ renderConverter2 st
 
 handleConvertAction2 :: forall m outp. (MonadAff m) => ParentAction2 -> Hal.HalogenM ParentState2 ParentAction2 ParentSlots2 outp m Unit
 handleConvertAction2 x = case x of
+  -- Change orthography input, with special
+  -- handling of Island input.
   (ChangeOrthIn2  kit) -> do
     old <- Hal.gets _.inputSelect
     Hal.modify_ (\st -> st {inputSelect  = kit })
@@ -332,38 +334,38 @@ handleConvertAction2 x = case x of
     when (old == InIsland && kit /= InIsland) $ do
       void $ HQ.query _inputFile unit (InputFileNonIsland unit)
     void $ HQ.query _inputFile unit (InputFileButtonReset unit)
+  -- Change output orthography. Also changes
+  -- "convert" button style.
   (ChangeOrthOut2 kot) -> do
     Hal.modify_ (\st -> st {outputSelect = kot})
     void $ HQ.query _inputFile unit (InputFileButtonReset unit)
+  -- Change specific orthography settings.
   (ChangeOrthOpts2 (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ChangeOrthOpts2 (OrthIPAOptions ops)) -> do
     Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
-  -- (ChangeOrthOpts2 (OrthGeorgianOptions ops)) -> do
-  --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
+  -- Receive text that is to be converted, and
+  -- then send it off to be converted. Also
+  -- changes the style of the "Convert" button.
   (ConvertText2 fdt) -> do
     stt <- Hal.modify (\st -> st {inputFile = fdt})
-    -- stt.inputSelect
-    -- stt.outputSelect
-    -- stt.grubbOptions
-    
-    
-    -- newStr <- pure $ convertOrthography stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
-    -- void $ HQ.query _outputText unit (OutputString newStr unit)
-    -- void $ HQ.query _outputFile unit (ReceiveFileData (fdt {fileStr = newStr}) unit)
-
     case stt.parentListener of
       Nothing      -> liftEffect $ Console.error "Parent Listener not found."
       (Just lstnr) -> forkConverter lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
-
-
-    -- Hal.modify_ (\st -> st {outputText = newStr})
-    
+  -- Receive the converted text, and then give
+  -- it to the child output component to display
+  -- it. 
+  (ConvertedString2 str) -> do
+    -- Maybe remove this part?
+    Hal.modify_ (\st -> st {outputText = str})
+    void $ HQ.query _outputText unit (OutputString   str unit)
+    void $ HQ.query _inputFile  unit (InputFileButtonDone unit)
+  -- Initialize the component. It does this by
+  -- creating the listener/emitter pair and
+  -- storing them in the component's state.
   ParentInitialize2 -> do
     emtPair <- Hal.liftEffect HS.create
     sbsc    <- Hal.subscribe (ConvertedString2 <$> emtPair.emitter)
-      -- Console.debug "Hello?"
-      -- pure $ ConvertedString str
     Hal.modify_ $ \st -> st 
       { parentListener = Just emtPair.listener 
       , parentEmitter  = Just emtPair.emitter
@@ -371,10 +373,6 @@ handleConvertAction2 x = case x of
       }
   ParentFinalize2 -> do
     pure unit
-  (ConvertedString2 str) -> do
-    Hal.modify_ (\st -> st {outputText = str})
-    void $ HQ.query _outputText unit (OutputString   str unit)
-    void $ HQ.query _inputFile  unit (InputFileButtonDone unit)
   -- Fallback
   -- _ -> pure unit
 

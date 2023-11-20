@@ -34,9 +34,6 @@ import Web.HTML.Common (ClassName(..))
 _orthOptions :: Proxy "orthOptions"
 _orthOptions = Proxy
 
--- | eXtensible record with `grubbOptions` as a field.
-type OrthOptionsX r = {grubbOptions :: GrubbOptions | r}
-
 type OrthSlot x = Hal.Slot OrthQuery OrthOptions x
 
 type OrthSlots
@@ -47,10 +44,10 @@ type OrthSlots
 
 data OrthQuery a
   = OrthGetGrubb (GrubbOptions -> a)
-  -- | OrthSetGrubb GrubbOptions a
   | OrthGetIPA (IPAOptions -> a)
-  -- | OrthSetIPA IPAOptions a
   -- | OrthGetGeorgian (GeorgianOptions -> a)
+  -- | OrthSetGrubb GrubbOptions a
+  -- | OrthSetIPA IPAOptions a
   -- | OrthSetGeorgian GeorgianOptions a
 
 data OrthAction
@@ -71,13 +68,9 @@ data OrthOptions
   | OrthIPAOptions IPAOptions
   -- | OrthGeorgianOptions GeorgianOptions
 
-type OrthState
-  = { orthOpen :: Boolean
-    }
-  -- = {orthGrubb :: GrubbOptions
-    -- , orthIPA :: IPAOptions
-    -- , orthGeorgian :: GeorgianOptions
-    -- }
+-- | Only has one value, since the orthography
+-- | options are stored in the child components.
+type OrthState = { orthOpen :: Boolean }
 
 handleOrthChange_ :: forall m. OrthAction -> Hal.HalogenM OrthState OrthAction OrthSlots OrthOptions m Unit
 handleOrthChange_ OrthToggleBox = Hal.modify_ (\x -> x {orthOpen = (not x.orthOpen)})
@@ -120,6 +113,7 @@ buttonText orst
   | orst.orthOpen = "Hide Specific Orthography Options"
   | otherwise     = "Show Specific Orhtography Options"
 
+-- | Handle queries by in turn querying the child components.
 handleOrthQuery :: forall a m. Monad m => OrthQuery a -> Hal.HalogenM OrthState OrthAction OrthSlots OrthOptions m (Maybe a)
 handleOrthQuery (OrthGetGrubb reply) = do
   rslt <- HQ.query _grubbOptions unit (GetGrubb (\x -> x))
