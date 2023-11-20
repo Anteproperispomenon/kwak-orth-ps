@@ -292,3 +292,24 @@ cvb:disabled:hover {
   background-color: #fdb;
   border-color: #c74;
 }
+
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+
+/* Link options */
+/* From: https://stackoverflow.com/questions/10276133/how-to-disable-html-links */
+
+a.no-link {
+  pointer-events: none;
+  color: gray;
+}
+
+a.down-link:visited {
+  color:#277
+}
+
+a.down-link:link {
+  color:#4c4
+}
+

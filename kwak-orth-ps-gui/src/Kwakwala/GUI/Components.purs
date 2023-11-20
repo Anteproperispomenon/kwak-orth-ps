@@ -354,12 +354,14 @@ handleConvertAction2 x = case x of
       (Just lstnr) -> forkConverter lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
   -- Receive the converted text, and then give
   -- it to the child output component to display
-  -- it. 
+  -- it. Also send the file data to the download
+  -- button.
   (ConvertedString2 str) -> do
-    -- Maybe remove this part?
-    Hal.modify_ (\st -> st {outputText = str})
+    -- Maybe change to just get the current state?
+    stt <- Hal.modify (\st -> st {outputText = str})
     void $ HQ.query _outputText unit (OutputString   str unit)
     void $ HQ.query _inputFile  unit (InputFileButtonDone unit)
+    void $ HQ.query _outputFile unit (ReceiveFileData (stt.inputFile {fileStr = str}) unit)
   -- Initialize the component. It does this by
   -- creating the listener/emitter pair and
   -- storing them in the component's state.

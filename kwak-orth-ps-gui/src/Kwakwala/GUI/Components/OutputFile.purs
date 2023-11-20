@@ -30,10 +30,10 @@ import Halogen.HTML.Properties (InputAcceptType)
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
 import Web.File.File as File
-
 import Web.File.Blob as Blob
 import Web.File.FileReader.Aff as FR
 import Web.File.Url (createObjectURL)
+import Web.HTML.Common (ClassName(..))
 
 import Effect.Exception (message)
 
@@ -82,6 +82,7 @@ outputFileGUI stt
           , HP.download "output_text"
           , HP.type_ stt.ofTyp
           , HP.target "_blank"
+          , HP.class_ (linkClass (null stt.ofUrl))
           ]
           [Html.text "Download"]]
       -- , Html.p_ [Html.text "Input"]
@@ -96,6 +97,10 @@ outputFileGUI stt
 
 createBlob :: FileData -> Blob.Blob
 createBlob fd = Blob.fromString fd.fileStr (fdType fd)
+
+linkClass :: Boolean -> ClassName
+linkClass true  = ClassName "no-link"
+linkClass false = ClassName "down-link"
 
 fdType :: FileData -> MediaType
 fdType fd = case fd.fileTyp of
