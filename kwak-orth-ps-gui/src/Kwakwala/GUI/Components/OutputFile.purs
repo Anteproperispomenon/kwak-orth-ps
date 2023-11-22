@@ -48,7 +48,7 @@ type OutputFileX r = {outputFile :: String | r}
 type OutputFileSlot x = Hal.Slot OutputFileQuery Void x
 
 data OutputFileQuery a
-  = ReceiveFileData FileData a
+  = ReceiveFileData FileData (String -> a)
 
 type OutputFileAction = Unit
 -- data OutputFileAction
@@ -108,12 +108,12 @@ fdType fd = case fd.fileTyp of
   (Just x) -> x
 
 handleOutputFileQuery :: forall a s m. MonadEffect m => OutputFileQuery a -> Hal.HalogenM OutputFileState OutputFileAction s Void m (Maybe a)
-handleOutputFileQuery (ReceiveFileData fdat x) = do
+handleOutputFileQuery (ReceiveFileData fdat reply) = do
   ftp <- pure $ fdType fdat
   blb <- pure $ Blob.fromString fdat.fileStr ftp
   str <- liftEffect $ createObjectURL blb
   Hal.put { ofUrl : str , ofTyp : ftp }
-  pure $ Just x
+  pure $ Just (reply str)
 
 handleOutputFileAction :: forall m s. (MonadAff m) => OutputFileAction -> Hal.HalogenM OutputFileState OutputFileAction s Void m Unit 
 handleOutputFileAction _ = pure unit

@@ -40,6 +40,8 @@ import Kwakwala.GUI.Components.InputFile   (InputFileQuery(..) , InputFileSlot ,
 import Kwakwala.GUI.Components.OutputFile  (OutputFileQuery(..), OutputFileSlot, _outputFile, outputFileComp)
 import Kwakwala.GUI.Components.OrthOptions (OrthOptions(..), OrthSlot, _orthOptions, orthComp)
 
+import Kwakwala.GUI.RecentStore
+
 import Control.Applicative (when)
 
 import Effect (Effect)
@@ -66,6 +68,8 @@ import Halogen.Query as HQ
 import Halogen.Query.HalogenM as HM
 import Halogen.Subscription as HS
 import Type.Proxy (Proxy(..))
+
+import Web.File.Url (revokeObjectURL)
 
 --------------------------------
 -- Parent Component (Text)
@@ -274,6 +278,7 @@ type ParentState2
     , parentListener :: Maybe (HS.Listener String)
     , parentEmitter  :: Maybe (HS.Emitter  String)
     , parentSubscription :: Maybe (Hal.SubscriptionId)
+    , parentUrlStore :: RecentStoreEff String
     }
 
 defParentState2 :: ParentState2
@@ -286,6 +291,7 @@ defParentState2 =
   , parentListener : Nothing
   , parentEmitter : Nothing
   , parentSubscription : Nothing
+  , parentUrlStore : newRecentStoreMP 5 revokeObjectURL
   }
 
 -- | The Action type used by the
@@ -368,9 +374,17 @@ handleConvertAction2 x = case x of
     -- Maybe change to just get the current state?
     -- stt <- Hal.modify (\st -> st {outputText = str})
     stt <- Hal.get
-    void $ HQ.query _outputText unit (OutputString    str unit)
-    void $ HQ.query _inputFile  unit (InputFileButtonDone unit)
-    void $ HQ.query _outputFile unit (ReceiveFileData (stt.inputFile {fileStr = str}) unit)
+    void $  HQ.query _outputText unit (OutputString    str unit)
+    void $  HQ.query _inputFile  unit (InputFileButtonDone unit)
+    murl <- HQ.query _outputFile unit (ReceiveFileData (stt.inputFile {fileStr = str}) (\z -> z))
+    
+    -- Add the new url to the url store.
+    case murl of
+      Nothing    -> pure unit
+      (Just url) -> do
+        nstore <- liftEffect $ addElementM url stt.parentUrlStore
+        Hal.modify_ $ \st -> st { parentUrlStore = nstore }
+
   -- Initialize the component. It does this by
   -- creating the listener/emitter pair and
   -- storing them in the component's state.
@@ -383,7 +397,9 @@ handleConvertAction2 x = case x of
       , parentSubscription = Just sbsc
       }
   ParentFinalize2 -> do
-    pure unit
+    -- This is probably unnecessary.
+    rs <- Hal.gets _.parentUrlStore
+    void $ liftEffect $ clearStoreM rs
   -- Fallback
   -- _ -> pure unit
 
