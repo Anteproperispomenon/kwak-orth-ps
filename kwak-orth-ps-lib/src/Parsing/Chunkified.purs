@@ -32,5 +32,3 @@ runParserChunkPar (Left  str) prs = pure $ singleton <$> runParser str prs
 runParserChunkPar (Right lst) prs
   = map sequence $ parTraverse (\x -> pure $ runParser x prs) lst
 
--- 
--- m (List (Either ParseError a))

@@ -531,6 +531,7 @@ parseGrubbWord' ltr
     | otherwise       = (Cons ltr)                        <$> many parseGrubbLetter
 
 -- 
+caseOf :: CasedLetter -> KwakLetter -> CasedLetter
 caseOf (Maj _) x = Maj x
 caseOf (Min _) x = Min x
 

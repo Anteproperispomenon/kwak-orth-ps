@@ -9,11 +9,17 @@ module Kwakwala.Types.Tables
  , tryConsCC
  ) where
 
-import Prelude
+-- import Prelude
 
 import Data.Maybe(Maybe(..))
 
 import Kwakwala.Types
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , KwakConsonant(..)
+  , KwakLetter(..)
+  , KwakVowel(..)
+  )
 
 tryVowelCL :: CasedLetter -> Maybe KwakVowel
 tryVowelCL (Maj x) = letterToVowel x

@@ -356,7 +356,7 @@ takeLetters (Cons (Punct x) lst) = Just {chrs : (PunctW x), rst : lst}
 takeLetters lst = go Nil lst
   where
     go acc (Cons (Kwak c) cs) = go (c : acc) cs
-    go acc lst = Just {chrs : (KwakW $ reverse acc), rst : lst}
+    go acc xlst = Just {chrs : (KwakW $ reverse acc), rst : xlst}
 
 -- | Convert a `List` of `CasedChar`s
 -- | into a `List` of `CasedWord`s. This

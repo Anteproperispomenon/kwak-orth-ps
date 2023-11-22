@@ -10,11 +10,11 @@ module Kwakwala.GUI.Components.OrthOptions
 
 import Prelude
 
-import Kwakwala.GUI.Components.GrubbOptions
-import Kwakwala.GUI.Components.IPAOptions
-import Kwakwala.GUI.Types (AllOrthOptions, defAllOrthOptions)
+import Kwakwala.GUI.Components.GrubbOptions (GrubbQuery(..), GrubbSlot, _grubbOptions, grubbComp)
+import Kwakwala.GUI.Components.IPAOptions (IPAQuery(..), IPASlot, _ipaOptions, ipaComp)
+-- import Kwakwala.GUI.Types (AllOrthOptions, defAllOrthOptions)
 
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe)
 import Effect.Class (class MonadEffect)
 import Halogen as Hal
 import Halogen.Component as HC

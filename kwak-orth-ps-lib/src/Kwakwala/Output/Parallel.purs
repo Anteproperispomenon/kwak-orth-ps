@@ -20,13 +20,13 @@ import Control.Parallel.Class (class Parallel)
 import Data.List (List)
 import Data.Foldable (fold)
 
-import Kwakwala.Output.Grubb
-import Kwakwala.Output.IPA
-import Kwakwala.Output.Napa
-import Kwakwala.Output.Syllabic
-import Kwakwala.Output.Umista
+import Kwakwala.Output.Grubb    (GrubbOptions, outputGrubbAsciiWords)
+import Kwakwala.Output.IPA      (IPAOptions, outputIPAWords)
+import Kwakwala.Output.Napa     (outputNapaWords)
+import Kwakwala.Output.Syllabic (outputSyllabicsWords)
+import Kwakwala.Output.Umista   (outputUmistaWords)
 
-import Kwakwala.Types
+import Kwakwala.Types (CasedWord)
 
 outputNapaWordsPar :: forall f m. Parallel f m => Applicative f => Applicative m => List (List CasedWord) -> m (List String)
 outputNapaWordsPar lsts = parTraverse (\cws -> pure $ outputNapaWords cws) lsts

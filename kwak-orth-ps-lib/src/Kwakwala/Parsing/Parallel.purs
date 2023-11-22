@@ -22,16 +22,16 @@ import Control.Parallel.Class (class Parallel)
 import Data.Either (fromRight)
 import Data.List (List(..))
 
-import Kwakwala.Parsing.Boas
-import Kwakwala.Parsing.Grubb
-import Kwakwala.Parsing.Island
-import Kwakwala.Parsing.Napa
-import Kwakwala.Parsing.Umista
+import Kwakwala.Parsing.Boas   (parseBoas)
+import Kwakwala.Parsing.Grubb  (parseGrubbAscii)
+import Kwakwala.Parsing.Island (parseIsland)
+import Kwakwala.Parsing.Napa   (parseNapa)
+import Kwakwala.Parsing.Umista (parseUmista)
 
-import Kwakwala.Types
+import Kwakwala.Types (CasedWord, toWordsL, toWordsR)
 
-import Parsing.Chunking
-import Parsing.Chunkified
+import Parsing.Chunking   (chunkifyText)
+import Parsing.Chunkified (runParserChunkPar)
 
 chkSz :: Int
 chkSz = 1024

@@ -93,8 +93,6 @@ grubbOptionsGUI grb
       ]
     ]
 
-
-
 data GrubbToggle
   = GrbTogJ
   | GrbTog'
@@ -107,5 +105,3 @@ toggleGrubb :: GrubbToggle -> GrubbOptions -> GrubbOptions
 toggleGrubb GrbTogJ grb = grb {grbUseJ = not grb.grbUseJ}
 toggleGrubb GrbTog' grb = grb {grbUse' = not grb.grbUse'}
 toggleGrubb GrbTog7 grb = grb {grbUse7 = not grb.grbUse7}
-
-

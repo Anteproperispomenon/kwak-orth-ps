@@ -9,7 +9,7 @@ import Prelude
 
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
-import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Class (liftEffect) -- , class MonadEffect
 import Halogen.Aff.Util (selectElement)
 import Web.DOM.ChildNode (remove)
 import Web.DOM.ParentNode (QuerySelector(..))

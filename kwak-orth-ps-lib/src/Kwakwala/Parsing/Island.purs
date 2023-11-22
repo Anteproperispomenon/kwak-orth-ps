@@ -22,23 +22,32 @@ module Kwakwala.Parsing.Island
     , parseIslandOld
     ) where
 
-import Data.CodePoint.Unicode
-import Data.Maybe
-import Kwakwala.Parsing.Helpers
-import Kwakwala.Types
 import Prelude
+
+import Data.CodePoint.Unicode (isAlpha, isUpper)
+import Data.Maybe (Maybe(..))
+import Kwakwala.Parsing.Helpers (eqCP, isUpperC, parsePipe, peekChar)
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord
+  , KwakLetter(..)
+  , makeCase
+  , toWordsL
+  , toWordsR
+  )
 
 import Control.Alt ((<|>))
 import Data.Either (fromRight)
 import Data.List (List(..))
-import Data.List as List
+-- import Data.List as List
 import Data.List.Types (toList)
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
 import Parsing (Parser, runParser)
 import Parsing.Chunkified (runParserChunk)
 import Parsing.Chunking (chunkifyText)
 import Parsing.Combinators (many1, choice)
-import Parsing.String (anyChar, anyCodePoint, char, eof, satisfy, satisfyCodePoint, string)
+import Parsing.String (anyChar, anyCodePoint, char, satisfy, satisfyCodePoint) -- , eof, string)
 import Parsing.String.Basic (takeWhile1)
 
 -- Primarily copied over from the NAPA parser file.
@@ -421,7 +430,7 @@ parseY = do
   pure $ makeCase b Y
 
 tstm :: forall a. (a -> Boolean) -> (Maybe a) -> Boolean
-tstm p Nothing  = false
+tstm _ Nothing  = false
 tstm p (Just x) = p x
 
 -----------------------

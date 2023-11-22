@@ -23,34 +23,44 @@ module Kwakwala.Parsing.Napa
   , encodeFromNapaWordsR
   , parseNapa
   , parseNapaOld
+  , parseNAPA
+  , encodeFromNAPA
   ) where
 
 import Prelude
-import Parsing (Parser, runParser, fail)
+import Parsing (Parser, runParser) -- , fail)
 import Parsing.String
   ( char
-  , string
+  -- , string
   , anyChar
   , anyCodePoint
   , satisfy
-  , satisfyCodePoint
-  , eof
+  -- , satisfyCodePoint
+  -- , eof
   )
 import Parsing.String.Basic (takeWhile1)
 import Parsing.Combinators (many1, choice)
 
-import Control.Alt (alt, (<|>))
+import Control.Alt ((<|>))
 
-import Data.List (List(Nil, Cons))
+import Data.List (List(..))
 import Data.Either (fromRight)
-import Data.Maybe
+import Data.Maybe (Maybe(..))
 
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Data.CodePoint.Unicode
+import Data.CodePoint.Unicode (isAlpha, isUpper)
 import Data.List.Types (toList)
 
 import Kwakwala.Types
-import Kwakwala.Parsing.Helpers
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord
+  , KwakLetter(..)
+  , makeCase
+  , toWordsL
+  , toWordsR
+  )
+import Kwakwala.Parsing.Helpers (isUpperC, parsePipe, peekChar, peekCode)
 
 import Parsing.Chunking   (chunkifyText)
 import Parsing.Chunkified (runParserChunk)

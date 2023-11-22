@@ -8,25 +8,42 @@ module Kwakwala.GUI.Convert
 
 import Prelude
 
-import Control.Monad ((>=>))
+-- import Control.Monad ((>=>)) -- already in Prelude
 import Control.Parallel.Class (class Parallel)
 import Data.List (List)
 import Kwakwala.GUI.Types (KwakInputType(..), KwakOutputType(..), AllOrthOptions)
 
-import Kwakwala.Output.Grubb (GrubbOptions, outputGrubbAsciiChars, outputGrubbAsciiWords)
-import Kwakwala.Output.IPA (IPAOptions, outputIPAChars, outputIPAWords)
+import Kwakwala.Output.Grubb (outputGrubbAsciiChars, outputGrubbAsciiWords) -- , GrubbOptions
+import Kwakwala.Output.IPA (outputIPAChars, outputIPAWords) -- , IPAOptions
 import Kwakwala.Output.Napa (outputNapaChars, outputNapaWords)
 import Kwakwala.Output.Syllabic (outputSyllabics, outputSyllabicsWords)
 import Kwakwala.Output.Umista (outputUmistaChars, outputUmistaWords)
 
-import Kwakwala.Parsing.Boas (encodeFromBoas, encodeFromBoasChunk, encodeFromBoasWordsL, encodeFromBoasWordsR)
-import Kwakwala.Parsing.Grubb (encodeFromGrubbAscii, encodeFromGrubbAsciiChunk, encodeFromGrubbWordsL, encodeFromGrubbWordsR)
-import Kwakwala.Parsing.Island (encodeFromIsland, encodeFromIslandChunk, encodeFromIslandWordsL, encodeFromIslandWordsR)
-import Kwakwala.Parsing.Napa (encodeFromNapa, encodeFromNapaChunk, encodeFromNapaWordsL, encodeFromNapaWordsR)
-import Kwakwala.Parsing.Umista (encodeFromUmista, encodeFromUmistaChunk, encodeFromUmistaWordsL, encodeFromUmistaWordsR)
+import Kwakwala.Parsing.Boas (encodeFromBoasChunk, encodeFromBoasWordsL, encodeFromBoasWordsR) -- , encodeFromBoas)
+import Kwakwala.Parsing.Grubb (encodeFromGrubbAsciiChunk, encodeFromGrubbWordsL, encodeFromGrubbWordsR) -- , encodeFromGrubbAscii)
+import Kwakwala.Parsing.Island (encodeFromIslandChunk, encodeFromIslandWordsL, encodeFromIslandWordsR) -- , encodeFromIsland
+import Kwakwala.Parsing.Napa (encodeFromNapaChunk, encodeFromNapaWordsL, encodeFromNapaWordsR) -- , encodeFromNapa
+import Kwakwala.Parsing.Umista (encodeFromUmistaChunk, encodeFromUmistaWordsL, encodeFromUmistaWordsR) -- , encodeFromUmista
 
 import Kwakwala.Output.Parallel
+  ( outputGrubbWordsParC
+  , outputIPAWordsParC
+  , outputNapaWordsParC
+  , outputSyllabicsWordsParC
+  , outputUmistaWordsParC
+  )
 import Kwakwala.Parsing.Parallel
+  ( encodeFromBoasWordsParL
+  , encodeFromBoasWordsParR
+  , encodeFromGrubbWordsParL
+  , encodeFromGrubbWordsParR
+  , encodeFromIslandWordsParL
+  , encodeFromIslandWordsParR
+  , encodeFromNapaWordsParL
+  , encodeFromNapaWordsParR
+  , encodeFromUmistaWordsParL
+  , encodeFromUmistaWordsParR
+  )
 
 import Kwakwala.Types (CasedChar, CasedWord)
 

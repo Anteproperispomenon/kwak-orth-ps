@@ -11,17 +11,17 @@ import Kwakwala.GUI.Types (FileData)
 
 import Control.Monad.State.Class (get)
 import DOM.HTML.Indexed.InputAcceptType (mediaType)
-import Data.Array as Arr
+-- import Data.Array as Arr
 -- import Data.Array ((:))
-import Data.Either (Either(..))
+-- import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
-import Data.MediaType.Common (textPlain, textCSV)
+import Data.MediaType.Common (textPlain) -- , textCSV)
 import Data.String (null)
 -- import Data.Unfoldable
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Aff (attempt)
-import Effect.Aff.Class (class MonadAff, liftAff)
+import Effect.Aff.Class (class MonadAff) -- , liftAff)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html

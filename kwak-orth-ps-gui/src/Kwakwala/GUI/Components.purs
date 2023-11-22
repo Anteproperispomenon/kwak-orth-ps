@@ -1,3 +1,9 @@
+-- | This module contains the main Parent Components
+-- | that are passed to the main function. There are
+-- | two versions, one for direct text input, and one
+-- | for uploaded file input. They probably should
+-- | be separated into separate modules, but 
+
 module Kwakwala.GUI.Components
   ( convertComp
   , ParentAction(..)
@@ -14,40 +20,42 @@ module Kwakwala.GUI.Components
   where
 
 import Prelude
-import Kwakwala.GUI.Types
-import Type.Row
+
+-- import Type.Row
 
 import Data.Time.Duration (Milliseconds(..))
 
-import Kwakwala.GUI.Components.InSelect
-import Kwakwala.GUI.Components.OutSelect
-import Kwakwala.GUI.Components.GrubbOptions
-import Kwakwala.GUI.Components.InputText
-import Kwakwala.GUI.Components.OutputText
-import Kwakwala.GUI.Components.InputFile
-import Kwakwala.GUI.Components.OutputFile
-import Kwakwala.GUI.Components.OrthOptions
+import Kwakwala.GUI.Components.InSelect  (InputSlot, _inputSelect, inputComp)
+import Kwakwala.GUI.Components.OutSelect (OutputSlot, _outputSelect, outputComp)
+import Kwakwala.GUI.Components.InputText 
+  ( InputTextInput(..)
+  , InputTextQuery(..)
+  , InputTextRaise(..)
+  , InputTextSlot
+  , _inputText
+  , inputTextComp
+  )
+import Kwakwala.GUI.Components.OutputText  (OutputTextQuery(..), OutputTextSlot, _outputText, outputTextComp)
+import Kwakwala.GUI.Components.InputFile   (InputFileQuery(..) , InputFileSlot , _inputFile , inputFileComp )
+import Kwakwala.GUI.Components.OutputFile  (OutputFileQuery(..), OutputFileSlot, _outputFile, outputFileComp)
+import Kwakwala.GUI.Components.OrthOptions (OrthOptions(..), OrthSlot, _orthOptions, orthComp)
 
 import Control.Applicative (when)
 
 import Effect (Effect)
-import Effect.Class (class MonadEffect, liftEffect)
-import Effect.Aff (forkAff, joinFiber, delay)
+import Effect.Class (liftEffect) -- , class MonadEffect)
+import Effect.Aff (forkAff, delay) -- , joinFiber)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Console (debug)
 import Effect.Console as Console
 
-import Kwakwala.GUI.Convert
-import Kwakwala.GUI.Types (FileData, AllOrthOptions, defAllOrthOptions)
+import Kwakwala.GUI.Convert (convertOrthographyParL, convertOrthographyWL)
+import Kwakwala.GUI.Types (AllOrthOptions, FileData, KwakInputType(..), KwakOutputType(..), defAllOrthOptions)
 
-import Control.Monad.State.Class (class MonadState, get)
-import Control.Monad.Trans.Class (lift)
+-- import Control.Monad.Trans.Class (lift)
 import Data.Maybe (Maybe(..))
-import Data.MediaType (MediaType)
-import Data.MediaType.Common (textPlain)
-import Effect.Aff (joinFiber, forkAff)
-import Effect.Aff.Class (class MonadAff, liftAff)
-import Halogen (ComponentHTML)
+-- import Data.MediaType (MediaType)
+-- import Data.MediaType.Common (textPlain)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
@@ -57,7 +65,6 @@ import Halogen.HTML.Properties as HP
 import Halogen.Query as HQ
 import Halogen.Query.HalogenM as HM
 import Halogen.Subscription as HS
-import Kwakwala.Output.Grubb (GrubbOptions(..), GrubbOptions, defGrubbOptions)
 import Type.Proxy (Proxy(..))
 
 --------------------------------
@@ -116,7 +123,7 @@ defParentState =
   -- , inputFile : ""
   }
 
-convertComp :: forall m. (MonadAff m) => HC.Component _ ParentAction _ m
+convertComp :: forall m qr op. (MonadAff m) => HC.Component qr ParentAction op m
 convertComp 
   = Hal.mkComponent
      { initialState : (\_ -> defParentState)
@@ -150,7 +157,7 @@ handleInputText :: InputTextRaise -> ParentAction
 handleInputText (RaiseInput str) = ConvertText str
 handleInputText PullInput = ConvertPull
 
-handleConvertAction :: forall m. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots _ m Unit
+handleConvertAction :: forall m ops. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots ops m Unit
 handleConvertAction x = case x of
   ParentInitialize -> do
     emtPair <- Hal.liftEffect HS.create
@@ -225,7 +232,7 @@ handleConvertAction x = case x of
 
 -- If I keep the type general enough, I may be able to
 -- reuse this function for both Text input and File input.
-forkConverter :: forall m pstate. MonadAff m => HS.Listener String -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate _ _ _ m Unit
+forkConverter :: forall m pstate acts slots ops. MonadAff m => HS.Listener String -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
 -- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
 forkConverter lstnr kin kout oops str = liftAff $ void $ forkAff $ do
   liftEffect $ debug "Feeding the converter..."
