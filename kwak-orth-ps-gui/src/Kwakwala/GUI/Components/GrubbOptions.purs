@@ -24,8 +24,8 @@ import Web.HTML.Common (ClassName(..))
 --------------------------------
 -- Grubb Options Select
 
-_grubbSelect :: Proxy "grubbOptions"
-_grubbSelect = Proxy
+-- _grubbSelect :: Proxy "grubbOptions"
+-- _grubbSelect = Proxy
 
 _grubbOptions :: Proxy "grubbOptions"
 _grubbOptions = Proxy

@@ -43,6 +43,8 @@ module Kwakwala.Types
     -- ** Conversion Functions
     , toWordsL
     , toWordsR
+    -- ** Other Functions
+    , isLetter
     )
   where
 

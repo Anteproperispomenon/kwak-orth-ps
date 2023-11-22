@@ -40,11 +40,11 @@ import Kwakwala.GUI.Components.InputFile   (InputFileQuery(..) , InputFileSlot ,
 import Kwakwala.GUI.Components.OutputFile  (OutputFileQuery(..), OutputFileSlot, _outputFile, outputFileComp)
 import Kwakwala.GUI.Components.OrthOptions (OrthOptions(..), OrthSlot, _orthOptions, orthComp)
 
-import Kwakwala.GUI.RecentStore
+import Kwakwala.GUI.RecentStore (RecentStoreEff, addElementM, clearStoreM, newRecentStoreMP)
 
-import Control.Applicative (when)
+-- import Control.Applicative (when)
 
-import Effect (Effect)
+-- import Effect (Effect)
 import Effect.Class (liftEffect) -- , class MonadEffect)
 import Effect.Aff (forkAff, delay) -- , joinFiber)
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -61,13 +61,13 @@ import Data.Maybe (Maybe(..))
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
-import Halogen.HTML.Core (PropName(..))
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties as HP
+-- import Halogen.HTML.Core (PropName(..))
+-- import Halogen.HTML.Events as HE
+-- import Halogen.HTML.Properties as HP
 import Halogen.Query as HQ
-import Halogen.Query.HalogenM as HM
+-- import Halogen.Query.HalogenM as HM
 import Halogen.Subscription as HS
-import Type.Proxy (Proxy(..))
+-- import Type.Proxy (Proxy(..))
 
 import Web.File.Url (revokeObjectURL)
 

@@ -9,8 +9,8 @@ import Prelude
 
 import Kwakwala.GUI.Types (FileData)
 
-import Control.Monad.State.Class (get)
-import DOM.HTML.Indexed.InputAcceptType (mediaType)
+-- import Control.Monad.State.Class (get)
+-- import DOM.HTML.Indexed.InputAcceptType (mediaType)
 -- import Data.Array as Arr
 -- import Data.Array ((:))
 -- import Data.Either (Either(..))
@@ -20,22 +20,22 @@ import Data.MediaType.Common (textPlain) -- , textCSV)
 import Data.String (null)
 -- import Data.Unfoldable
 import Effect.Class (class MonadEffect, liftEffect)
-import Effect.Aff (attempt)
+-- import Effect.Aff (attempt)
 import Effect.Aff.Class (class MonadAff) -- , liftAff)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties (InputAcceptType)
+-- import Halogen.HTML.Events as HE
+-- import Halogen.HTML.Properties (InputAcceptType)
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
-import Web.File.File as File
+-- import Web.File.File as File
 import Web.File.Blob as Blob
-import Web.File.FileReader.Aff as FR
+-- import Web.File.FileReader.Aff as FR
 import Web.File.Url (createObjectURL)
 import Web.HTML.Common (ClassName(..))
 
-import Effect.Exception (message)
+-- import Effect.Exception (message)
 
 --------------------------------
 -- Input Text Box
@@ -95,8 +95,8 @@ outputFileGUI stt
       -- , Html.p_ [Html.button [HP.id "convert-button", HP.name "convert-button", HE.onClick (\_ -> Reconvert), HP.disabled (null stt.input)] [Html.text "Reconvert"]]
       ]
 
-createBlob :: FileData -> Blob.Blob
-createBlob fd = Blob.fromString fd.fileStr (fdType fd)
+-- createBlob :: FileData -> Blob.Blob
+-- createBlob fd = Blob.fromString fd.fileStr (fdType fd)
 
 linkClass :: Boolean -> ClassName
 linkClass true  = ClassName "no-link"
