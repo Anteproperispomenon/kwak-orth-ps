@@ -169,7 +169,7 @@ handleConvertAction x = case x of
     msbs <- Hal.gets _.parentEmitter
     case msbs of
       Nothing -> pure unit
-      (Just sbs) -> HS.unsubscribe sbs
+      (Just sbs) -> Hal.unsubscribe sbs
     -}
   (ChangeOrthIn  kit) -> do
     old <- Hal.gets _.inputSelect
@@ -263,7 +263,7 @@ type ParentState2
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
     , inputFile  :: FileData
-    , outputText :: String
+    -- , outputText :: String
     , parentListener :: Maybe (HS.Listener String)
     , parentEmitter  :: Maybe (HS.Emitter  String)
     , parentSubscription :: Maybe (Hal.SubscriptionId)
@@ -275,7 +275,7 @@ defParentState2 =
   , outputSelect : OutGrubb
   , orthOptions  : defAllOrthOptions
   , inputFile  : { fileStr : "", fileTyp : Nothing}
-  , outputText : ""
+  -- , outputText : "" -- Unnecessary duplication of state.
   , parentListener : Nothing
   , parentEmitter : Nothing
   , parentSubscription : Nothing
@@ -284,10 +284,10 @@ defParentState2 =
 -- | The Action type used by the
 -- | File Output `Component`.
 data ParentAction2
-  = ChangeOrthIn2   KwakInputType
-  | ChangeOrthOut2  KwakOutputType
-  | ChangeOrthOpts2 OrthOptions
-  | ConvertText2    FileData
+  = ChangeOrthIn2    KwakInputType
+  | ChangeOrthOut2   KwakOutputType
+  | ChangeOrthOpts2  OrthOptions
+  | ConvertText2     FileData
   | ConvertedString2 String
   | ParentInitialize2
   | ParentFinalize2
@@ -318,8 +318,9 @@ renderConverter2 st
     -- , Html.p_ [Html.text "Input File"]
     , Html.p_ [Html.slot  _inputFile unit inputFileComp st.inputFile.fileStr ConvertText2]
     -- , Html.p_ [Html.text "Output Text"]
-    , Html.p_ [Html.slot_ _outputText unit outputTextComp st.outputText]
-    , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : st.outputText , fileTyp : st.inputFile.fileTyp} ]
+    , Html.p_ [Html.slot_ _outputText unit outputTextComp ""] -- st.outputText]
+    , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : "" , fileTyp : st.inputFile.fileTyp} ]
+    -- , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : st.outputText , fileTyp : st.inputFile.fileTyp} ]
     ]
 
 handleConvertAction2 :: forall m outp. (MonadAff m) => ParentAction2 -> Hal.HalogenM ParentState2 ParentAction2 ParentSlots2 outp m Unit
@@ -358,8 +359,9 @@ handleConvertAction2 x = case x of
   -- button.
   (ConvertedString2 str) -> do
     -- Maybe change to just get the current state?
-    stt <- Hal.modify (\st -> st {outputText = str})
-    void $ HQ.query _outputText unit (OutputString   str unit)
+    -- stt <- Hal.modify (\st -> st {outputText = str})
+    stt <- Hal.get
+    void $ HQ.query _outputText unit (OutputString    str unit)
     void $ HQ.query _inputFile  unit (InputFileButtonDone unit)
     void $ HQ.query _outputFile unit (ReceiveFileData (stt.inputFile {fileStr = str}) unit)
   -- Initialize the component. It does this by
