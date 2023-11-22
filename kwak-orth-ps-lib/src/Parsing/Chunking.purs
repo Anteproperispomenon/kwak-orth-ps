@@ -26,6 +26,7 @@ import Prelude
 import Data.Array as Arr
 import Data.Array.NonEmpty (NonEmptyArray, fromArray, toArray)
 import Data.Array.NonEmpty as NEA
+import Data.Foldable (minimum)
 import Data.List (List(..))
 import Data.List as L
 import Data.Maybe (Maybe(..))
@@ -91,20 +92,37 @@ chunkifyString'' chkSz chrPrd arr' str = case (fromArray arr') of
 chunkifyStringX :: Int -> (NonEmptyArray CodePoint) -> String -> List String
 chunkifyStringX chkSz arr str = case (findFirstCP (toArray arr) str) of
   (Just n) -> let splt = S.splitAt (n+1) str in (Cons splt.before (chunkifyString' chkSz arr splt.after))
-  Nothing  -> L.singleton str -- giving up at this point
+  Nothing  -> L.singleton str -- giving up at this point; there's no way to split up the string.
 
 patCodePoint :: CodePoint -> Pattern
 patCodePoint cod = Pattern (S.singleton cod)
 
+-- Might be a lot slower than the version below
+-- if the CodePoint Array is REALLY long, but
+-- since this function should rarely fire 
+-- (unless your chunk size is way too small),
+-- that shouldn't be a problem. This is especially
+-- true since having a larger CodePoint array 
+-- decreases the chance of reaching this function
+-- in the first place.
+findFirstCP :: (Array CodePoint) -> String -> Maybe Int
+findFirstCP [] _ = Nothing
+findFirstCP arr str = minimum idxs
+  where idxs = Arr.mapMaybe (\cp -> S.indexOf (patCodePoint cp) str) arr
+
 -- TODO: Make it so it splits on the first instance
 -- of any CodePoint in the Array, rather than going
 -- through the whole array first.
-findFirstCP :: (Array CodePoint) -> String -> Maybe Int
+{-
 findFirstCP arr str = case (Arr.uncons arr) of
   Nothing    -> Nothing
   (Just xar) -> case (S.indexOf (patCodePoint xar.head) str) of
     Nothing  -> findFirstCP xar.tail str
     (Just x) -> Just x
+-}
+
+-- This version didn't work because you can't pattern
+-- match directly on arrays (other than empty arrays).
 {- findFirstCP [] _ = Nothing
 findFirstCP (Cons cp rst) str = case (S.indexOf (patCodePoint cp) str) of
   Nothing  -> findFirstCP rst str

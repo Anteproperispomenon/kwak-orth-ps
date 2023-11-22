@@ -92,10 +92,10 @@ isApostCP = (eqCP '\'') || (eqCP '`') || (eqCP '̕' ) || (eqCP '\x313') || (eqCP
 -- For checking after an m/n/etc...
 isApost' :: Char -> Boolean
 -- isApost' '\'' = true -- since this would be a glottal stop
-isApost' '`'  = true
-isApost' '̕'  = true
-isApost' '\x313' = true
--- isApost' '\x315' = true
+isApost'  '`'  = true
+isApost'  '̕'  = true
+isApost'  '\x313' = true
+-- isApost'  '\x315' = true
 isApost' _ = false
 
 -- ʷᵂ
