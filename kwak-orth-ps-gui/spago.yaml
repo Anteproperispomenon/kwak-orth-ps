@@ -15,19 +15,19 @@ package:
     - web-html
   name: kwak-orth-ps-gui
   bundle:
-    #module: Main
-    #outfile: "app/convert-text.js" 
-    #module: MainFile
-    #outfile: "app/convert-file.js"
-    
     module: Main
     outfile: "app/convert-text.min.js" 
     minify: true
     #module: MainFile
     #outfile: "app/convert-file.min.js"
-
     platform: browser
     type: "app"
+
+    # Non-minified version
+    #module: Main
+    #outfile: "app/convert-text.js" 
+    #module: MainFile
+    #outfile: "app/convert-file.js"
   #test:
   #  dependencies: []
   #  main: Test.Main

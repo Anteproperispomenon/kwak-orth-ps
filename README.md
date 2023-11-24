@@ -63,11 +63,13 @@ in your browser, and it should work. To get the other script, you'll have to ope
 ```yaml
   bundle:
     module: Main
-    outfile: "app/convert-text.js" 
+    outfile: "app/convert-text.min.js" 
+    minify: true
     #module: MainFile
-    #outfile: "app/convert-file.js"
+    #outfile: "app/convert-file.min.js"
     platform: browser
     type: "app"
+    # ...
 ```
 
 to make `spago` compile the other script, you'll have to add a `#` to the `module` and `outfile`
@@ -78,11 +80,13 @@ change it look like this:
 ```yaml
   bundle:
     #module: Main
-    #outfile: "app/convert-text.js" 
+    #outfile: "app/convert-text.min.js" 
+    minify: true
     module: MainFile
-    outfile: "app/convert-file.js"
+    outfile: "app/convert-file.min.js"
     platform: browser
     type: "app"
+    # ...
 ```
 
 on the other hand, if your `kwak-orth-ps-gui/spago.yaml` file's bundle section file looks like 
