@@ -252,6 +252,28 @@ textarea.island {
 }
 
 .convert-progress {
+  background-color: #fed;
+  border-color: #c74;
+}
+
+.convert-progress:hover {
+  background-color: #fdb;
+  border-color: #c74;
+}
+
+.convert-error {
+  background-color: #fdd;
+  border-color: #c44;
+}
+
+.convert-error:hover {
+  background-color: #fbb;
+  border-color: #c44;
+  cursor: not-allowed;
+}
+
+/*
+.convert-progress {
   background-color: #ddd;
   border-color: #444;
 }
@@ -259,6 +281,7 @@ textarea.island {
 .convert-progress:hover {
   background-color: #bbb;
 }
+*/
 
 cvb:disabled {
   background-color: #fed;
@@ -269,3 +292,24 @@ cvb:disabled:hover {
   background-color: #fdb;
   border-color: #c74;
 }
+
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+
+/* Link options */
+/* From: https://stackoverflow.com/questions/10276133/how-to-disable-html-links */
+
+a.no-link {
+  pointer-events: none;
+  color: gray;
+}
+
+a.down-link:visited {
+  color:#277
+}
+
+a.down-link:link {
+  color:#4c4
+}
+

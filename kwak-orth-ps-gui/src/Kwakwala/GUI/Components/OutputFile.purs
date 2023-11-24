@@ -9,33 +9,33 @@ import Prelude
 
 import Kwakwala.GUI.Types (FileData)
 
-import Control.Monad.State.Class (get)
-import DOM.HTML.Indexed.InputAcceptType (mediaType)
-import Data.Array as Arr
+-- import Control.Monad.State.Class (get)
+-- import DOM.HTML.Indexed.InputAcceptType (mediaType)
+-- import Data.Array as Arr
 -- import Data.Array ((:))
-import Data.Either (Either(..))
+-- import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
-import Data.MediaType.Common (textPlain, textCSV)
+import Data.MediaType.Common (textPlain) -- , textCSV)
 import Data.String (null)
 -- import Data.Unfoldable
 import Effect.Class (class MonadEffect, liftEffect)
-import Effect.Aff (attempt)
-import Effect.Aff.Class (class MonadAff, liftAff)
+-- import Effect.Aff (attempt)
+import Effect.Aff.Class (class MonadAff) -- , liftAff)
 import Halogen as Hal
 import Halogen.Component as HC
 import Halogen.HTML as Html
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties (InputAcceptType)
+-- import Halogen.HTML.Events as HE
+-- import Halogen.HTML.Properties (InputAcceptType)
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
-import Web.File.File as File
-
+-- import Web.File.File as File
 import Web.File.Blob as Blob
-import Web.File.FileReader.Aff as FR
+-- import Web.File.FileReader.Aff as FR
 import Web.File.Url (createObjectURL)
+import Web.HTML.Common (ClassName(..))
 
-import Effect.Exception (message)
+-- import Effect.Exception (message)
 
 --------------------------------
 -- Input Text Box
@@ -48,7 +48,7 @@ type OutputFileX r = {outputFile :: String | r}
 type OutputFileSlot x = Hal.Slot OutputFileQuery Void x
 
 data OutputFileQuery a
-  = ReceiveFileData FileData a
+  = ReceiveFileData FileData (String -> a)
 
 type OutputFileAction = Unit
 -- data OutputFileAction
@@ -82,6 +82,7 @@ outputFileGUI stt
           , HP.download "output_text"
           , HP.type_ stt.ofTyp
           , HP.target "_blank"
+          , HP.class_ (linkClass (null stt.ofUrl))
           ]
           [Html.text "Download"]]
       -- , Html.p_ [Html.text "Input"]
@@ -94,8 +95,12 @@ outputFileGUI stt
       -- , Html.p_ [Html.button [HP.id "convert-button", HP.name "convert-button", HE.onClick (\_ -> Reconvert), HP.disabled (null stt.input)] [Html.text "Reconvert"]]
       ]
 
-createBlob :: FileData -> Blob.Blob
-createBlob fd = Blob.fromString fd.fileStr (fdType fd)
+-- createBlob :: FileData -> Blob.Blob
+-- createBlob fd = Blob.fromString fd.fileStr (fdType fd)
+
+linkClass :: Boolean -> ClassName
+linkClass true  = ClassName "no-link"
+linkClass false = ClassName "down-link"
 
 fdType :: FileData -> MediaType
 fdType fd = case fd.fileTyp of
@@ -103,12 +108,12 @@ fdType fd = case fd.fileTyp of
   (Just x) -> x
 
 handleOutputFileQuery :: forall a s m. MonadEffect m => OutputFileQuery a -> Hal.HalogenM OutputFileState OutputFileAction s Void m (Maybe a)
-handleOutputFileQuery (ReceiveFileData fdat x) = do
+handleOutputFileQuery (ReceiveFileData fdat reply) = do
   ftp <- pure $ fdType fdat
   blb <- pure $ Blob.fromString fdat.fileStr ftp
   str <- liftEffect $ createObjectURL blb
   Hal.put { ofUrl : str , ofTyp : ftp }
-  pure $ Just x
+  pure $ Just (reply str)
 
 handleOutputFileAction :: forall m s. (MonadAff m) => OutputFileAction -> Hal.HalogenM OutputFileState OutputFileAction s Void m Unit 
 handleOutputFileAction _ = pure unit

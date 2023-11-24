@@ -4,6 +4,7 @@ module Kwakwala.GUI.Components.InputText
   , InputTextQuery(..)
   , InputTextSlot
   , InputTextRaise(..)
+  , InputTextInput(..)
   ) where
 
 import Prelude
@@ -50,21 +51,35 @@ data InputTextAction
   | SetInProgress
   | DoneButton
   | RevertButton
+  | ErrorButton
 
 data InputTextRaise
   = RaiseInput String
   | PullInput
 
-inputTextComp :: forall m. (MonadAff m) => HC.Component InputTextQuery String InputTextRaise m
+data InputTextInput
+  = SetInString String
+  | SetConvStatus ConvertState
+
+inputTextComp :: forall m. (MonadAff m) => HC.Component InputTextQuery InputTextInput InputTextRaise m
 inputTextComp
   = Hal.mkComponent
-    { initialState : \x -> { itString : x, itStyle : "normal", itConvert : ConvertReady }
+    { initialState : \x -> case x of
+      (SetInString  str) -> { itString : str, itStyle : "normal", itConvert : ConvertReady }
+      (SetConvStatus cs) -> { itString : "",  itStyle : "normal", itConvert : cs}
     , render : inputTextGUI
     , eval : HC.mkEval $ HC.defaultEval 
       { handleQuery = handleInputTextQuery
       , handleAction = handleInputTextAction
+      , receive = \x -> case x of
+         (SetInString _) -> Nothing -- Okay.
+         (SetConvStatus ConvertReady) -> Just RevertButton
+         (SetConvStatus ConvertDone)  -> Just DoneButton
+         (SetConvStatus ConvertProgress) -> Just SetInProgress
+         (SetConvStatus ConvertError) -> Just ErrorButton
       }
     }
+
 
 inputTextGUI :: forall m s. Monad m => InputTextState -> Hal.ComponentHTML InputTextAction s m
 inputTextGUI st
@@ -104,6 +119,7 @@ getButtonText :: ConvertState -> String
 getButtonText ConvertReady    = "Convert"
 getButtonText ConvertProgress = "Converting..."
 getButtonText ConvertDone     = "Conversion Complete"
+getButtonText ConvertError    = "Error Converting"
 
 handleInputTextQuery :: forall a s m. Monad m => InputTextQuery a -> Hal.HalogenM InputTextState InputTextAction s InputTextRaise m (Maybe a)
 handleInputTextQuery (InputStringQ reply) = do
@@ -143,3 +159,4 @@ handleInputTextAction SendInputPull = do
   Hal.raise PullInput
 handleInputTextAction DoneButton   = Hal.modify_ $ \st -> st { itConvert = ConvertDone  }
 handleInputTextAction RevertButton = Hal.modify_ $ \st -> st { itConvert = ConvertReady }
+handleInputTextAction ErrorButton  = Hal.modify_ $ \st -> st { itConvert = ConvertError }

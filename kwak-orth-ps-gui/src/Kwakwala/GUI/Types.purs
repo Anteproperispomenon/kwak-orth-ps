@@ -106,6 +106,7 @@ data ConvertState
   = ConvertReady
   | ConvertProgress
   | ConvertDone
+  | ConvertError
 
 derive instance  eqConvertState :: Eq  ConvertState
 derive instance ordConvertState :: Ord ConvertState
@@ -114,3 +115,4 @@ convertStateC :: ConvertState -> ClassName
 convertStateC ConvertReady    = ClassName "cvb convert-ready"
 convertStateC ConvertProgress = ClassName "cvb convert-progress"
 convertStateC ConvertDone     = ClassName "cvb convert-done"
+convertStateC ConvertError    = ClassName "cvb convert-error"

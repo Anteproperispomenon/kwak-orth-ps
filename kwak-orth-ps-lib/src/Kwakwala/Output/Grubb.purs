@@ -27,6 +27,7 @@ module Kwakwala.Output.Grubb
   , outputGrubbAsciiCharsDef
   , outputGrubbAsciiLetter
   , outputGrubbAsciiWord
+  , outputGrubbAsciiWords
   )
   where
 
@@ -222,6 +223,10 @@ outputGrubbAsciiWord grb (KwakW  x)
   | (not grb.grbUse') = outputWord grb x
   | otherwise         = foldMap (outputGrubbAsciiLetter grb) x
 outputGrubbAsciiWord _gr (PunctW x) = x
+
+-- | Output a `List` of `CasedWord`s into Grubb-ASCII.
+outputGrubbAsciiWords :: GrubbOptions -> List CasedWord -> String
+outputGrubbAsciiWords grb = foldMap (outputGrubbAsciiWord grb)
 
 outputWord :: GrubbOptions -> List CasedLetter -> String
 outputWord _gr Nil = ""

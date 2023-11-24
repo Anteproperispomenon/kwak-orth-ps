@@ -26,6 +26,7 @@ type OutputTextSlot x = Hal.Slot OutputTextQuery Void x
 
 data OutputTextQuery a
   = OutputString String a
+  | GetOutputString (String -> a)
 
 -- outputTextComp :: forall m r. (MonadState (OutputTextX r) m) => HC.Component OutputTextQuery String String m
 outputTextComp :: forall m. (Monad m) => HC.Component OutputTextQuery String Void m
@@ -34,9 +35,9 @@ outputTextComp
     { initialState : \x -> x -- \_ -> defGrubbOptions
     , render : outputTextGUI
     , eval : HC.mkEval $ HC.defaultEval 
-       { receive = (\str -> Just str)
-       , handleAction = handleOutputAction
+       { handleAction = handleOutputAction
        , handleQuery = handleOutputTextQuery
+       -- , receive = (\str -> Just str) -- Don't do this if the parent doesn't store the output string.
        } -- {handleAction = lift <<< }
     }
 
@@ -48,6 +49,9 @@ handleOutputTextQuery :: forall m s a out. (Monad m) => OutputTextQuery a -> Hal
 handleOutputTextQuery (OutputString str x) = do
   Hal.put str
   pure (Just x)
+handleOutputTextQuery (GetOutputString reply) = Just <<< reply <$> Hal.get
+  -- str <- Hal.get
+  -- pure $ Just (reply str)
 
 -- outputTextGUI :: forall m r. MonadState (OutputTextX r) m => String -> Hal.ComponentHTML String _ m
 outputTextGUI :: forall m s. Monad m => String -> Hal.ComponentHTML String s m

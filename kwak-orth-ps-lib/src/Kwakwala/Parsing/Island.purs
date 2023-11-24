@@ -14,26 +14,40 @@ module Kwakwala.Parsing.Island
     -- * Direct Encoder
     ( encodeFromIsland
     , encodeFromIslandOld
+    , encodeFromIslandChunk
+    , encodeFromIslandWordsL
+    , encodeFromIslandWordsR
     -- * Parser
     , parseIsland
     , parseIslandOld
     ) where
 
-import Data.CodePoint.Unicode
-import Data.Maybe
-import Kwakwala.Parsing.Helpers
-import Kwakwala.Types
 import Prelude
 
-import Control.Alt (alt, (<|>))
+import Data.CodePoint.Unicode (isAlpha, isUpper)
+import Data.Maybe (Maybe(..))
+import Kwakwala.Parsing.Helpers (eqCP, isUpperC, parsePipe, peekChar)
+import Kwakwala.Types 
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord
+  , KwakLetter(..)
+  , makeCase
+  , toWordsL
+  , toWordsR
+  )
+
+import Control.Alt ((<|>))
 import Data.Either (fromRight)
-import Data.List (List(Nil, Cons), (:), concat)
-import Data.List as List
+import Data.List (List(..))
+-- import Data.List as List
 import Data.List.Types (toList)
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Parsing (Parser, runParser, fail)
-import Parsing.Combinators (many1, choice, many)
-import Parsing.String (anyChar, anyCodePoint, char, eof, satisfy, satisfyCodePoint, string)
+import Parsing (Parser, runParser)
+import Parsing.Chunkified (runParserChunk)
+import Parsing.Chunking (chunkifyText)
+import Parsing.Combinators (many1, choice)
+import Parsing.String (anyChar, anyCodePoint, char, satisfy, satisfyCodePoint) -- , eof, string)
 import Parsing.String.Basic (takeWhile1)
 
 -- Primarily copied over from the NAPA parser file.
@@ -416,7 +430,7 @@ parseY = do
   pure $ makeCase b Y
 
 tstm :: forall a. (a -> Boolean) -> (Maybe a) -> Boolean
-tstm p Nothing  = false
+tstm _ Nothing  = false
 tstm p (Just x) = p x
 
 -----------------------
@@ -505,4 +519,11 @@ encodeFromIsland txt = fromRight Nil $ runParser txt parseIsland
 encodeFromIslandOld :: String -> (List CasedChar)
 encodeFromIslandOld txt = fromRight Nil $ runParser txt parseIslandOld
 
+encodeFromIslandChunk :: String -> (List CasedChar)
+encodeFromIslandChunk txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseIsland
 
+encodeFromIslandWordsL :: String -> (List CasedWord)
+encodeFromIslandWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsL <$> parseIsland)
+
+encodeFromIslandWordsR :: String -> (List CasedWord)
+encodeFromIslandWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <$> parseIsland)

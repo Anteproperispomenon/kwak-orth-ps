@@ -24,8 +24,8 @@ import Web.HTML.Common (ClassName(..))
 --------------------------------
 -- Grubb Options Select
 
-_grubbSelect :: Proxy "grubbOptions"
-_grubbSelect = Proxy
+-- _grubbSelect :: Proxy "grubbOptions"
+-- _grubbSelect = Proxy
 
 _grubbOptions :: Proxy "grubbOptions"
 _grubbOptions = Proxy
@@ -93,8 +93,6 @@ grubbOptionsGUI grb
       ]
     ]
 
-
-
 data GrubbToggle
   = GrbTogJ
   | GrbTog'
@@ -107,5 +105,3 @@ toggleGrubb :: GrubbToggle -> GrubbOptions -> GrubbOptions
 toggleGrubb GrbTogJ grb = grb {grbUseJ = not grb.grbUseJ}
 toggleGrubb GrbTog' grb = grb {grbUse' = not grb.grbUse'}
 toggleGrubb GrbTog7 grb = grb {grbUse7 = not grb.grbUse7}
-
-

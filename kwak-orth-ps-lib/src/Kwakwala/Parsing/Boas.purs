@@ -16,6 +16,10 @@ License     : BSD-3
 
 module Kwakwala.Parsing.Boas
     ( encodeFromBoas
+    , encodeFromBoasChunk
+    , encodeFromBoasChunk'
+    , encodeFromBoasWordsL
+    , encodeFromBoasWordsR
     , parseBoas
     ) where
 
@@ -27,10 +31,13 @@ import Kwakwala.Parsing.Helpers (eqCP, isUpperC, parsePipe, peekChar, satisfyMay
 import Kwakwala.Types
   ( CasedChar(..)
   , CasedLetter(..)
+  , CasedWord
   , KwakLetter(..)
   , isKwkVow'
   , isKwkVow''
   , makeCase
+  , toWordsL
+  , toWordsR
   )
 
 import Control.Alt ((<|>))
@@ -43,6 +50,9 @@ import Parsing (Parser, runParser)
 import Parsing.Combinators (many1, choice, many)
 import Parsing.String (anyChar, anyCodePoint, char, satisfy)
 import Parsing.String.Basic (takeWhile1)
+
+import Parsing.Chunking   (chunkifyText)
+import Parsing.Chunkified (runParserChunk)
 
 -------------------------------------------
 -- Helper Functions
@@ -146,17 +156,45 @@ parseBoasMain :: Parser String (List CasedChar)
 parseBoasMain = (map Kwak <$> parseBoasWord) <|> ((_:Nil) <$> parsePipe) <|> ((_:Nil) <$> parsePuncts) <|> ((_:Nil) <$> Punct <$> singleton <$> anyCodePoint)
 
 -- | Parser for Boas orthographies for Kwak'wala.
--- Use this together with `runParser` or similar
--- functions if you want error messages.
+-- | Use this together with `runParser` or similar
+-- | functions if you want error messages.
 parseBoas :: Parser String (List CasedChar)
 parseBoas = concat <<< toList <$> many1 parseBoasMain
 
 -- | Direct encoder for Boas's othographies.
--- Note that if the parser runs into any errors,
--- this just pures an empty list. If you want
--- error messages, use `parseBoas`.
+-- | Note that if the parser runs into any errors,
+-- | this just pures an empty list. If you want
+-- | error messages, use `parseBoas`.
 encodeFromBoas :: String -> (List CasedChar)
 encodeFromBoas txt = fixVowels $ fromRight Nil $ runParser txt parseBoas
+
+-- | Direct encoder for Boas's othographies.
+-- | Variant of `encodeFromBoas` that uses
+-- | chunks to (hopefully) reduce stack
+-- | usage.
+encodeFromBoasChunk :: String -> List CasedChar
+encodeFromBoasChunk txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (fixVowels <$> parseBoas)
+
+-- | Direct encoder for Boas's othographies.
+-- | Variant of `encodeFromBoas` that uses
+-- | chunks to (hopefully) reduce stack
+-- | usage.
+encodeFromBoasChunk' :: String -> List CasedChar
+encodeFromBoasChunk' txt = fixVowels $ fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseBoas
+
+-- | Direct encoder for Boas's othographies.
+-- | Variant of `encodeFromBoas` that uses
+-- | chunks and `CasedWord`s to (hopefully)
+-- | reduce stack usage.
+encodeFromBoasWordsL :: String -> List CasedWord
+encodeFromBoasWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsL <<< fixVowels <$> parseBoas)
+
+-- | Direct encoder for Boas's othographies.
+-- | Variant of `encodeFromBoas` that uses
+-- | chunks and `CasedWord`s to (hopefully)
+-- | reduce stack usage.
+encodeFromBoasWordsR :: String -> List CasedWord
+encodeFromBoasWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <<< fixVowels <$> parseBoas)
 
 -- Adds a glottal stop between vowels
 fixVowels :: (List CasedChar) -> (List CasedChar)

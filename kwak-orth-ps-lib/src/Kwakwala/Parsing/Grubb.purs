@@ -26,7 +26,11 @@ License     : BSD-3
 module Kwakwala.Parsing.Grubb
     -- * Newer Parsers
     ( encodeFromGrubbAscii
+    , encodeFromGrubbAsciiChunk
     , parseGrubbAscii
+    -- * With `CasedWord`
+    , encodeFromGrubbWordsL
+    , encodeFromGrubbWordsR
     -- * Deprecated Parsers
     , encodeFromGrubbAsciiOld
     , parseGrubbAsciiOld
@@ -58,7 +62,12 @@ import Kwakwala.Types
   , KwakLetter(..)
   , isKwkVow'
   , makeCase
+  , toWordsL
+  , toWordsR
   )
+
+import Parsing.Chunking   (chunkifyText)
+import Parsing.Chunkified (runParserChunk)
 
 -- These aren't really necessary;
 -- They're just extras.
@@ -522,6 +531,7 @@ parseGrubbWord' ltr
     | otherwise       = (Cons ltr)                        <$> many parseGrubbLetter
 
 -- 
+caseOf :: CasedLetter -> KwakLetter -> CasedLetter
 caseOf (Maj _) x = Maj x
 caseOf (Min _) x = Min x
 
@@ -615,4 +625,53 @@ encodeFromGrubbAsciiOld :: String -> List CasedChar
 encodeFromGrubbAsciiOld txt = fromRight Nil $ runParser txt parseGrubbAsciiOld
 
 
+-- | Direct encoder for newer Grubb-ASCII variants.
+-- | This version is chunkified.
+-- | 
+-- | Note that this doesn't work on variants of 
+-- | Grubb-ASCII where the /j/ phoneme (usually
+-- | written as "y") is written as "j".
+-- | 
+-- | Note that if the parser runs into any errors,
+-- | this just returns an empty list. If you want
+-- | error messages, use `parseGrubbAscii` together
+-- | with `runParser` or other `Parser` runners.
+encodeFromGrubbAsciiChunk :: String -> List CasedChar
+encodeFromGrubbAsciiChunk txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) parseGrubbAscii
+
+-- | Direct encoder for newer Grubb-ASCII variants.
+-- | This version is chunkified and uses `CasedWord`.
+-- | 
+-- | Note that this doesn't work on variants of 
+-- | Grubb-ASCII where the /j/ phoneme (usually
+-- | written as "y") is written as "j".
+-- | 
+-- | Note that if the parser runs into any errors,
+-- | this just returns an empty list. If you want
+-- | error messages, use `parseGrubbAscii` together
+-- | with `runParser` or other `Parser` runners.
+-- |
+-- | Converting to `CasedWord`s is done before
+-- | being grouped from Chunks into a single
+-- | `List`, which should improve space performance.
+encodeFromGrubbWordsL :: String -> List CasedWord
+encodeFromGrubbWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsL <$> parseGrubbAscii)
+
+-- | Direct encoder for newer Grubb-ASCII variants.
+-- | This version is chunkified and uses `CasedWord`.
+-- | 
+-- | Note that this doesn't work on variants of 
+-- | Grubb-ASCII where the /j/ phoneme (usually
+-- | written as "y") is written as "j".
+-- | 
+-- | Note that if the parser runs into any errors,
+-- | this just returns an empty list. If you want
+-- | error messages, use `parseGrubbAscii` together
+-- | with `runParser` or other `Parser` runners.
+-- |
+-- | Converting to `CasedWord`s is done before
+-- | being grouped from Chunks into a single
+-- | `List`, which should improve space performance.
+encodeFromGrubbWordsR :: String -> List CasedWord
+encodeFromGrubbWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsR <$> parseGrubbAscii)
 

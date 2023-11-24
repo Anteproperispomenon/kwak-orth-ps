@@ -18,36 +18,52 @@ License     : BSD-3
 module Kwakwala.Parsing.Napa 
   ( encodeFromNapa
   , encodeFromNapaOld
+  , encodeFromNapaChunk
+  , encodeFromNapaWordsL
+  , encodeFromNapaWordsR
   , parseNapa
   , parseNapaOld
+  , parseNAPA
+  , encodeFromNAPA
   ) where
 
 import Prelude
-import Parsing (Parser, runParser, fail)
+import Parsing (Parser, runParser) -- , fail)
 import Parsing.String
   ( char
-  , string
+  -- , string
   , anyChar
   , anyCodePoint
   , satisfy
-  , satisfyCodePoint
-  , eof
+  -- , satisfyCodePoint
+  -- , eof
   )
 import Parsing.String.Basic (takeWhile1)
 import Parsing.Combinators (many1, choice)
 
-import Control.Alt (alt, (<|>))
+import Control.Alt ((<|>))
 
-import Data.List (List(Nil, Cons))
+import Data.List (List(..))
 import Data.Either (fromRight)
-import Data.Maybe
+import Data.Maybe (Maybe(..))
 
 import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
-import Data.CodePoint.Unicode
+import Data.CodePoint.Unicode (isAlpha, isUpper)
 import Data.List.Types (toList)
 
 import Kwakwala.Types
-import Kwakwala.Parsing.Helpers
+  ( CasedChar(..)
+  , CasedLetter(..)
+  , CasedWord
+  , KwakLetter(..)
+  , makeCase
+  , toWordsL
+  , toWordsR
+  )
+import Kwakwala.Parsing.Helpers (isUpperC, parsePipe, peekChar, peekCode)
+
+import Parsing.Chunking   (chunkifyText)
+import Parsing.Chunkified (runParserChunk)
 
 -- Apostrophe/Ejective Marker
 isApost :: Char -> Boolean
@@ -501,3 +517,23 @@ parseNAPA = parseNapa
 -- | Synonym for `encodeFromNapa`.
 encodeFromNAPA :: String -> (List CasedChar)
 encodeFromNAPA = encodeFromNapa
+
+-- | Version of `encodeFromNapa` that uses
+-- | chunked strings. Hopefully fewer errors
+-- | with larger inputs.
+encodeFromNapaChunk :: String -> List CasedChar
+encodeFromNapaChunk txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseNapa
+
+-- | Version of `encodeFromNapa` that uses
+-- | chunked strings. Also converts the
+-- | `CasedChar`s to `CasedWord`s before
+-- | recombining the chunks.
+encodeFromNapaWordsL :: String -> List CasedWord
+encodeFromNapaWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsL <$> parseNapa)
+
+-- | Version of `encodeFromNapa` that uses
+-- | chunked strings. Also converts the
+-- | `CasedChar`s to `CasedWord`s before
+-- | recombining the chunks.
+encodeFromNapaWordsR :: String -> List CasedWord
+encodeFromNapaWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <$> parseNapa)

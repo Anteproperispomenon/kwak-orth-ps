@@ -3,20 +3,29 @@ package:
     - console
     - effect
     - prelude
+    - catenable-lists
     - dom-filereader
     - lists
     - parsing
     - tailrec
     - halogen
+    - halogen-subscriptions
     # - halogen-formless
     - kwak-orth-ps-lib
     - web-html
   name: kwak-orth-ps-gui
   bundle:
-    module: Main
-    outfile: "app/convert-text.js" 
+    #module: Main
+    #outfile: "app/convert-text.js" 
     #module: MainFile
     #outfile: "app/convert-file.js"
+    
+    module: Main
+    outfile: "app/convert-text.min.js" 
+    minify: true
+    #module: MainFile
+    #outfile: "app/convert-file.min.js"
+
     platform: browser
     type: "app"
   #test:
