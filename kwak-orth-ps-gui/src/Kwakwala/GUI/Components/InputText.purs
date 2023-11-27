@@ -92,7 +92,8 @@ inputTextGUI st
          , HP.id "input-box"
          , HP.name "input-box"
          , HP.placeholder "Input Text"
-         , HE.onValueInput (\x -> ChangeInput x)
+         -- , HE.onValueInput (\x -> ChangeInput x) -- fires whenever input changes
+         , HE.onValueChange (\x -> ChangeInput x)   -- fires upon losing focus.
          , HP.class_ (ClassName st.itStyle)
          ] ]
       , Html.p_ 
