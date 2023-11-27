@@ -1,6 +1,7 @@
 module Parsing.Chunkified
   ( runParserChunk
   , runParserChunkPar
+  -- , ChunkifiedString
   ) where
 
 import Prelude
@@ -11,6 +12,8 @@ import Control.Parallel.Class (class Parallel)
 import Data.Either (Either(..))
 import Data.List (List, singleton)
 import Data.Traversable (fold, traverse, sequence)
+-- import Parsing.Chunking (ChunkifiedString)
+
 
 -- | A variant of `runParser` that is specialised
 -- | to work on the output of `chunkifyString`.

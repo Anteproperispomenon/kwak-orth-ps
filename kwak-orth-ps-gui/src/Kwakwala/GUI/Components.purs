@@ -51,8 +51,10 @@ import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Console (debug)
 import Effect.Console as Console
 
-import Kwakwala.GUI.Convert (convertOrthographyParL, convertOrthographyWL)
+import Kwakwala.GUI.Convert (convertOrthographyParL, convertOrthographyWL, convertOrthographyParL')
 import Kwakwala.GUI.Types (AllOrthOptions, FileData, KwakInputType(..), KwakOutputType(..), defAllOrthOptions)
+
+import Parsing.Chunking (ChunkifiedString, chunkifyText, numChunks)
 
 -- import Control.Monad.Trans.Class (lift)
 import Data.Maybe (Maybe(..))
@@ -97,9 +99,10 @@ type ParentState
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
     -- , inputText  :: String
+    , inputChunks :: Maybe ChunkifiedString
     , outputText :: String
-    , parentListener :: Maybe (HS.Listener String)
-    , parentEmitter  :: Maybe (HS.Emitter  String)
+    , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
+    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
     , parentSubscription :: Maybe (Hal.SubscriptionId)
     -- , inputFile :: String
     }
@@ -111,6 +114,8 @@ data ParentAction
   | ConvertText    String
   | ConvertPull
   | ConvertedString String
+  | ChunksReady ChunkifiedString
+  | ParentAlert String
   | ParentInitialize
   | ParentFinalize
 
@@ -120,6 +125,7 @@ defParentState =
   , outputSelect : OutGrubb
   , orthOptions : defAllOrthOptions
   -- , inputText  : ""
+  , inputChunks : Nothing
   , outputText : ""
   , parentListener : Nothing
   , parentEmitter  : Nothing
@@ -161,11 +167,16 @@ handleInputText :: InputTextRaise -> ParentAction
 handleInputText (RaiseInput str) = ConvertText str
 handleInputText PullInput = ConvertPull
 
+handleConverted :: ProgressUpdate ChunkifiedString String -> ParentAction
+handleConverted (Notice  str) = ParentAlert str
+handleConverted (Payload str) = ConvertedString str
+handleConverted (Partway chk) = ChunksReady chk
+
 handleConvertAction :: forall m ops. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots ops m Unit
 handleConvertAction x = case x of
   ParentInitialize -> do
     emtPair <- Hal.liftEffect HS.create
-    sbsc    <- Hal.subscribe (ConvertedString <$> emtPair.emitter)
+    sbsc    <- Hal.subscribe (handleConverted <$> emtPair.emitter)
       -- Console.debug "Hello?"
       -- pure $ ConvertedString str
     Hal.modify_ $ \st -> st 
@@ -228,25 +239,67 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {outputText = newStr})
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
+  (ChunksReady chk) -> Hal.modify_ $ \st -> st {inputChunks = Just chk}
+  (ParentAlert str) -> liftEffect $ debug str
+    
 
 -- type Node r p i = Array (IProp r i) -> Array (HTML p i) -> HTML p i
 
 -- form :: forall i p. Node HTMLform p i
 -- form :: forall i p Array (IProp HTMLform i) -> Array (HTML p i) -> HTML p i
 
+--------------------------------
+-- Joint Operations
+
+-- | A type meant for Subscriptions to be
+-- | able to send feedback partway through
+-- | execution.
+data ProgressUpdate b a
+  = Notice  String
+  | Partway b
+  | Payload a
+
 -- If I keep the type general enough, I may be able to
 -- reuse this function for both Text input and File input.
-forkConverter :: forall m pstate acts slots ops. MonadAff m => HS.Listener String -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
+-- This version doesn't supply the ChunkifiedString to the user.
+forkConverter :: forall m pstate acts slots ops pw. MonadAff m => HS.Listener (ProgressUpdate pw String) -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
 -- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
 forkConverter lstnr kin kout oops str = liftAff $ void $ forkAff $ do
   liftEffect $ debug "Feeding the converter..."
   -- Need to insert a slight delay for the other
   -- parts of the javascript to fire first. Otherwise,
   -- the HTML won't be updated first.
-  delay $ Milliseconds 2.0
-  newStr <- convertOrthographyParL kin kout oops str
+  delay $ Milliseconds 30.0
+  
+  chks <- pure $ chunkifyText 2048 1024 str
+
+  liftEffect $ debug $ "String Chunkified: " <> (show (numChunks chks)) <> " chunks."
+  liftEffect $ HS.notify lstnr (Notice "String Chunkified.")
+
+  newStr <- convertOrthographyParL' kin kout oops chks
   liftEffect $ debug "Finished conversion..."
-  liftEffect $ HS.notify lstnr newStr
+  liftEffect $ HS.notify lstnr (Payload newStr)
+
+-- This version *does* send the chunkified string
+-- back to the component.
+forkConverterX :: forall m pstate acts slots ops. MonadAff m => HS.Listener (ProgressUpdate ChunkifiedString String) -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
+-- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
+forkConverterX lstnr kin kout oops str = liftAff $ void $ forkAff $ do
+  liftEffect $ debug "Feeding the converter..."
+  -- Need to insert a slight delay for the other
+  -- parts of the javascript to fire first. Otherwise,
+  -- the HTML won't be updated first.
+  delay $ Milliseconds 30.0
+
+  chks <- pure $ chunkifyText 2048 1024 str
+
+  liftEffect $ debug $ "String Chunkified: " <> (show (numChunks chks)) <> " chunks."
+  liftEffect $ HS.notify lstnr (Notice "String Chunkified.")
+  liftEffect $ HS.notify lstnr (Partway chks)
+
+  newStr <- convertOrthographyParL' kin kout oops chks
+  liftEffect $ debug "Finished conversion..."
+  liftEffect $ HS.notify lstnr (Payload newStr)
 
 --------------------------------
 -- Parent Component (File)
@@ -273,10 +326,11 @@ type ParentState2
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
-    , inputFile  :: FileData
+    , inputFile   :: FileData
+    , inputChunks :: Maybe ChunkifiedString
     -- , outputText :: String
-    , parentListener :: Maybe (HS.Listener String)
-    , parentEmitter  :: Maybe (HS.Emitter  String)
+    , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
+    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
     , parentSubscription :: Maybe (Hal.SubscriptionId)
     , parentUrlStore :: RecentStoreEff String
     }
@@ -287,6 +341,7 @@ defParentState2 =
   , outputSelect : OutGrubb
   , orthOptions  : defAllOrthOptions
   , inputFile  : { fileStr : "", fileTyp : Nothing}
+  , inputChunks : Nothing
   -- , outputText : "" -- Unnecessary duplication of state.
   , parentListener : Nothing
   , parentEmitter : Nothing
@@ -302,6 +357,8 @@ data ParentAction2
   | ChangeOrthOpts2  OrthOptions
   | ConvertText2     FileData
   | ConvertedString2 String
+  | ChunksReady2 ChunkifiedString
+  | ParentAlert2 String
   | ParentInitialize2
   | ParentFinalize2
 
@@ -385,12 +442,15 @@ handleConvertAction2 x = case x of
         nstore <- liftEffect $ addElementM url stt.parentUrlStore
         Hal.modify_ $ \st -> st { parentUrlStore = nstore }
 
+  (ChunksReady2 chks) -> Hal.modify_ $ \st -> st {inputChunks = Just chks}
+  (ParentAlert2 alrt) -> liftEffect $ debug alrt
+
   -- Initialize the component. It does this by
   -- creating the listener/emitter pair and
   -- storing them in the component's state.
   ParentInitialize2 -> do
     emtPair <- Hal.liftEffect HS.create
-    sbsc    <- Hal.subscribe (ConvertedString2 <$> emtPair.emitter)
+    sbsc    <- Hal.subscribe (handleConverted2 <$> emtPair.emitter)
     Hal.modify_ $ \st -> st 
       { parentListener = Just emtPair.listener 
       , parentEmitter  = Just emtPair.emitter
@@ -402,4 +462,9 @@ handleConvertAction2 x = case x of
     void $ liftEffect $ clearStoreM rs
   -- Fallback
   -- _ -> pure unit
+
+handleConverted2 :: ProgressUpdate ChunkifiedString String -> ParentAction2
+handleConverted2 (Notice  str) = ParentAlert2 str
+handleConverted2 (Payload str) = ConvertedString2 str
+handleConverted2 (Partway chk) = ChunksReady2 chk
 

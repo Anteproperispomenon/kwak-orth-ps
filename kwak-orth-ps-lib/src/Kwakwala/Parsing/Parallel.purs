@@ -12,6 +12,16 @@ module Kwakwala.Parsing.Parallel
   , encodeFromBoasWordsParR
   , encodeFromIslandWordsParL
   , encodeFromIslandWordsParR
+  , encodeFromUmistaWordsParL'
+  , encodeFromUmistaWordsParR'
+  , encodeFromNapaWordsParL'
+  , encodeFromNapaWordsParR'
+  , encodeFromGrubbWordsParL'
+  , encodeFromGrubbWordsParR'
+  , encodeFromBoasWordsParL'
+  , encodeFromBoasWordsParR'
+  , encodeFromIslandWordsParL'
+  , encodeFromIslandWordsParR'
   ) where
 
 import Prelude
@@ -30,7 +40,7 @@ import Kwakwala.Parsing.Umista (parseUmista)
 
 import Kwakwala.Types (CasedWord, toWordsL, toWordsR)
 
-import Parsing.Chunking   (chunkifyText)
+import Parsing.Chunking   (chunkifyText, ChunkifiedString)
 import Parsing.Chunkified (runParserChunkPar)
 
 chkSz :: Int
@@ -68,5 +78,41 @@ encodeFromIslandWordsParL txt = map (fromRight Nil) $ runParserChunkPar (chunkif
 
 encodeFromIslandWordsParR :: forall f m. Parallel f m => Applicative f => Applicative m => String -> m (List (List CasedWord))
 encodeFromIslandWordsParR txt = map (fromRight Nil) $ runParserChunkPar (chunkifyText flSz chkSz txt) (toWordsR <$> parseIsland)
+
+----------------------------------------------------------------------
+-- Versions that take a `ChunkifiedString` as input
+
+encodeFromUmistaWordsParL' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromUmistaWordsParL' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsL <$> parseUmista)
+
+encodeFromUmistaWordsParR' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromUmistaWordsParR' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsR <$> parseUmista)
+
+encodeFromNapaWordsParL' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromNapaWordsParL' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsL <$> parseNapa)
+
+encodeFromNapaWordsParR' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromNapaWordsParR' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsR <$> parseNapa)
+
+encodeFromGrubbWordsParL' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromGrubbWordsParL' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsL <$> parseGrubbAscii)
+
+encodeFromGrubbWordsParR' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromGrubbWordsParR' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsR <$> parseGrubbAscii)
+
+encodeFromBoasWordsParL' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromBoasWordsParL' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsL <$> parseBoas)
+
+encodeFromBoasWordsParR' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromBoasWordsParR' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsR <$> parseBoas)
+
+encodeFromIslandWordsParL' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromIslandWordsParL' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsL <$> parseIsland)
+
+encodeFromIslandWordsParR' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromIslandWordsParR' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsR <$> parseIsland)
+
+
+
 
 

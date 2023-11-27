@@ -14,8 +14,10 @@ License     : BSD-3
 -- | independently.
 
 module Parsing.Chunking 
-  ( chunkifyString
+  ( ChunkifiedString
+  , chunkifyString
   , chunkifyText
+  , numChunks
   ) where
 
 import Prelude
@@ -35,6 +37,14 @@ import Data.String.CodeUnits (length)
 import Data.String.CodePoints (CodePoint)
 import Data.String.CodePoints as S
 import Data.String.Pattern (Pattern(..))
+
+-- | Type synonym for the output of `chunkifyString`.
+type ChunkifiedString = Either String (List String)
+
+-- | Number of Chunks in a `ChunkifiedString`.
+numChunks :: ChunkifiedString -> Int
+numChunks (Left _str) = 1
+numChunks (Right lst) = L.length lst
 
 -- | A version of `chunkiftString` specialised to
 -- | just use spaces and newlines as the break

@@ -4,6 +4,8 @@ module Kwakwala.GUI.Convert
   , convertOrthographyWR
   , convertOrthographyParL
   , convertOrthographyParR
+  , convertOrthographyParL'
+  , convertOrthographyParR'
   ) where
 
 import Prelude
@@ -43,9 +45,21 @@ import Kwakwala.Parsing.Parallel
   , encodeFromNapaWordsParR
   , encodeFromUmistaWordsParL
   , encodeFromUmistaWordsParR
+  , encodeFromBoasWordsParL'
+  , encodeFromBoasWordsParR'
+  , encodeFromGrubbWordsParL'
+  , encodeFromGrubbWordsParR'
+  , encodeFromIslandWordsParL'
+  , encodeFromIslandWordsParR'
+  , encodeFromNapaWordsParL'
+  , encodeFromNapaWordsParR'
+  , encodeFromUmistaWordsParL'
+  , encodeFromUmistaWordsParR'
   )
 
 import Kwakwala.Types (CasedChar, CasedWord)
+
+import Parsing.Chunking (ChunkifiedString)
 
 convertOrthography :: KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> String
 convertOrthography kit kot ops = (encodeByType kit) >>> (outputByType kot ops)
@@ -61,6 +75,12 @@ convertOrthographyParL kit kot ops = (encodeByTypeParL kit) >=> (outputByTypePar
 
 convertOrthographyParR :: forall f m. Parallel f m => Applicative f => Monad m => KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> m String
 convertOrthographyParR kit kot ops = (encodeByTypeParR kit) >=> (outputByTypePar kot ops)
+
+convertOrthographyParL' :: forall f m. Parallel f m => Applicative f => Monad m => KwakInputType -> KwakOutputType -> AllOrthOptions -> ChunkifiedString -> m String
+convertOrthographyParL' kit kot ops = (encodeByTypeParL' kit) >=> (outputByTypePar kot ops)
+
+convertOrthographyParR' :: forall f m. Parallel f m => Applicative f => Monad m => KwakInputType -> KwakOutputType -> AllOrthOptions -> ChunkifiedString -> m String
+convertOrthographyParR' kit kot ops = (encodeByTypeParR' kit) >=> (outputByTypePar kot ops)
 
 encodeByType :: KwakInputType -> String -> List CasedChar
 encodeByType kit str = case kit of
@@ -125,4 +145,23 @@ outputByTypePar kot ops lst = case kot of
   OutUmista   -> outputUmistaWordsParC lst
   OutIPA      -> outputIPAWordsParC ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabicsWordsParC lst
+
+----------------------------------------------------------------
+-- Encoding from Already Chunkified Text.
+
+encodeByTypeParL' :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> ChunkifiedString -> m (List (List CasedWord))
+encodeByTypeParL' kit str = case kit of
+  InGrubb  -> encodeFromGrubbWordsParL' str
+  InNapa   -> encodeFromNapaWordsParL' str
+  InUmista -> encodeFromUmistaWordsParL' str
+  InIsland -> encodeFromIslandWordsParL' str
+  InBoas   -> encodeFromBoasWordsParL' str
+  
+encodeByTypeParR' :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> ChunkifiedString -> m (List (List CasedWord))
+encodeByTypeParR' kit str = case kit of
+  InGrubb  -> encodeFromGrubbWordsParR' str
+  InNapa   -> encodeFromNapaWordsParR' str
+  InUmista -> encodeFromUmistaWordsParR' str
+  InIsland -> encodeFromIslandWordsParR' str
+  InBoas   -> encodeFromBoasWordsParR' str
 
