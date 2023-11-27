@@ -99,10 +99,12 @@ type ParentState
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
     -- , inputText  :: String
-    , inputChunks :: Maybe ChunkifiedString
+    -- , inputChunks :: Maybe ChunkifiedString
     , outputText :: String
-    , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
-    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
+    -- , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
+    -- , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
+    , parentListener :: Maybe (HS.Listener (ProgressUpdate Void String))
+    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate Void String))
     , parentSubscription :: Maybe (Hal.SubscriptionId)
     -- , inputFile :: String
     }
@@ -114,7 +116,7 @@ data ParentAction
   | ConvertText    String
   | ConvertPull
   | ConvertedString String
-  | ChunksReady ChunkifiedString
+  -- | ChunksReady ChunkifiedString
   | ParentAlert String
   | ParentInitialize
   | ParentFinalize
@@ -125,7 +127,7 @@ defParentState =
   , outputSelect : OutGrubb
   , orthOptions : defAllOrthOptions
   -- , inputText  : ""
-  , inputChunks : Nothing
+  -- , inputChunks : Nothing
   , outputText : ""
   , parentListener : Nothing
   , parentEmitter  : Nothing
@@ -167,10 +169,12 @@ handleInputText :: InputTextRaise -> ParentAction
 handleInputText (RaiseInput str) = ConvertText str
 handleInputText PullInput = ConvertPull
 
-handleConverted :: ProgressUpdate ChunkifiedString String -> ParentAction
+-- handleConverted :: ProgressUpdate ChunkifiedString String -> ParentAction
+handleConverted :: ProgressUpdate Void String -> ParentAction
 handleConverted (Notice  str) = ParentAlert str
 handleConverted (Payload str) = ConvertedString str
-handleConverted (Partway chk) = ChunksReady chk
+handleConverted (Partway str) = absurd str
+-- handleConverted (Partway chk) = ChunksReady chk
 
 handleConvertAction :: forall m ops. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots ops m Unit
 handleConvertAction x = case x of
@@ -239,7 +243,7 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {outputText = newStr})
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
-  (ChunksReady chk) -> Hal.modify_ $ \st -> st {inputChunks = Just chk}
+  -- (ChunksReady chk) -> Hal.modify_ $ \st -> st {inputChunks = Just chk}
   (ParentAlert str) -> liftEffect $ debug str
     
 
@@ -327,10 +331,12 @@ type ParentState2
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
     , inputFile   :: FileData
-    , inputChunks :: Maybe ChunkifiedString
+    -- , inputChunks :: Maybe ChunkifiedString
     -- , outputText :: String
-    , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
-    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
+    -- , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
+    -- , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
+    , parentListener :: Maybe (HS.Listener (ProgressUpdate Void String))
+    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate Void String))
     , parentSubscription :: Maybe (Hal.SubscriptionId)
     , parentUrlStore :: RecentStoreEff String
     }
@@ -341,7 +347,7 @@ defParentState2 =
   , outputSelect : OutGrubb
   , orthOptions  : defAllOrthOptions
   , inputFile  : { fileStr : "", fileTyp : Nothing}
-  , inputChunks : Nothing
+  -- , inputChunks : Nothing
   -- , outputText : "" -- Unnecessary duplication of state.
   , parentListener : Nothing
   , parentEmitter : Nothing
@@ -357,7 +363,7 @@ data ParentAction2
   | ChangeOrthOpts2  OrthOptions
   | ConvertText2     FileData
   | ConvertedString2 String
-  | ChunksReady2 ChunkifiedString
+  -- | ChunksReady2 ChunkifiedString
   | ParentAlert2 String
   | ParentInitialize2
   | ParentFinalize2
@@ -442,7 +448,7 @@ handleConvertAction2 x = case x of
         nstore <- liftEffect $ addElementM url stt.parentUrlStore
         Hal.modify_ $ \st -> st { parentUrlStore = nstore }
 
-  (ChunksReady2 chks) -> Hal.modify_ $ \st -> st {inputChunks = Just chks}
+  -- (ChunksReady2 chks) -> Hal.modify_ $ \st -> st {inputChunks = Just chks}
   (ParentAlert2 alrt) -> liftEffect $ debug alrt
 
   -- Initialize the component. It does this by
@@ -463,8 +469,10 @@ handleConvertAction2 x = case x of
   -- Fallback
   -- _ -> pure unit
 
-handleConverted2 :: ProgressUpdate ChunkifiedString String -> ParentAction2
+-- handleConverted2 :: ProgressUpdate ChunkifiedString String -> ParentAction2
+handleConverted2 :: ProgressUpdate Void String -> ParentAction2
 handleConverted2 (Notice  str) = ParentAlert2 str
 handleConverted2 (Payload str) = ConvertedString2 str
-handleConverted2 (Partway chk) = ChunksReady2 chk
+handleConverted2 (Partway chk) = absurd chk
+-- handleConverted2 (Partway chk) = ChunksReady2 chk
 

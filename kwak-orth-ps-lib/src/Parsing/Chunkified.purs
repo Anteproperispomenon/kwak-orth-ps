@@ -34,4 +34,13 @@ runParserChunkPar :: forall f m a. Parallel f m => Applicative f => Applicative 
 runParserChunkPar (Left  str) prs = pure $ singleton <$> runParser str prs
 runParserChunkPar (Right lst) prs
   = map sequence $ parTraverse (\x -> pure $ runParser x prs) lst
-
+-- How it works:
+-- parTraverse (...) lst returns a list of
+-- (Either ParseError a) embedded in the Monad m.
+-- If any of the individual results fail to parse,
+-- we want the computation as a whole to be
+-- (Left <parse_error>). Thus we use `sequence` to
+-- convert (List (Either ParseError a)) to
+-- (Either ParseError (List a)). However, we have
+-- to lift the `sequence` computation into the
+-- proper Monad, which we do with `map`.
