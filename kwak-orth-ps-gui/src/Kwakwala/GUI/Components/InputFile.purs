@@ -1,6 +1,7 @@
 module Kwakwala.GUI.Components.InputFile
   ( InputFileAction(..)
   , InputFileQuery(..)
+  , InputFileRaise(..)
   -- , InputFileInput(..)
   , InputFileSlot
   , InputFileX
@@ -45,7 +46,7 @@ _inputFile = Proxy
 
 type InputFileX r = {inputFile :: String | r}
 
-type InputFileSlot x = Hal.Slot InputFileQuery FileData x
+type InputFileSlot x = Hal.Slot InputFileQuery InputFileRaise x
 
 data InputFileQuery a
   = InputString (FileData -> a)
@@ -76,10 +77,14 @@ type InputFileState
     , cvrtr :: ConvertState
     }
 
+data InputFileRaise
+  = NewFileInput FileData
+  | OldFileInput FileData
+
 -- data InputFileInput
 --   = ResetConvertButton
 
-inputFileComp :: forall m. (MonadAff m) => HC.Component InputFileQuery String FileData m
+inputFileComp :: forall m. (MonadAff m) => HC.Component InputFileQuery String InputFileRaise m
 inputFileComp
   = Hal.mkComponent
     { initialState : \_ -> {input : "", error : Nothing, ftype : Nothing, style : "normal", cvrtr : ConvertReady}
@@ -142,7 +147,7 @@ handleUpload xs = case (Arr.head xs) of
 inputTypes :: InputAcceptType
 inputTypes = (mediaType textPlain) <> (mediaType textCSV)
 
-handleInputFileQuery :: forall a s m. Monad m => InputFileQuery a -> Hal.HalogenM InputFileState InputFileAction s FileData m (Maybe a)
+handleInputFileQuery :: forall a s m. Monad m => InputFileQuery a -> Hal.HalogenM InputFileState InputFileAction s InputFileRaise m (Maybe a)
 handleInputFileQuery (InputString reply) = do
   stt <- get
   pure $ Just $ reply $ makeFileData stt
@@ -161,7 +166,7 @@ handleInputFileQuery (InputFileButtonReset x) = do
   Hal.modify_ $ \st -> st { cvrtr = ConvertReady }
   pure $ Just x
 
-handleInputFileAction :: forall m s. (MonadAff m) => InputFileAction -> Hal.HalogenM InputFileState InputFileAction s FileData m Unit 
+handleInputFileAction :: forall m s. (MonadAff m) => InputFileAction -> Hal.HalogenM InputFileState InputFileAction s InputFileRaise m Unit 
 handleInputFileAction (DoNothing) = pure unit
 handleInputFileAction (ResetButton) = do
   Hal.modify_ $ \st -> st {cvrtr = ConvertReady}
@@ -177,12 +182,12 @@ handleInputFileAction (ChangeFile fl) = do
     Right str -> do
       sty <- Hal.gets _.style
       Hal.put   { input   : str, error   : Nothing, ftype : ftyp, style : sty, cvrtr : ConvertProgress }
-      Hal.raise { fileStr : str, fileTyp : ftyp }
+      Hal.raise $ NewFileInput { fileStr : str, fileTyp : ftyp }
 handleInputFileAction Reconvert = do
   str <- Hal.gets _.input
   typ <- Hal.gets _.ftype
   Hal.modify_ $ \st -> st {cvrtr = ConvertProgress}
-  Hal.raise { fileStr : str, fileTyp : typ}
+  Hal.raise $ OldFileInput { fileStr : str, fileTyp : typ}
 
 makeFileData :: InputFileState -> FileData
 makeFileData stt = { fileStr : stt.input , fileTyp : stt.ftype}

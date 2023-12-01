@@ -35,6 +35,7 @@ type InputTextState
   = { itString :: String
     , itStyle  :: String
     , itConvert :: ConvertState
+    , itChanged :: Boolean
     }
 
 data InputTextQuery a
@@ -55,6 +56,7 @@ data InputTextAction
 
 data InputTextRaise
   = RaiseInput String
+  | InputStringChange
   | PullInput
 
 data InputTextInput
@@ -65,8 +67,8 @@ inputTextComp :: forall m. (MonadAff m) => HC.Component InputTextQuery InputText
 inputTextComp
   = Hal.mkComponent
     { initialState : \x -> case x of
-      (SetInString  str) -> { itString : str, itStyle : "normal", itConvert : ConvertReady }
-      (SetConvStatus cs) -> { itString : "",  itStyle : "normal", itConvert : cs}
+      (SetInString  str) -> { itString : str, itStyle : "normal", itConvert : ConvertReady, itChanged : true }
+      (SetConvStatus cs) -> { itString : "",  itStyle : "normal", itConvert : cs          , itChanged : true }
     , render : inputTextGUI
     , eval : HC.mkEval $ HC.defaultEval 
       { handleQuery = handleInputTextQuery
@@ -144,14 +146,22 @@ handleInputTextQuery (InputReset x) = do
 
 handleInputTextAction :: forall m s. MonadAff m => InputTextAction -> Hal.HalogenM InputTextState InputTextAction s InputTextRaise m Unit 
 handleInputTextAction (ChangeInput str) = do
-  stx <- Hal.modify $ \st -> st { itString = str }
-  when (stx.itConvert == ConvertDone) (Hal.modify_ $ \st -> st { itConvert = ConvertReady })
+  -- stx <- Hal.modify $ \st -> st { itString = str, itChanged = true }
+  stx <- Hal.get
+  when (stx.itChanged == false) (Hal.raise InputStringChange)
+
+  let cvt = if (stx.itConvert == ConvertDone) then ConvertReady else stx.itConvert
+
+  Hal.put $ stx { itString = str, itChanged = true, itConvert = cvt }
+
+  -- when (stx.itConvert == ConvertDone) (Hal.modify_ $ \st -> st { itConvert = ConvertReady })
   -- Might want to check whether st.itConvert is in progress first.
   -- = Hal.modify_ $ \st -> st { itString = str , itConvert = ConvertReady }
 handleInputTextAction SetInProgress = do
   Hal.modify_ $ \st -> st { itConvert = ConvertProgress }
 handleInputTextAction SendInput = do
-  Hal.modify_ $ \st -> st { itConvert = ConvertProgress }
+  Hal.modify_ $ \st -> st { itConvert = ConvertProgress, itChanged = false }
+  -- if stt.itChanged 
   str <- Hal.gets _.itString
   Hal.raise (RaiseInput str)
 handleInputTextAction SendInputPull = do

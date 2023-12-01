@@ -6,6 +6,10 @@ module Kwakwala.GUI.Convert
   , convertOrthographyParR
   , convertOrthographyParL'
   , convertOrthographyParR'
+  , encodeByTypeParL'
+  , encodeByTypeParR'
+  , outputByTypePar
+  , CachedParse
   ) where
 
 import Prelude
@@ -148,6 +152,8 @@ outputByTypePar kot ops lst = case kot of
 
 ----------------------------------------------------------------
 -- Encoding from Already Chunkified Text.
+
+type CachedParse = (List (List CasedWord))
 
 encodeByTypeParL' :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> ChunkifiedString -> m (List (List CasedWord))
 encodeByTypeParL' kit str = case kit of
