@@ -20,4 +20,4 @@ main :: Effect Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
   removeLoader
-  runUI convertComp2 (ConvertText2 { fileStr : "" , fileTyp : Nothing} ) body
+  runUI (convertComp2 true) (ConvertText2 { fileStr : "" , fileTyp : Nothing} ) body

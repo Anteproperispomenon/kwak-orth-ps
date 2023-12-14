@@ -146,14 +146,14 @@ defParentState =
   -- , inputFile : ""
   }
 
-convertComp :: forall m qr op. (MonadAff m) => HC.Component qr ParentAction op m
-convertComp 
+convertComp :: forall m qr op. (MonadAff m) => Boolean -> HC.Component qr ParentAction op m
+convertComp hiMem
   = Hal.mkComponent
      { initialState : (\_ -> defParentState)
      , render : renderConverter
      , eval : HC.mkEval $ HC.defaultEval
        { receive = Just
-       , handleAction = handleConvertAction
+       , handleAction = handleConvertAction hiMem
        , initialize = Just ParentInitialize
        , finalize   = Just ParentFinalize
        }
@@ -188,8 +188,8 @@ handleConverted (Payload str) = ConvertedString str
 handleConverted (Partway prs) = FinishedParse prs
 -- handleConverted (Partway chk) = ChunksReady chk
 
-handleConvertAction :: forall m ops. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots ops m Unit
-handleConvertAction x = case x of
+handleConvertAction :: forall m ops. (MonadAff m) => Boolean -> ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots ops m Unit
+handleConvertAction hiMem x = case x of
   ParentInitialize -> do
     emtPair <- Hal.liftEffect HS.create
     sbsc    <- Hal.subscribe (handleConverted <$> emtPair.emitter)
@@ -238,7 +238,9 @@ handleConvertAction x = case x of
       Nothing      -> liftEffect $ Console.error "Parent Listener not found."
       (Just lstnr) -> case stt.inputParsed of
         (Just prsd) -> forkConverterC lstnr stt.outputSelect stt.orthOptions prsd
-        Nothing     -> forkConverterP lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
+        Nothing     -> if hiMem 
+          then forkConverterP lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
+          else forkConverter  lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
   (ConvertedString str) -> do
     Hal.modify_ (\st -> st {outputText = str})
     void $ HQ.query _outputText unit (OutputString   str unit)
@@ -443,14 +445,14 @@ data ParentAction2
   | ParentFinalize2
 
 -- | The main `Component` for file output.
-convertComp2 :: forall m qr slt. (MonadAff m) => HC.Component qr ParentAction2 slt m
-convertComp2 
+convertComp2 :: forall m qr slt. (MonadAff m) => Boolean -> HC.Component qr ParentAction2 slt m
+convertComp2 hiMem
   = Hal.mkComponent
      { initialState : (\_ -> defParentState2)
      , render : renderConverter2
      , eval : HC.mkEval $ HC.defaultEval
        { receive = Just
-       , handleAction = handleConvertAction2
+       , handleAction = handleConvertAction2 hiMem
        , initialize = Just ParentInitialize2
        , finalize   = Just ParentFinalize2
        }
@@ -477,8 +479,8 @@ handleFileInput :: InputFileRaise -> ParentAction2
 handleFileInput (NewFileInput ftyp) = ConvertTextNew2 ftyp
 handleFileInput (OldFileInput ftyp) = ConvertText2    ftyp
 
-handleConvertAction2 :: forall m outp. (MonadAff m) => ParentAction2 -> Hal.HalogenM ParentState2 ParentAction2 ParentSlots2 outp m Unit
-handleConvertAction2 x = case x of
+handleConvertAction2 :: forall m outp. (MonadAff m) => Boolean -> ParentAction2 -> Hal.HalogenM ParentState2 ParentAction2 ParentSlots2 outp m Unit
+handleConvertAction2 hiMem x = case x of
   -- Change orthography input, with special
   -- handling of Island input.
   (ChangeOrthIn2  kit) -> do
@@ -515,7 +517,9 @@ handleConvertAction2 x = case x of
       Nothing      -> liftEffect $ Console.error "Parent Listener not found."
       (Just lstnr) -> case stt.inputParsed of
         (Just prsd) -> forkConverterC lstnr stt.outputSelect stt.orthOptions prsd
-        Nothing     -> forkConverterP lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
+        Nothing     -> if hiMem 
+          then forkConverterP lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
+          else forkConverter  lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
   (ConvertTextNew2 fdt) -> do
     stt <- Hal.modify (\st -> st {inputFile = fdt})
     case stt.parentListener of
