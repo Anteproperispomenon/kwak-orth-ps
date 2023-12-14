@@ -4,9 +4,14 @@ package:
     - effect
     - prelude
     - lists
+    - parallel
     - parsing
+    - strings
     - tailrec
   name: kwak-orth-ps-lib
   test:
-    dependencies: []
+    dependencies:
+      - quickcheck
+      - spec
+      - spec-quickcheck
     main: Test.Main

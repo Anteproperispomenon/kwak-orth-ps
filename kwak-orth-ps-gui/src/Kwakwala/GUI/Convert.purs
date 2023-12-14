@@ -1,3 +1,16 @@
+{-|
+Module      : Kwakwala.GUI.Convert
+Description : Generalised Orthography Conversion Functions
+Copyright   : (c) David Wilson, 2023
+License     : BSD-3
+
+-}
+
+-- | This module contains functions that can
+-- | be used to convert between orthographies
+-- | where the orthographiy types are arguments
+-- | to the function.
+
 module Kwakwala.GUI.Convert
   ( convertOrthography
   , convertOrthographyWL
