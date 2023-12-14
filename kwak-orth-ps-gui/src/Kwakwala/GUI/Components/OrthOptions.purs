@@ -46,6 +46,7 @@ data OrthQuery a
   = OrthGetGrubb (GrubbOptions -> a)
   | OrthGetIPA (IPAOptions -> a)
   -- | OrthGetGeorgian (GeorgianOptions -> a)
+  -- 
   -- | OrthSetGrubb GrubbOptions a
   -- | OrthSetIPA IPAOptions a
   -- | OrthSetGeorgian GeorgianOptions a

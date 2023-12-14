@@ -52,16 +52,16 @@ import Effect.Console (debug)
 import Effect.Console as Console
 
 import Kwakwala.GUI.Convert 
-  ( convertOrthographyParL
-  , convertOrthographyWL
+  ( convertOrthographyWL
   , convertOrthographyParL'
+  -- , convertOrthographyParL
   , encodeByTypeParL'
   , outputByTypePar
   , CachedParse
   )
 import Kwakwala.GUI.Types (AllOrthOptions, FileData, KwakInputType(..), KwakOutputType(..), defAllOrthOptions)
 
-import Parsing.Chunking (ChunkifiedString, chunkifyText, numChunks)
+import Parsing.Chunking (chunkifyText, numChunks) -- , ChunkifiedString)
 
 -- import Control.Monad.Trans.Class (lift)
 import Data.Maybe (Maybe(..), isJust)
@@ -311,6 +311,7 @@ forkConverter lstnr kin kout oops str = liftAff $ void $ forkAff $ do
 
 -- This version *does* send the chunkified string
 -- back to the component.
+{-
 forkConverterX :: forall m pstate acts slots ops. MonadAff m => HS.Listener (ProgressUpdate ChunkifiedString String) -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
 -- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
 forkConverterX lstnr kin kout oops str = liftAff $ void $ forkAff $ do
@@ -329,6 +330,7 @@ forkConverterX lstnr kin kout oops str = liftAff $ void $ forkAff $ do
   newStr <- convertOrthographyParL' kin kout oops chks
   liftEffect $ debug "Finished conversion..."
   liftEffect $ HS.notify lstnr (Payload newStr)
+-}
 
 forkConverterP :: forall m pstate acts slots ops. MonadAff m => HS.Listener (ProgressUpdate CachedParse String) -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
 -- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
@@ -353,7 +355,7 @@ forkConverterP lstnr kin kout oops str = liftAff $ void $ forkAff $ do
   liftEffect $ debug "Finished conversion..."
   liftEffect $ HS.notify lstnr (Payload newStr)
 
--- This version caches the Parsed String.
+-- This version uses the cached Parsed String.
 forkConverterC :: forall m pstate acts slots ops. MonadAff m => HS.Listener (ProgressUpdate CachedParse String) -> KwakOutputType -> AllOrthOptions -> CachedParse -> Hal.HalogenM pstate acts slots ops m Unit
 -- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
 forkConverterC lstnr kout oops prs = liftAff $ void $ forkAff $ do
