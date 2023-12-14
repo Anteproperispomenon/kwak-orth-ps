@@ -1,5 +1,15 @@
+{-|
+Module      : Kwakwala.Parsing.Parallel
+Description : Parallelised Parsing/Encoding Functions
+Copyright   : (c) David Wilson, 2023
+License     : BSD-3
+
+-}
+
 -- | Parallel versions of other parsers.
 -- | Hopefully these will work as expected.
+-- | To run in parallel, these functions use the 
+-- | `Parallel` interface from `Control.Parallel`.
 
 module Kwakwala.Parsing.Parallel
   ( encodeFromUmistaWordsParL
@@ -43,9 +53,15 @@ import Kwakwala.Types (CasedWord, toWordsL, toWordsR)
 import Parsing.Chunking   (chunkifyText, ChunkifiedString)
 import Parsing.Chunkified (runParserChunkPar)
 
+-- Pre-defined Chunk Size.
+-- Useful to change the chunk
+-- size for all functions at once.
 chkSz :: Int
 chkSz = 1024
 
+-- Pre-defined max file size.
+-- Useful to change the chunk
+-- size for all functions at once.
 flSz :: Int
 flSz = 2048
 
