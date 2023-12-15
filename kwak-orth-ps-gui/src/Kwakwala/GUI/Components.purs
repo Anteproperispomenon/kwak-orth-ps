@@ -222,7 +222,14 @@ handleConvertAction hiMem x = case x of
     Hal.put st3
     void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOut kot) -> do
-    Hal.modify_ (\st -> st {outputSelect = kot})
+    st <- Hal.get
+    let old = st.outputSelect
+        st2 = st {outputSelect = kot}
+    when (kot == OutArabic && old /= OutArabic) $ do
+      void $ HQ.query _outputText unit (SetOutputStyle "arabic" unit)
+    when (old == OutArabic && kot /= OutArabic) $ do
+      void $ HQ.query _outputText unit (SetOutputStyle "default-out" unit)
+    Hal.put st2
     void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
