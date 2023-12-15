@@ -12,6 +12,7 @@ License     : BSD-3
 module Kwakwala.Output.Arabic
   ( outputArabicWord
   , outputArabicWords
+  , outputArabicChars
   ) where
 
 import Prelude
@@ -24,6 +25,7 @@ import Kwakwala.Types
   , CasedLetter(..)
   , CasedWord(..)
   , KwakLetter(..)
+  , isCharLetter
   )
 
 -- لٔب
@@ -109,3 +111,22 @@ outputArabicWords xs = foldMap outputArabicWord xs
 
 -- outputNapaChars :: List CasedChar -> String
 -- outputNapaChars xs = foldMap outputNapaChar xs
+
+-- Copied from Umista version.
+outputArabicChars' :: List CasedChar -> String
+outputArabicChars' Nil = ""
+outputArabicChars' (Cons (Punct x) (Cons y@(Kwak z) rst) )
+  | (isCharLetter Y y) = x <> outputArabicChars' rst
+  | otherwise          = x <> outputArabicLetter z <> outputArabicChars' rst
+outputArabicChars' (Cons (Punct x) rst)
+  = x <> outputArabicChars' rst
+outputArabicChars' (Cons (Kwak  x) rst)
+  = outputArabicLetter x <> outputArabicChars' rst
+
+-- | Ouptut a list of `CasedChar`s in Umista.
+outputArabicChars :: List CasedChar -> String
+outputArabicChars Nil = ""
+outputArabicChars (Cons y@(Kwak z) rst)
+  | (isCharLetter Y y) = outputArabicChars' rst
+  | otherwise = outputArabicLetter z <> outputArabicChars' rst
+outputArabicChars xs = outputArabicChars' xs

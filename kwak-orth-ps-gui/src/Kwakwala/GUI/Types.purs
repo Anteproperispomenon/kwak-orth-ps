@@ -32,6 +32,7 @@ data KwakOutputType
   | OutUmista
   | OutIPA
   | OutSyllabic
+  | OutArabic
 
 derive instance  eqKwakOutType :: Eq  KwakOutputType
 derive instance ordKwakOutType :: Ord KwakOutputType
@@ -42,6 +43,7 @@ instance showKwakOut :: Show KwakOutputType where
   show OutUmista   = "U'mista"
   show OutIPA      = "IPA"
   show OutSyllabic = "Syllabic"
+  show OutArabic   = "Arabic"
 
 data KwakInputType
   = InGrubb

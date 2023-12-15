@@ -37,6 +37,7 @@ import Kwakwala.Output.IPA (outputIPAChars, outputIPAWords) -- , IPAOptions
 import Kwakwala.Output.Napa (outputNapaChars, outputNapaWords)
 import Kwakwala.Output.Syllabic (outputSyllabics, outputSyllabicsWords)
 import Kwakwala.Output.Umista (outputUmistaChars, outputUmistaWords)
+import Kwakwala.Output.Arabic (outputArabicChars, outputArabicWords)
 
 import Kwakwala.Parsing.Boas (encodeFromBoasChunk, encodeFromBoasWordsL, encodeFromBoasWordsR) -- , encodeFromBoas)
 import Kwakwala.Parsing.Grubb (encodeFromGrubbAsciiChunk, encodeFromGrubbWordsL, encodeFromGrubbWordsR) -- , encodeFromGrubbAscii)
@@ -50,6 +51,7 @@ import Kwakwala.Output.Parallel
   , outputNapaWordsParC
   , outputSyllabicsWordsParC
   , outputUmistaWordsParC
+  , outputArabicWordsParC
   )
 import Kwakwala.Parsing.Parallel
   ( encodeFromBoasWordsParL
@@ -200,6 +202,7 @@ outputByType kot ops lst = case kot of
   OutUmista   -> outputUmistaChars lst
   OutIPA      -> outputIPAChars ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabics lst
+  OutArabic   -> outputArabicChars lst
 
 -- | Parse a `String` into a `List` of `CasedWord`s using the
 -- | input type specified by the `KwakInputType` argument.
@@ -237,6 +240,7 @@ outputByTypeW kot ops lst = case kot of
   OutUmista   -> outputUmistaWords lst
   OutIPA      -> outputIPAWords ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabicsWords lst
+  OutArabic   -> outputArabicWords lst
 
 -- | Convert a `String` into a `CachedParse` by
 -- | chunkifying it and then parsing it in parallel.
@@ -295,6 +299,7 @@ outputByTypePar kot ops lst = case kot of
   OutUmista   -> outputUmistaWordsParC lst
   OutIPA      -> outputIPAWordsParC ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabicsWordsParC lst
+  OutArabic   -> outputArabicWordsParC lst
 
 ----------------------------------------------------------------
 -- Encoding from Already Chunkified Text.
