@@ -32,6 +32,7 @@ import Control.Parallel.Class (class Parallel)
 import Data.List (List)
 import Kwakwala.GUI.Types (KwakInputType(..), KwakOutputType(..), AllOrthOptions)
 
+import Kwakwala.Output.Arabic (outputArabicChars, outputArabicWords) -- , GrubbOptions
 import Kwakwala.Output.Grubb (outputGrubbAsciiChars, outputGrubbAsciiWords) -- , GrubbOptions
 import Kwakwala.Output.IPA (outputIPAChars, outputIPAWords) -- , IPAOptions
 import Kwakwala.Output.Napa (outputNapaChars, outputNapaWords)
@@ -202,7 +203,7 @@ outputByType kot ops lst = case kot of
   OutUmista   -> outputUmistaChars lst
   OutIPA      -> outputIPAChars ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabics lst
-  OutArabic   -> outputArabicChars lst
+  OutArabic   -> outputArabicChars ops.arabicOrthOptions lst
 
 -- | Parse a `String` into a `List` of `CasedWord`s using the
 -- | input type specified by the `KwakInputType` argument.
@@ -240,7 +241,7 @@ outputByTypeW kot ops lst = case kot of
   OutUmista   -> outputUmistaWords lst
   OutIPA      -> outputIPAWords ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabicsWords lst
-  OutArabic   -> outputArabicWords lst
+  OutArabic   -> outputArabicWords ops.arabicOrthOptions lst
 
 -- | Convert a `String` into a `CachedParse` by
 -- | chunkifying it and then parsing it in parallel.
@@ -299,7 +300,7 @@ outputByTypePar kot ops lst = case kot of
   OutUmista   -> outputUmistaWordsParC lst
   OutIPA      -> outputIPAWordsParC ops.ipaOrthOptions lst
   OutSyllabic -> outputSyllabicsWordsParC lst
-  OutArabic   -> outputArabicWordsParC lst
+  OutArabic   -> outputArabicWordsParC ops.arabicOrthOptions lst
 
 ----------------------------------------------------------------
 -- Encoding from Already Chunkified Text.

@@ -34,7 +34,7 @@ import Control.Parallel.Class (class Parallel)
 import Data.List (List)
 import Data.Foldable (fold)
 
-import Kwakwala.Output.Arabic   (outputArabicWords)
+import Kwakwala.Output.Arabic   (ArabicOptions, outputArabicWords)
 import Kwakwala.Output.Grubb    (GrubbOptions, outputGrubbAsciiWords)
 import Kwakwala.Output.IPA      (IPAOptions, outputIPAWords)
 import Kwakwala.Output.Napa     (outputNapaWords)
@@ -106,11 +106,11 @@ outputSyllabicsWordsParC lsts = map fold $ outputSyllabicsWordsPar lsts
 -- | Output a `CachedParse`/`List (List CasedWord)` into Arabic
 -- | by running the outputters in parallel. This version 
 -- | leaves the output as a list of `String`s.
-outputArabicWordsPar :: forall f m. Parallel f m => Applicative f => Applicative m => List (List CasedWord) -> m (List String)
-outputArabicWordsPar lsts = parTraverse (\cws -> pure $ outputArabicWords cws) lsts
+outputArabicWordsPar :: forall f m. Parallel f m => Applicative f => Applicative m => ArabicOptions -> List (List CasedWord) -> m (List String)
+outputArabicWordsPar ops lsts = parTraverse (\cws -> pure $ (outputArabicWords ops) cws) lsts
 
 -- | Output a `CachedParse`/`List (List CasedWord)` into Arabic
 -- | by running the outputters in parallel. This version 
 -- | concatenates the output into a single `String`.
-outputArabicWordsParC :: forall f m. Parallel f m => Applicative f => Applicative m => List (List CasedWord) -> m String
-outputArabicWordsParC lsts = map fold $ outputArabicWordsPar lsts
+outputArabicWordsParC :: forall f m. Parallel f m => Applicative f => Applicative m => ArabicOptions -> List (List CasedWord) -> m String
+outputArabicWordsParC ops lsts = map fold $ (outputArabicWordsPar ops) lsts

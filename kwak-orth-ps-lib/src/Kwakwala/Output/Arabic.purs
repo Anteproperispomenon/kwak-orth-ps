@@ -16,6 +16,7 @@ module Kwakwala.Output.Arabic
   , outputArabicWordsI
   , outputArabicCharsI
   , ArabicOptions
+  , defArabicOptions
   , ArabicLhOption(..)
   , ArabicGuOption(..)
   , ArabicGOption(..)

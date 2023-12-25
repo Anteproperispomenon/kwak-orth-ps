@@ -237,6 +237,8 @@ handleConvertAction hiMem x = case x of
     Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
   -- (ChangeOrthOpts (OrthGeorgianOptions ops)) -> do
   --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
+  (ChangeOrthOpts (OrthArabicOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {arabicOrthOptions = ops}})
   (ConvertText str) -> do
     -- Removing this line to reduce memory usage.
     -- stt <- Hal.modify (\st -> st {inputText = str})
@@ -516,6 +518,8 @@ handleConvertAction2 hiMem x = case x of
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ChangeOrthOpts2 (OrthIPAOptions ops)) -> do
     Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
+  (ChangeOrthOpts2 (OrthArabicOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {arabicOrthOptions = ops}})
   -- Receive text that is to be converted, and
   -- then send it off to be converted. Also
   -- changes the style of the "Convert" button.

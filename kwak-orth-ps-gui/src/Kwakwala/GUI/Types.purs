@@ -22,6 +22,7 @@ import Prelude
 
 import Data.Maybe (Maybe)
 import Data.MediaType (MediaType)
+import Kwakwala.Output.Arabic (ArabicOptions, defArabicOptions)
 import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
 import Kwakwala.Output.IPA (IPAOptions, defIPAOptions)
 import Web.HTML.Common (ClassName(..))
@@ -70,6 +71,7 @@ type FileData
 type AllOrthOptions
   = { grubbOrthOptions :: GrubbOptions
     , ipaOrthOptions :: IPAOptions
+    , arabicOrthOptions :: ArabicOptions
     -- , georgianOrthOptions :: GeorgianOptions
     }
 
@@ -77,6 +79,7 @@ defAllOrthOptions :: AllOrthOptions
 defAllOrthOptions
   = { grubbOrthOptions : defGrubbOptions
     , ipaOrthOptions : defIPAOptions
+    , arabicOrthOptions : defArabicOptions
     -- , georgianOrthOptions : defGeorgianOptions
     }
 
