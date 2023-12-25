@@ -73,12 +73,12 @@ arabicOptionsGUI ops
   = Html.div [HP.class_ (ClassName "orth-options")]
       [ Html.p [HP.class_ arbClass]
         [ Html.text "/ɬ/"
-        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-lh-sh" , HP.name "ROutput", HP.value "arb1", HE.onClick (\_ -> (ArbLhToggle LhSheen))   , HP.checked (ops.arbLhKind == LhSheen)]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-lh-sh" , HP.name "CArabicLh", HP.value "arb1", HE.onClick (\_ -> (ArbLhToggle LhSheen))   , HP.checked (ops.arbLhKind == LhSheen)]
         , Html.label [HP.for "arb-lh-sh"] -- , HP.class_ toolbelowFC] 
           [ Html.text "\x634 (Sheen)"
           -- , Html.span [HP.class_ tooltiptextC] [Html.text "ASCII-compatible orthography for simple applications."]
           ]
-        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-lh-lh", HP.name "ROutput", HP.value "arb2", HE.onClick (\_ -> (ArbLhToggle LhLhah))  , HP.checked (ops.arbLhKind == LhLhah)]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-lh-lh", HP.name "CArabicLh", HP.value "arb2", HE.onClick (\_ -> (ArbLhToggle LhLhah))  , HP.checked (ops.arbLhKind == LhLhah)]
         , Html.label [HP.for "arb-lh-lh"] -- , HP.class_ toolbelowC] 
           [ Html.text "\x6b5 (Lhah)"
           -- , Html.span [HP.class_ tooltiptextC] [Html.text "Common Orthography generally used further north."]
@@ -86,12 +86,12 @@ arabicOptionsGUI ops
         ]
       , Html.p [HP.class_ arbClass]
         [ Html.text "/ɢ/"
-        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-gu-gh" , HP.name "ROutput", HP.value "arb3", HE.onClick (\_ -> (ArbGuToggle GuGhain))   , HP.checked (ops.arbGuKind == GuGhain)]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-gu-gh" , HP.name "CArabicGu", HP.value "arb3", HE.onClick (\_ -> (ArbGuToggle GuGhain))   , HP.checked (ops.arbGuKind == GuGhain)]
         , Html.label [HP.for "arb-gu-gh"] -- , HP.class_ toolbelowFC] 
           [ Html.text "\x63a (Ghain)"
           -- , Html.span [HP.class_ tooltiptextC] [Html.text "ASCII-compatible orthography for simple applications."]
           ]
-        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-gu-qh", HP.name "ROutput", HP.value "arb4", HE.onClick (\_ -> (ArbGuToggle GuLikeQ))  , HP.checked (ops.arbGuKind == GuLikeQ)]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-gu-qh", HP.name "CArabicGu", HP.value "arb4", HE.onClick (\_ -> (ArbGuToggle GuLikeQ))  , HP.checked (ops.arbGuKind == GuLikeQ)]
         , Html.label [HP.for "arb-gu-qh"] -- , HP.class_ toolbelowC] 
           [ Html.text "\x6a8 (Like Qah)"
           -- , Html.span [HP.class_ tooltiptextC] [Html.text "Common Orthography generally used further north."]
@@ -99,12 +99,12 @@ arabicOptionsGUI ops
         ]  
       , Html.p [HP.class_ arbClass]
         [ Html.text "/g/"
-        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-g-k" , HP.name "ROutput", HP.value "arb5", HE.onClick (\_ -> (ArbGToggle GLikeK))   , HP.checked (ops.arbGKind == GLikeK)]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-g-k" , HP.name "CArabicG", HP.value "arb5", HE.onClick (\_ -> (ArbGToggle GLikeK))   , HP.checked (ops.arbGKind == GLikeK)]
         , Html.label [HP.for "arb-g-k"] -- , HP.class_ toolbelowFC] 
           [ Html.text "\x6ac (Like Kah)"
           -- , Html.span [HP.class_ tooltiptextC] [Html.text "ASCII-compatible orthography for simple applications."]
           ]
-        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-g-q", HP.name "ROutput", HP.value "arb6", HE.onClick (\_ -> (ArbGToggle GLikeQ))  , HP.checked (ops.arbGKind == GLikeQ)]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-g-q", HP.name "CArabicG", HP.value "arb6", HE.onClick (\_ -> (ArbGToggle GLikeQ))  , HP.checked (ops.arbGKind == GLikeQ)]
         , Html.label [HP.for "arb-g-q"] -- , HP.class_ toolbelowC] 
           [ Html.text "\x6a7 (Like Qah)"
           -- , Html.span [HP.class_ tooltiptextC] [Html.text "Common Orthography generally used further north."]
