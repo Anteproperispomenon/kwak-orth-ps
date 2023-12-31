@@ -72,16 +72,21 @@ arabicOptionsGUI :: forall m s. ArabicOptions -> Hal.ComponentHTML ArabicToggle 
 arabicOptionsGUI ops
   = Html.div [HP.class_ (ClassName "orth-options")]
       [ Html.p [HP.class_ arbClass]
+        [ Html.label [HP.for "arb-hamzah", HP.class_ (ClassName "orth-span")]
+          [ Html.input [HP.type_ HP.InputCheckbox, HP.id "arb-hamzah", HP.name "CArabicHamzah", HP.class_ checkboxC, HP.value "arb0", HE.onClick (\_ -> ArbHamzahToggle), HP.checked ops.combHamza]
+          , Html.text "Integrate Hamzahs with vowels"
+          ]
+      ]
+      , Html.p_ [Html.text "Phoneme Options"]
+      , Html.p [HP.class_ arbClass]
         [ Html.text "/ɬ/"
         , Html.input [HP.type_ HP.InputRadio, HP.id "arb-lh-sh" , HP.name "CArabicLh", HP.value "arb1", HE.onClick (\_ -> (ArbLhToggle LhSheen))   , HP.checked (ops.arbLhKind == LhSheen)]
         , Html.label [HP.for "arb-lh-sh"] -- , HP.class_ toolbelowFC] 
           [ Html.text "\x634 (Sheen)"
-          -- , Html.span [HP.class_ tooltiptextC] [Html.text "ASCII-compatible orthography for simple applications."]
           ]
         , Html.input [HP.type_ HP.InputRadio, HP.id "arb-lh-lh", HP.name "CArabicLh", HP.value "arb2", HE.onClick (\_ -> (ArbLhToggle LhLhah))  , HP.checked (ops.arbLhKind == LhLhah)]
         , Html.label [HP.for "arb-lh-lh"] -- , HP.class_ toolbelowC] 
           [ Html.text "\x6b5 (Lhah)"
-          -- , Html.span [HP.class_ tooltiptextC] [Html.text "Common Orthography generally used further north."]
           ]
         ]
       , Html.p [HP.class_ arbClass]
@@ -89,26 +94,40 @@ arabicOptionsGUI ops
         , Html.input [HP.type_ HP.InputRadio, HP.id "arb-gu-gh" , HP.name "CArabicGu", HP.value "arb3", HE.onClick (\_ -> (ArbGuToggle GuGhain))   , HP.checked (ops.arbGuKind == GuGhain)]
         , Html.label [HP.for "arb-gu-gh"] -- , HP.class_ toolbelowFC] 
           [ Html.text "\x63a (Ghain)"
-          -- , Html.span [HP.class_ tooltiptextC] [Html.text "ASCII-compatible orthography for simple applications."]
           ]
         , Html.input [HP.type_ HP.InputRadio, HP.id "arb-gu-qh", HP.name "CArabicGu", HP.value "arb4", HE.onClick (\_ -> (ArbGuToggle GuLikeQ))  , HP.checked (ops.arbGuKind == GuLikeQ)]
         , Html.label [HP.for "arb-gu-qh"] -- , HP.class_ toolbelowC] 
           [ Html.text "\x6a8 (Like Qah)"
-          -- , Html.span [HP.class_ tooltiptextC] [Html.text "Common Orthography generally used further north."]
           ]
-        ]  
+        ]
       , Html.p [HP.class_ arbClass]
         [ Html.text "/g/"
         , Html.input [HP.type_ HP.InputRadio, HP.id "arb-g-k" , HP.name "CArabicG", HP.value "arb5", HE.onClick (\_ -> (ArbGToggle GLikeK))   , HP.checked (ops.arbGKind == GLikeK)]
         , Html.label [HP.for "arb-g-k"] -- , HP.class_ toolbelowFC] 
           [ Html.text "\x6ac (Like Kah)"
-          -- , Html.span [HP.class_ tooltiptextC] [Html.text "ASCII-compatible orthography for simple applications."]
           ]
         , Html.input [HP.type_ HP.InputRadio, HP.id "arb-g-q", HP.name "CArabicG", HP.value "arb6", HE.onClick (\_ -> (ArbGToggle GLikeQ))  , HP.checked (ops.arbGKind == GLikeQ)]
         , Html.label [HP.for "arb-g-q"] -- , HP.class_ toolbelowC] 
           [ Html.text "\x6a7 (Like Qah)"
-          -- , Html.span [HP.class_ tooltiptextC] [Html.text "Common Orthography generally used further north."]
           ]
+        ]
+      , Html.p [HP.class_ arbClass]
+        [ Html.text "/e/"
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-e-a" , HP.name "CArabicE", HP.value "arb7", HE.onClick (\_ -> (ArbEToggle EAlifDia))   , HP.checked (ops.arbEKind == EAlifDia)]
+        , Html.label [HP.for "arb-e-a"] -- , HP.class_ toolbelowFC] 
+          [ Html.text "\x627\x650 (Alif Kasrah)" ]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-e-i", HP.name "CArabicE", HP.value "arb8", HE.onClick (\_ -> (ArbEToggle EWedgeI))  , HP.checked (ops.arbEKind == EWedgeI)]
+        , Html.label [HP.for "arb-e-i"] -- , HP.class_ toolbelowC] 
+          [ Html.text "\x6ce (Ya Wedge)" ]
+        ]
+      , Html.p [HP.class_ arbClass]
+        [ Html.text "/e/"
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-o-a" , HP.name "CArabicO", HP.value "arb9", HE.onClick (\_ -> (ArbOToggle OAlifDia))   , HP.checked (ops.arbOKind == OAlifDia)]
+        , Html.label [HP.for "arb-o-a"] -- , HP.class_ toolbelowFC] 
+          [ Html.text "\x627\x64f (Alif Dammah)" ]
+        , Html.input [HP.type_ HP.InputRadio, HP.id "arb-o-u", HP.name "CArabicO", HP.value "arb10", HE.onClick (\_ -> (ArbOToggle OWedgeU))  , HP.checked (ops.arbOKind == OWedgeU)]
+        , Html.label [HP.for "arb-o-u"] -- , HP.class_ toolbelowC] 
+          [ Html.text "\x6c9 (Waw Wedge)" ]
         ]
       ]
 
@@ -127,6 +146,7 @@ data ArabicToggle
   | ArbIToggle  ArabicIOption
   | ArbOToggle  ArabicOOption
   | ArbUToggle  ArabicUOption
+  | ArbHamzahToggle
 
 derive instance  eqArabicTog :: Eq  ArabicToggle
 -- derive instance ordArabicTog :: Ord ArabicToggle
@@ -140,6 +160,7 @@ toggleArabic (ArbEToggle  tog) ops = ops {arbEKind  = tog}
 toggleArabic (ArbIToggle  tog) ops = ops {arbIKind  = tog}
 toggleArabic (ArbOToggle  tog) ops = ops {arbOKind  = tog}
 toggleArabic (ArbUToggle  tog) ops = ops {arbUKind  = tog}
+toggleArabic ArbHamzahToggle   ops = ops {combHamza = not ops.combHamza}
 
 {-
   = { arbLhKind :: ArabicLhOption

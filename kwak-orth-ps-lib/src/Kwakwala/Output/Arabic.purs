@@ -15,6 +15,7 @@ module Kwakwala.Output.Arabic
   , outputArabicChars
   , outputArabicWordsI
   , outputArabicCharsI
+  , outputArabicWFR
   , ArabicOptions
   , defArabicOptions
   , ArabicLhOption(..)
@@ -38,6 +39,7 @@ import Kwakwala.Types
   , CasedWord(..)
   , KwakLetter(..)
   , isCharLetter
+  , stripCase
   )
 
 -- لٔب
@@ -212,6 +214,7 @@ type ArabicOptions
     , arbIKind  :: ArabicIOption
     , arbOKind  :: ArabicOOption
     , arbUKind  :: ArabicUOption
+    , combHamza :: Boolean
     -- , arbEjectHamzah :: Boolean
     }
 
@@ -225,6 +228,7 @@ defArabicOptions =
   , arbIKind  : IStandard
   , arbOKind  : OAlifDia
   , arbUKind  : UStandard
+  , combHamza : true
   -- , arbEjectHamzah : true
   }
 
@@ -275,7 +279,7 @@ outputArabic o LH
 outputArabic _ L   = "\x644" -- ل
 outputArabic _ LY  = "\x644\x654" -- لٔ
 outputArabic _ J   = "\x64a\x652" -- يْ
-outputArabic _ JY  = "\x64a\x654" -- or \x678 ٸ
+outputArabic _ JY  = "\x626\x652" -- \x626 has integrated hamzah "\x64a\x654" -- or \x678 ٸ
 outputArabic _ K   = "\x643" -- ك
 outputArabic _ KW  = "\x643\x64f" -- كُ
 outputArabic o G   
@@ -305,7 +309,7 @@ outputArabic _ XW  = "\x62e\x64f"
 outputArabic _ XU  = "\x62d" -- ح
 outputArabic _ XUW = "\x62d\x64f" -- حُ
 outputArabic _ W   = "\x64a\x652" -- وْ
-outputArabic _ WY  = "\x648\x654"
+outputArabic _ WY  = "\x624\x652" -- "\x648\x654"
 outputArabic _ Y   = "\x621" -- hamza ء
 outputArabic _ H   = "\x647" -- ه
 outputArabic _ A   = "\x627\x64e"
@@ -321,6 +325,51 @@ outputArabic o O
 outputArabic _ U   = "\x648"
 outputArabic _ AU  = "\x627"
 
+--------------------------------
+-- Fold-based
+
+-- If we want to include the hamzah with the 
+-- vowel following it, we can't use a straight
+-- map. Instead, we have to use a fold where we
+-- can look ahead one character. Normally, I 
+-- might use a parser, but running parsers in
+-- PureScript is MUCH slower than in Haskell,
+-- whereas folds don't seem to experience as
+-- much of a time bloat.
+
+outputArabicWFR :: ArabicOptions -> CasedWord -> String
+outputArabicWFR _ps (PunctW str) = str
+outputArabicWFR ops (KwakW ltrs) = outputArabicFR ops ltrs
+
+-- \x623 : Alif with hamzah above
+-- \x625 : Alif with hamzah below
+
+outputArabicFR :: ArabicOptions -> List CasedLetter -> String
+outputArabicFR ops Nil = ""
+outputArabicFR ops (Cons x rs1@(Cons z rst))
+  | (x == (Maj Y)) || (x == (Min Y))
+  = case (stripCase z) of
+    A  -> "\x625\x64e" <> outputArabicFR ops rst
+    E  -> case ops.arbEKind of
+      EAlifDia -> "\x623\x650" <> outputArabicFR ops rst
+      EWedgeI  -> "\x6ce\x655" <> outputArabicFR ops rst -- check
+    I  -> "\x626" <> outputArabicFR ops rst
+    O  -> case ops.arbOKind of
+      OAlifDia -> "\x625\x64f" <> outputArabicFR ops rst
+      OWedgeU  -> "\x6c9\x654" <> outputArabicFR ops rst -- check
+    U  -> "\x624" <> outputArabicFR ops rst
+    AU -> "\x625" <> outputArabicFR ops rst
+    _c -> "\x621" <> outputArabicFR ops rs1
+    -- c  -> "\x621" <> (outputArabic ops c) <> (outputArabicFR ops rst)
+  | otherwise = (outputArabic ops (stripCase x)) <> (outputArabicFR ops rs1)
+outputArabicFR ops (Cons x Nil)
+  = outputArabic ops (stripCase x)
+
+-- outputArabicWordsF :: ArabicOptions -> List CasedWord -> String
+-- outputArabicWordsF ops xs = foldMap (outputArabicWFR ops) xs
+
+--------------------------------
+-- Derived Functions
 
 outputArabicLetterI :: CasedLetter -> String
 outputArabicLetterI (Maj x) = outputArabicI x
@@ -343,7 +392,9 @@ outputArabicWordI (KwakW  x) = outputWordI x
 outputArabicWordI (PunctW x) = x
 
 outputArabicWord :: ArabicOptions -> CasedWord -> String
-outputArabicWord ops (KwakW  x) = outputWord ops x
+outputArabicWord ops (KwakW  x) 
+  | ops.combHamza = outputArabicFR ops x
+  | otherwise     = outputWord ops x
 outputArabicWord _ps (PunctW x) = x
 
 outputWordI :: List CasedLetter -> String

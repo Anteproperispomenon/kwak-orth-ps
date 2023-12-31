@@ -110,7 +110,7 @@ orthOptionsGUI orst
         , Html.p_ [Html.slot  _grubbOptions unit grubbComp defGrubbOptions orthRaiseGrubb]
         , Html.p_ [Html.text "IPA Options"]
         , Html.p_ [Html.slot  _ipaOptions unit ipaComp defIPAOptions orthRaiseIPA]
-        , Html.p_ [Html.text "Arabic Options (By Phoneme)"]
+        , Html.p_ [Html.text "Arabic Options"]
         , Html.p_ [Html.slot  _arabicOptions unit arabicComp defArabicOptions orthRaiseArabic]
         ]
       ]
