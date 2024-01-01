@@ -68,6 +68,11 @@ radioButtonsI kwk
         [ Html.text "Island"
         , Html.span [HP.class_ tooltiptextC] [Html.text "Variant of NAPA that uses the specific 'Island' Font."]
         ]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "arabic-in", HP.name "RInput", HP.value "uh6", HE.onClick (\_ -> InArabic), HP.checked (kwk == InArabic)]
+      , Html.label [HP.for "arabic-in", HP.class_ toolaboveC] 
+        [ Html.text "Arabic"
+        , Html.span [HP.class_ tooltiptextC] [Html.text "Experimental orthography loosely based on various Arabic scripts."]
+        ]
       ]
 
  -- forall m . MonadState KwakInputType m => KwakInputType -> m Unit

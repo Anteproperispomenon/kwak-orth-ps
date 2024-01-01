@@ -215,14 +215,23 @@ handleConvertAction hiMem x = case x of
         st2 = st {inputSelect = kit }
     when (kit == InIsland && old /= InIsland) $ do
       void $ HQ.query _inputText unit (InputSetIsland unit)
-    when (old == InIsland && kit /= InIsland) $ do
+    when (kit == InArabic && old /= InArabic) $ do
+      void $ HQ.query _inputText unit (InputSetArabic unit)
+    when ((old == InIsland || old == InArabic) && (kit /= InIsland || kit /= InArabic)) $ do
       void $ HQ.query _inputText unit (InputSetNonIsland unit)
     let st3 = if (kit == old) then st2 else (st2 {inputParsed = Nothing})
     when ((kit /= old) && (isJust st2.inputParsed)) $ liftEffect $ debug "Removed Cached Parse (Orthography Change)"
     Hal.put st3
     void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOut kot) -> do
-    Hal.modify_ (\st -> st {outputSelect = kot})
+    st <- Hal.get
+    let old = st.outputSelect
+        st2 = st {outputSelect = kot}
+    when (kot == OutArabic && old /= OutArabic) $ do
+      void $ HQ.query _outputText unit (SetOutputStyle "arabic" unit)
+    when (old == OutArabic && kot /= OutArabic) $ do
+      void $ HQ.query _outputText unit (SetOutputStyle "default-out" unit)
+    Hal.put st2
     void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
@@ -230,6 +239,8 @@ handleConvertAction hiMem x = case x of
     Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
   -- (ChangeOrthOpts (OrthGeorgianOptions ops)) -> do
   --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
+  (ChangeOrthOpts (OrthArabicOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {arabicOrthOptions = ops}})
   (ConvertText str) -> do
     -- Removing this line to reduce memory usage.
     -- stt <- Hal.modify (\st -> st {inputText = str})
@@ -509,6 +520,8 @@ handleConvertAction2 hiMem x = case x of
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ChangeOrthOpts2 (OrthIPAOptions ops)) -> do
     Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
+  (ChangeOrthOpts2 (OrthArabicOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {arabicOrthOptions = ops}})
   -- Receive text that is to be converted, and
   -- then send it off to be converted. Also
   -- changes the style of the "Convert" button.

@@ -22,6 +22,7 @@ import Test.Spec.Reporter.Console (consoleReporter)
 import Test.Spec.Runner (runSpec, runSpecT)
 import Test.Chunking
 import Test.Chunking.Parsing
+import Test.Parsing.Arabic
 import Test.QuickCheck.Gen
 import Test.Words
 
@@ -44,6 +45,16 @@ main = launchAff_ $ runSpec [consoleReporter] $ do
           rslt1 `shouldEqual` rslt2
         pure unit
       pure unit
+  describe "Parsing Tests" do
+    describe "Arabic Tests" do
+      it "Grubb -> Arabic -> Grubb (Default)" do
+        quickCheck testArabicParse1
+      it "Grubb -> Arabic -> Grubb (Uncombined Hamzahs)" do
+        quickCheck testArabicParse2
+      it "Grubb -> Arabic -> Grubb (Alternative 2)" do
+        quickCheck testArabicParse3
+      it "Grubb -> Arabic -> Grubb (Alternative 3)" do
+        quickCheck testArabicParse4
 
 {-
 main :: Effect Unit

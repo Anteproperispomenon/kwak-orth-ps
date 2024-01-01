@@ -45,6 +45,7 @@ module Kwakwala.Types
     , toWordsR
     -- ** Other Functions
     , isLetter
+    , fromWords
     )
   where
 
@@ -335,6 +336,11 @@ isKwakWord _         = false
 isLetter :: CasedChar -> Boolean
 isLetter (Kwak _) = true
 isLetter _ = false
+
+fromWords :: List CasedWord -> List CasedChar
+fromWords Nil = Nil
+fromWords (Cons (PunctW x) rst) = (Punct x)     : fromWords rst
+fromWords (Cons (KwakW  x) rst) = (map Kwak x) <> fromWords rst
 
 -- nullWord :: CasedWord -> Boolean
 -- nullWord (KwakW x) = null x

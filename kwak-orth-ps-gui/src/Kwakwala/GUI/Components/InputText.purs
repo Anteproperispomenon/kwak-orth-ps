@@ -42,6 +42,7 @@ data InputTextQuery a
   = InputStringQ (String -> a)
   | InputSetIsland a
   | InputSetNonIsland a
+  | InputSetArabic a
   | InputSetButtonDone a
   | InputReset a
 
@@ -135,6 +136,10 @@ handleInputTextQuery (InputSetIsland x) = do
 handleInputTextQuery (InputSetNonIsland x) = do
   st <- get
   Hal.put $ st {itStyle = "normal"}
+  pure $ Just x
+handleInputTextQuery (InputSetArabic x) = do
+  st <- get
+  Hal.put $ st {itStyle = "arabic"}
   pure $ Just x
 handleInputTextQuery (InputSetButtonDone x) = do
   Hal.modify_ $ \st -> st { itConvert = ConvertDone }
