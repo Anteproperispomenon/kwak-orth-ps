@@ -45,6 +45,7 @@ import Kwakwala.Parsing.Grubb (encodeFromGrubbAsciiChunk, encodeFromGrubbWordsL,
 import Kwakwala.Parsing.Island (encodeFromIslandChunk, encodeFromIslandWordsL, encodeFromIslandWordsR) -- , encodeFromIsland
 import Kwakwala.Parsing.Napa (encodeFromNapaChunk, encodeFromNapaWordsL, encodeFromNapaWordsR) -- , encodeFromNapa
 import Kwakwala.Parsing.Umista (encodeFromUmistaChunk, encodeFromUmistaWordsL, encodeFromUmistaWordsR) -- , encodeFromUmista
+import Kwakwala.Parsing.Arabic (encodeFromArabicWords)
 
 import Kwakwala.Output.Parallel
   ( outputGrubbWordsParC
@@ -65,6 +66,7 @@ import Kwakwala.Parsing.Parallel
   , encodeFromNapaWordsParR
   , encodeFromUmistaWordsParL
   , encodeFromUmistaWordsParR
+  , encodeFromArabicWordsPar
   , encodeFromBoasWordsParL'
   , encodeFromBoasWordsParR'
   , encodeFromGrubbWordsParL'
@@ -75,9 +77,10 @@ import Kwakwala.Parsing.Parallel
   , encodeFromNapaWordsParR'
   , encodeFromUmistaWordsParL'
   , encodeFromUmistaWordsParR'
+  , encodeFromArabicWordsPar'
   )
 
-import Kwakwala.Types (CasedChar, CasedWord)
+import Kwakwala.Types (CasedChar, CasedWord, fromWords)
 
 import Parsing.Chunking (ChunkifiedString)
 
@@ -192,6 +195,7 @@ encodeByType kit str = case kit of
   InUmista -> encodeFromUmistaChunk str -- encodeFromUmista str
   InIsland -> encodeFromIslandChunk str -- encodeFromIsland str
   InBoas   -> encodeFromBoasChunk   str -- encodeFromBoas   str
+  InArabic -> fromWords $ encodeFromArabicWords str
 
 -- | Convert a `List` of `CasedChar`s into a `String`
 -- | using the specified Output Orthography options
@@ -217,6 +221,7 @@ encodeByTypeWL kit str = case kit of
   InUmista -> encodeFromUmistaWordsL str -- encodeFromUmista str
   InIsland -> encodeFromIslandWordsL str -- encodeFromIsland str
   InBoas   -> encodeFromBoasWordsL   str -- encodeFromBoas   str
+  InArabic -> encodeFromArabicWords  str
 
 -- | Parse a `String` into a `List` of `CasedWord`s using the
 -- | input type specified by the `KwakInputType` argument.
@@ -230,6 +235,7 @@ encodeByTypeWR kit str = case kit of
   InUmista -> encodeFromUmistaWordsR str -- encodeFromUmista str
   InIsland -> encodeFromIslandWordsR str -- encodeFromIsland str
   InBoas   -> encodeFromBoasWordsR   str -- encodeFromBoas   str
+  InArabic -> encodeFromArabicWords  str
 
 -- | Convert a `List` of `CasedWord`s into a `String`
 -- | using the specified Output Orthography options
@@ -256,6 +262,7 @@ encodeByTypeParL kit str = case kit of
   InUmista -> encodeFromUmistaWordsParL str
   InIsland -> encodeFromIslandWordsParL str
   InBoas   -> encodeFromBoasWordsParL str
+  InArabic -> encodeFromArabicWordsPar str
 
 -- | Convert a `String` into a `CachedParse` by
 -- | chunkifying it and then parsing it in parallel.
@@ -270,6 +277,7 @@ encodeByTypeParR kit str = case kit of
   InUmista -> encodeFromUmistaWordsParR str
   InIsland -> encodeFromIslandWordsParR str
   InBoas   -> encodeFromBoasWordsParR str
+  InArabic -> encodeFromArabicWordsPar str
 
 -- | Convert a `CachedParse` (i.e. `List (List CasedWord)`)
 -- | into a String using the selected output Orthography. 
@@ -323,6 +331,7 @@ encodeByTypeParL' kit str = case kit of
   InUmista -> encodeFromUmistaWordsParL' str
   InIsland -> encodeFromIslandWordsParL' str
   InBoas   -> encodeFromBoasWordsParL' str
+  InArabic -> encodeFromArabicWordsPar' str
   
 -- | Convert a `ChunkifiedString` into a `CachedParse`
 -- | by parsing it in parallel. Works on any input
@@ -336,4 +345,5 @@ encodeByTypeParR' kit str = case kit of
   InUmista -> encodeFromUmistaWordsParR' str
   InIsland -> encodeFromIslandWordsParR' str
   InBoas   -> encodeFromBoasWordsParR' str
+  InArabic -> encodeFromArabicWordsPar' str
 

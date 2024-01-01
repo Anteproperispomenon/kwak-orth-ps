@@ -91,6 +91,7 @@ import Kwakwala.Types
 -- Dammatan \x64c ??? ـٌ
 -- Kasratan \x64d ??? ـٍ
 -- Fatha    \x64e /a/ ـَ
+-- Damma    \x64f /u/ ـُ
 -- Kasra    \x650 /i/ ـِ
 -- Shadda   \x651 gemination ـّ
 -- Sukun    \x652 /ø/ ـْ
