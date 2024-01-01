@@ -16,6 +16,8 @@ module Kwakwala.Parsing.Arabic
     , parseArabicWords
     , encodeFromArabicWords
     , parseTheLetter'
+    , parseTheLetterAlt
+    , parseTheLetter''
     ) where
 
 import Prelude
@@ -39,7 +41,7 @@ import Data.String as String
 import Data.CodePoint.Unicode (isAlpha)
 -- import Data.List.Types (toList)
 
-import Kwakwala.Parsing.Helpers (eqCP, isUpperC, liftP, parsePipe, peekChar)
+import Kwakwala.Parsing.Helpers (eqCP, isUpperC, liftP, parsePipe, peekChar, peekChar')
 import Kwakwala.Types 
   ( CasedChar(..)
   , CasedLetter(..)
@@ -402,10 +404,85 @@ parseTheLetter c =
     '\x640' -> pure Nil -- line extender
     _ -> fail "Not a workable character."
 
+-- | Alternate version
+parseTheLetterAlt :: Parser String (List KwakLetter)
+parseTheLetterAlt = do
+  c <- peekChar'
+  case c of
+    -- Vowels
+    '\x627' -> anyChar *> parseAlif
+    '\x623' -> anyChar *> parseAlifHamzah
+    '\x625' -> anyChar *> parseAlifHamzah
+    '\x649' -> anyChar *> parseYeh
+    '\x64a' -> anyChar *> parseYeh
+    '\x649' -> anyChar *> parseYeh
+    '\x6d2' -> anyChar *> parseYeh
+    '\x626' -> anyChar *> parseYehHamzah
+    '\x678' -> anyChar *> parseYehHamzah
+    '\x6d3' -> anyChar *> parseYehHamzah
+    '\x6ce' -> anyChar *> parseYehWedge
+    '\x648' -> anyChar *> parseWaw
+    '\x624' -> anyChar *> parseWawHamzah
+    '\x676' -> anyChar *> parseWawHamzah
+    '\x6c6' -> anyChar *> parseWawWedge
+    '\x6c9' -> anyChar *> parseWawWedge
+    '\x6cf' -> anyChar *> parseWawWedge
+
+    -- Consonants
+    '\x645' -> anyChar *> (singleton <$> (peekChar >>= parseM'))
+    '\x646' -> anyChar *> (singleton <$> (peekChar >>= parseN'))
+    '\x67e' -> anyChar *> (singleton <$> (peekChar >>= parseP'))
+    '\x62a' -> anyChar *> (singleton <$> (peekChar >>= parseT'))
+    '\x628' -> anyChar *> (pure $ singleton B)
+    '\x62f' -> anyChar *> (pure $ singleton D)
+    -- TS
+    '\x684' -> anyChar *> (singleton <$> (peekChar >>= parseTS))
+    '\x62b' -> anyChar *> (singleton <$> (peekChar >>= parseTS))
+    '\x686' -> anyChar *> (singleton <$> (peekChar >>= parseTL))
+    '\x62c' -> anyChar *> (pure $ singleton DZ)
+    '\x685' -> anyChar *> (pure $ singleton DL)
+    '\x633' -> anyChar *> (pure $ singleton S)
+    -- LH
+    '\x634' -> anyChar *> (pure $ singleton LH)
+    '\x631' -> anyChar *> (pure $ singleton LH)
+    '\x6b5' -> anyChar *> (pure $ singleton LH)
+    '\x644' -> anyChar *> (singleton <$> (peekChar >>= parseL'))
+
+    -- K
+    '\x643' -> anyChar *> (singleton <$> (peekChar >>= parseK'))
+    '\x642' -> anyChar *> (singleton <$> (peekChar >>= parseKH))
+
+    -- G
+    '\x6a7' -> anyChar *> (singleton <$> (peekChar >>= parseG'))
+    '\x6ac' -> anyChar *> (singleton <$> (peekChar >>= parseG'))
+
+    -- GU
+    '\x63a' -> anyChar *> (singleton <$> (peekChar >>= parseGH))
+    '\x6a8' -> anyChar *> (singleton <$> (peekChar >>= parseGH))
+
+    -- X
+    '\x62e' -> anyChar *> (singleton <$> (peekChar >>= parseX'))
+    '\x62d' -> anyChar *> (singleton <$> (peekChar >>= parseXU'))
+
+    -- H
+    '\x647' -> anyChar *> (pure $ singleton H)
+
+    -- Glottal Stop
+    '\x621' -> anyChar *> (pure $ singleton Y)
+
+    -- Others
+    '\x640' -> anyChar *> pure Nil -- line extender
+    _ -> fail "Not a workable character."
+
 parseTheLetter' :: Parser String (List CasedLetter)
 parseTheLetter' = try $ do
   x <- anyChar
   c <- parseTheLetter x
+  pure $ map Min c
+
+parseTheLetter'' :: Parser String (List CasedLetter)
+parseTheLetter'' = do
+  c <- parseTheLetterAlt
   pure $ map Min c
 
 fixArabicWord :: CasedWord -> CasedWord
@@ -418,7 +495,7 @@ fixArabicWord orig@(KwakW wd@(Cons x _rst))
 
 parseArabicWord :: Parser String CasedWord
 parseArabicWord 
-  = (fixArabicWord <<< KwakW <<< fold <<< toList <$> many1 parseTheLetter')
+  = (fixArabicWord <<< KwakW <<< fold <<< toList <$> many1 parseTheLetter'')
     <|> parseOutsideArabic
     <|> (PunctW <<< CP.singleton <<< codePointFromChar <$> anyChar)
 
