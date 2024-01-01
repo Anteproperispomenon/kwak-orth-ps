@@ -20,5 +20,6 @@ testGrubbChunk1 = do
   prs2 <- pure $ encodeFromGrubbAsciiChunk wrds
   pure $ prs1 == prs2
 
-
+-- testGrubbChunk2 :: Gen Boolean
+-- testGrubbChunk2
 
