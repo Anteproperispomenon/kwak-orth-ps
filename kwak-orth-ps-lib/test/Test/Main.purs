@@ -47,8 +47,14 @@ main = launchAff_ $ runSpec [consoleReporter] $ do
       pure unit
   describe "Parsing Tests" do
     describe "Arabic Tests" do
-      it "Grubb -> Arabic -> Grubb" do
+      it "Grubb -> Arabic -> Grubb (Default)" do
         quickCheck testArabicParse1
+      it "Grubb -> Arabic -> Grubb (Uncombined Hamzahs)" do
+        quickCheck testArabicParse2
+      it "Grubb -> Arabic -> Grubb (Alternative 2)" do
+        quickCheck testArabicParse3
+      it "Grubb -> Arabic -> Grubb (Alternative 3)" do
+        quickCheck testArabicParse4
 
 {-
 main :: Effect Unit
