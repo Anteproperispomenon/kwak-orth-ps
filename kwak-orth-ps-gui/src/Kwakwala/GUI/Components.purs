@@ -215,7 +215,9 @@ handleConvertAction hiMem x = case x of
         st2 = st {inputSelect = kit }
     when (kit == InIsland && old /= InIsland) $ do
       void $ HQ.query _inputText unit (InputSetIsland unit)
-    when (old == InIsland && kit /= InIsland) $ do
+    when (kit == InArabic && old /= InArabic) $ do
+      void $ HQ.query _inputText unit (InputSetArabic unit)
+    when ((old == InIsland || old == InArabic) && (kit /= InIsland || kit /= InArabic)) $ do
       void $ HQ.query _inputText unit (InputSetNonIsland unit)
     let st3 = if (kit == old) then st2 else (st2 {inputParsed = Nothing})
     when ((kit /= old) && (isJust st2.inputParsed)) $ liftEffect $ debug "Removed Cached Parse (Orthography Change)"
