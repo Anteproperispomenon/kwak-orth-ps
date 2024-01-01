@@ -66,8 +66,18 @@ isHamzah '\x655' = true
 isHamzah _ = false
 -- will probably have to add more
 
+-- Excluding the full hamzah
+-- (Necessary for sonorants)
+isHamzah' :: Char -> Boolean
+isHamzah' '\x654' = true
+isHamzah' '\x655' = true
+isHamzah' _ = false
+
 isHamzahCP :: CodePoint -> Boolean
 isHamzahCP = (eqCP '\x621') || (eqCP '\x654') || (eqCP '\x655')
+
+isHamzahCP' :: CodePoint -> Boolean
+isHamzahCP' = (eqCP '\x654') || (eqCP '\x655')
 
 {-
 isApost'  :: Char -> Boolean
@@ -107,16 +117,16 @@ isH  _  = false
 parseK' :: (Maybe Char) -> Parser String KwakLetter
 parseK' Nothing = pure K
 parseK' (Just x)
-    | isHamzah x = anyChar *> peekChar >>= parseKY
-    | isW      x = anyChar *> peekChar >>= parseKW
-    | otherwise = pure K
+    | isHamzah' x = anyChar *> peekChar >>= parseKY
+    | isW       x = anyChar *> peekChar >>= parseKW
+    | otherwise   = pure K
 
 parseKH :: (Maybe Char) -> Parser String KwakLetter
 parseKH Nothing = pure Q
 parseKH (Just x)
-    | isHamzah x = anyChar *> peekChar >>= parseKHY
-    | isW      x = anyChar *> peekChar >>= parseKHW
-    | otherwise  = pure Q
+    | isHamzah' x = anyChar *> peekChar >>= parseKHY
+    | isW       x = anyChar *> peekChar >>= parseKHW
+    | otherwise   = pure Q
 
 parseKY :: Maybe Char -> Parser String KwakLetter
 parseKY Nothing = pure KY
@@ -133,8 +143,8 @@ parseKHY (Just x)
 parseKW :: Maybe Char -> Parser String KwakLetter
 parseKW Nothing = pure KW
 parseKW (Just x)
-    | isHamzah x = anyChar *> (pure KWY)
-    | otherwise  = pure KW
+    | isHamzah' x = anyChar *> (pure KWY)
+    | otherwise   = pure KW
 
 parseKHW :: Maybe Char -> Parser String KwakLetter
 parseKHW Nothing = pure KW
@@ -184,8 +194,8 @@ parseXU' (Just x)
 parseP' :: Maybe Char -> Parser String KwakLetter
 parseP' Nothing = pure P
 parseP' (Just x)
-    | isHamzah x = anyChar *> (pure PY)
-    | otherwise  = pure P
+    | isHamzah' x = anyChar *> (pure PY)
+    | otherwise   = pure P
 
 parseT' :: Maybe Char -> Parser String KwakLetter
 parseT' Nothing = pure T
@@ -198,14 +208,14 @@ parseT' (Just x)
 parseTS :: Maybe Char -> Parser String KwakLetter
 parseTS Nothing = pure TS
 parseTS (Just x)
-    | isHamzah x = anyChar *> (pure TSY)
-    | otherwise  = pure TS
+    | isHamzah' x = anyChar *> (pure TSY)
+    | otherwise   = pure TS
 
 parseTL :: Maybe Char -> Parser String KwakLetter
 parseTL Nothing = pure TL
 parseTL (Just x)
-    -- | isApost x = anyChar *> (pure TLY)
-    | otherwise = pure TL
+    | isHamzah' x = anyChar *> (pure TLY)
+    | otherwise   = pure TL
 
 parseTY :: Maybe Char -> Parser String KwakLetter
 parseTY Nothing = pure TY
@@ -229,8 +239,8 @@ parseC = do
 parseM' :: Maybe Char -> Parser String KwakLetter
 parseM' Nothing = pure M
 parseM' (Just x)
-    | isHamzah x = anyChar *> (pure MY)
-    | otherwise  = pure M
+    | isHamzah' x = anyChar *> (pure MY)
+    | otherwise   = pure M
 
 -- Version that doesn't accept
 -- "m'" as a parse.
@@ -242,8 +252,8 @@ parseMonly = do
 parseN' :: Maybe Char -> Parser String KwakLetter
 parseN' Nothing = pure N
 parseN' (Just x)
-    | isHamzah x = anyChar *> (pure NY)
-    | otherwise  = pure N
+    | isHamzah' x = anyChar *> (pure NY)
+    | otherwise   = pure N
 
 -- Version that doesn't accept
 -- "n'" as a parse.
@@ -258,8 +268,8 @@ parseNonly = do
 parseJ' :: Maybe Char -> Parser String KwakLetter
 parseJ' Nothing = pure J
 parseJ' (Just x)
-    | isHamzah x = anyChar *> (pure JY)
-    | otherwise = pure J
+    | isHamzah' x = anyChar *> (pure JY)
+    | otherwise   = pure J
 
 -- Version that doesn't accept
 -- "y'" as a parse.
@@ -271,8 +281,8 @@ parseJonly = do
 parseL' :: Maybe Char -> Parser String KwakLetter
 parseL' Nothing = pure L
 parseL' (Just x)
-    | isHamzah x = anyChar *> (pure LY)
-    | otherwise  = pure L
+    | isHamzah' x = anyChar *> (pure LY)
+    | otherwise   = pure L
 
 -- Version that doesn't accept
 -- "l'" as a parse.
@@ -291,8 +301,8 @@ parseLonly' (Just x)
 parseW' :: Maybe Char -> Parser String KwakLetter
 parseW' Nothing = pure W
 parseW' (Just x)
-    | isHamzah x = anyChar *> (pure WY)
-    | otherwise  = pure W
+    | isHamzah' x = anyChar *> (pure WY)
+    | otherwise   = pure W
 
 -- Version that doesn't accept
 -- "w'" as a parse.
