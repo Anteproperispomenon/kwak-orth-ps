@@ -102,19 +102,6 @@ isH  _  = false
 -- so that's what some of the names are
 -- based on.
 
------------------------
--- Entry Point
-parseK :: Parser String KwakLetter
-parseK = do
-  void $ satisfy (\x -> x == '\x643')
-  peekChar >>= parseK'
-
-parseQ :: Parser String KwakLetter
-parseQ = do
-  void $ satisfy (\x -> x == '\x642')
-  peekChar >>= parseKH
-  
-
 parseK' :: (Maybe Char) -> Parser String KwakLetter
 parseK' Nothing = pure K
 parseK' (Just x)
@@ -153,19 +140,6 @@ parseKHW (Just x)
     | isHamzah x = anyChar *> (pure QWY)
     | otherwise  = pure QW
 
------------------------
--- Entry Point For G
-parseG :: Parser String KwakLetter
-parseG = do
-  void $ satisfy (\x -> x == '\x6a7' || x == '\x6ac')
-  peekChar >>= parseG'
-
--- 63a 6a8
-parseGU :: Parser String KwakLetter
-parseGU = do
-  void $ satisfy (\x -> x == '\x63a' || x == '\x6a8')
-  peekChar >>= parseGH
-
 parseG' :: (Maybe Char) -> Parser String KwakLetter
 parseG' Nothing = pure G
 parseG' (Just x)
@@ -189,25 +163,11 @@ parseGW (Just x)
 ---------------------------------------------------------------
 -- Parsing X
 
------------------------
--- Entry Point
-parseX :: Parser String KwakLetter
-parseX = do
-  void $ satisfy (\x -> x == '\x62e')
-  peekChar >>= parseX'
-
 parseX' :: (Maybe Char) -> Parser String KwakLetter
 parseX' Nothing = pure X
 parseX' (Just x)
     | isW     x = anyChar *> pure XW  -- (pure XW) -- peekChar >>= parseXW
     | otherwise = pure X
-
------------------------
--- Entry Point
-parseXU :: Parser String KwakLetter
-parseXU = do
-  void $ satisfy (\x -> x == '\x62d')
-  peekChar >>= parseXU'
 
 parseXU' :: Maybe Char -> Parser String KwakLetter
 parseXU' Nothing = pure XU
@@ -215,75 +175,15 @@ parseXU' (Just x)
     | isW     x = anyChar *> (pure XUW)
     | otherwise = pure XU
 
-{-
-parseXW :: Maybe Char -> Parser String KwakLetter
-parseXW Nothing = pure XW
-parseXW (Just x)
-    | isW     x = anyChar *> (pure XUW)
-    | otherwise = pure XW
--}
-
------------------------
--- Entry Point
-parseD :: Parser String KwakLetter
-parseD = do
-  void $ satisfy (\x -> x == '\x62f')
-  -- peekChar >>= parseD'
-  pure D
-
-{-
-outputArabic _ DZ  = "\x62c" -- ج
-outputArabic _ DL  = "\x685" -- څ
--}
-
-{-
--- ᶻ
-parseD' :: Maybe Char -> Parser String KwakLetter
-parseD' Nothing = pure D
-parseD' (Just x)
-    | (x == 'z' || x == 'Z' || x == 'ᶻ') = anyChar *> (pure DZ)
-    | (x == 'l' || x == 'L'            ) = anyChar *> (pure DL)
-    | otherwise                          = pure D
--}
------------------------
--- Entry Point
-parseZ :: Parser String KwakLetter
-parseZ = do
-  void $ satisfy (\x -> x == 'z' || x == 'Z' || x == 'ǳ' || x == 'Ǳ' || x == 'ǲ')
-  pure DZ
 
 ---------------------------------------------------------------
--- Parsing B, P, T, C, and S
-
------------------------
--- Entry Point
-parseB :: Parser String KwakLetter
-parseB = do
-  void $ satisfy (\x -> x == 'b' || x == 'B')
-  pure B
-  
-
------------------------
--- Entry Point
-parseP :: Parser String KwakLetter
-parseP = do
-  void $ satisfy (\x -> x == 'p' || x == 'P')
-  peekChar >>= parseP'
-  
+-- Parsing P, T, C, and S  
 
 parseP' :: Maybe Char -> Parser String KwakLetter
 parseP' Nothing = pure P
 parseP' (Just x)
     | isHamzah x = anyChar *> (pure PY)
     | otherwise  = pure P
-
------------------------
--- Entry Point
-parseT :: Parser String KwakLetter
-parseT = do
-  void $ satisfy (\x -> x == 't' || x == 'T')
-  peekChar >>= parseT'
-
 
 parseT' :: Maybe Char -> Parser String KwakLetter
 parseT' Nothing = pure T
@@ -324,13 +224,6 @@ parseC = do
 ---------------------------------------------------------------
 -- Parsing M and N
 
------------------------
--- Entry Point
-parseM :: Parser String KwakLetter
-parseM = do
-  void $ satisfy (\x -> x == 'm' || x == 'M')
-  peekChar >>= parseM'
-
 parseM' :: Maybe Char -> Parser String KwakLetter
 parseM' Nothing = pure M
 parseM' (Just x)
@@ -343,14 +236,6 @@ parseMonly :: Parser String KwakLetter
 parseMonly = do
   void $ satisfy (\x -> x == 'm' || x == 'M')
   pure M
-
------------------------
--- Entry Point
-
-parseN :: Parser String KwakLetter
-parseN = do
-  void $ satisfy (\x -> x == 'n' || x == 'N')
-  peekChar >>= parseN'
 
 parseN' :: Maybe Char -> Parser String KwakLetter
 parseN' Nothing = pure N
@@ -368,13 +253,6 @@ parseNonly = do
 ---------------------------------------------------------------
 -- Parsing J/Y, L, LH, and W
 
------------------------
--- Entry Point
-parseJ :: Parser String KwakLetter
-parseJ = do
-  void $ satisfy (\x -> x == 'y' || x == 'Y')
-  peekChar >>= parseJ'
-
 parseJ' :: Maybe Char -> Parser String KwakLetter
 parseJ' Nothing = pure J
 parseJ' (Just x)
@@ -387,13 +265,6 @@ parseJonly :: Parser String KwakLetter
 parseJonly = do
   void $ satisfy (\x -> x == 'y' || x == 'Y')
   pure J
-
------------------------
--- Entry Point
-parseL :: Parser String KwakLetter
-parseL = do
-  void $ satisfy (\x -> x == 'l' || x == 'L')
-  peekChar >>= parseL'
 
 parseL' :: Maybe Char -> Parser String KwakLetter
 parseL' Nothing = pure L
@@ -414,12 +285,6 @@ parseLonly' (Just x)
     | isH     x = anyChar *> (pure LH)
     | otherwise = pure L
 
------------------------
--- Entry Point
-parseW :: Parser String KwakLetter
-parseW = do
-  void $ satisfy (\x -> x == 'w' || x == 'W')
-  peekChar >>= parseW'
 
 parseW' :: Maybe Char -> Parser String KwakLetter
 parseW' Nothing = pure W
@@ -645,77 +510,3 @@ parseWawWedge = do
     (Just '\x654') -> anyChar *> pure (Y : O : Nil)
     (Just '\x655') -> anyChar *> pure (Y : O : Nil)
     _ -> pure $ O : Nil
-
-
-
-{-
-outputArabic _ M   = "\x645" -- م
-outputArabic _ MY  = "\x645\x654"
-outputArabic _ N   = "\x646" -- ن
-outputArabic _ NY  = "\x646\x654" -- ن
-outputArabic _ P   = "\x67e" -- پ
-outputArabic _ T   = "\x62a" -- ت
-outputArabic _ B   = "\x628" -- ب
-outputArabic _ D   = "\x62f" -- د
-outputArabic _ PY  = "\x67e\x654"
-outputArabic _ TY  = "\x62a\x654"
-outputArabic _ TS  = "\x684" -- th ث \x62b OR Bosnian /ts/ ڄ \x684
-outputArabic _ TL  = "\x686" -- چ
-outputArabic _ DZ  = "\x62c" -- ج
-outputArabic _ DL  = "\x685" -- څ
-outputArabic _ TSY = "\x684\x654"
-outputArabic _ TLY = "\x686\x654" -- چٔ
-outputArabic _ S   = "\x633" -- س
-outputArabic o LH  
-  | o.arbLhKind == LhSheen = "\x634" -- sh ش \x634 OR r  ر \x631 or ڵ \x6b5
-  | o.arbLhKind == LhLhah  = "\x6b5"
-  | otherwise              = "\x634"
-outputArabic _ L   = "\x644" -- ل
-outputArabic _ LY  = "\x644\x654" -- لٔ
-outputArabic _ J   = "\x64a\x652" -- يْ
-outputArabic _ JY  = "\x626\x652" -- \x626 has integrated hamzah "\x64a\x654" -- or \x678 ٸ
-outputArabic _ K   = "\x643" -- ك
-outputArabic _ KW  = "\x643\x64f" -- كُ
-outputArabic o G   
-  | o.arbGKind == GLikeQ = "\x6a7" -- ڨ, originally \x6cb ۋ. Could also be \x6ab ګ or \x6ac ڬ now ڧ
-  | o.arbGKind == GLikeK = "\x6ac"
-  | otherwise            = "\x6ac"
-outputArabic o GW -- originally \x6cb\x64f
-  | o.arbGKind == GLikeQ = "\x6a7\x64f"
-  | o.arbGKind == GLikeK = "\x6ac\x64f"
-  | otherwise            = "\x6ac\x64f"
-outputArabic _ KY  = "\x643\x655" -- ك
-outputArabic _ KWY = "\x643\x64f\x655" -- كُ
-outputArabic _ Q   = "\x642" -- ق
-outputArabic _ QW  = "\x642\x64f" -- قُ
-outputArabic o GU  
-  | o.arbGuKind == GuGhain = "\x63a" -- غ
-  | o.arbGuKind == GuLikeQ = "\x6a8" -- ڨ
-  | otherwise              = "\x6a8" -- ڨ
-outputArabic o GUW
-  | o.arbGuKind == GuGhain = "\x63a\x64f" -- غ
-  | o.arbGuKind == GuLikeQ = "\x6a8\x64f" -- ڨ
-  | otherwise              = "\x6a8\x64f" -- ڨ
-outputArabic _ QY  = "\x642\x655"
-outputArabic _ QWY = "\x642\x64f\x655" -- most problematic letter for rendering
-outputArabic _ X   = "\x62e" -- خ
-outputArabic _ XW  = "\x62e\x64f"
-outputArabic _ XU  = "\x62d" -- ح
-outputArabic _ XUW = "\x62d\x64f" -- حُ
-outputArabic _ W   = "\x64a\x652" -- وْ
-outputArabic _ WY  = "\x624\x652" -- "\x648\x654"
-outputArabic _ Y   = "\x621" -- hamza ء
-outputArabic _ H   = "\x647" -- ه
-outputArabic _ A   = "\x627\x64e"
-outputArabic o E   
-  | o.arbEKind == EAlifDia = "\x627\x650" -- ai -> e
-  | o.arbEKind == EWedgeI  = "\x6ce" -- ێ
-  | otherwise              = "\x627\x650"
-outputArabic _ I   = "\x64a" 
-outputArabic o O
-  | o.arbOKind == OAlifDia = "\x627\x64f" -- aw -> o -- اُ
-  | o.arbOKind == OWedgeU  = "\x6c9"
-  | otherwise              = "\x627\x64f"
-outputArabic _ U   = "\x648"
-outputArabic _ AU  = "\x627"
--}
