@@ -2,9 +2,11 @@ module Test.Helpers
   ( diffString
   , diffString'
   , diffStringDisp
+  , shortenToAround
   , replicateChar
   , replicateCodeUnit
   , replicateCodePoint
+  , takeLast
   ) where
 
 import Prelude
@@ -13,7 +15,7 @@ import Data.String as String
 import Data.String.CodeUnits as CU
 import Data.Unfoldable (replicate)
 import Data.Maybe (Maybe(..))
-import Data.Tuple
+import Data.Tuple (Tuple(..))
 
 diffString :: Int -> String -> String -> String
 diffString idx str1 str2

@@ -4,13 +4,12 @@ module Test.Chunking.Parsing
 
 import Prelude
 
-import Test.Chunking
-import Test.Words
-
-import Parsing.Chunking
+import Test.Words (randomWords)
 import Test.QuickCheck.Gen (Gen)
+import Kwakwala.Parsing.Grubb (encodeFromGrubbAscii, encodeFromGrubbAsciiChunk)
 
-import Kwakwala.Parsing.Grubb
+-- import Parsing.Chunking
+-- import Test.Chunking
 
 
 testGrubbChunk1 :: Gen Boolean

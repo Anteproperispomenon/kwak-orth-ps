@@ -6,24 +6,31 @@ module Test.Parsing.Arabic
   ) where
 
 import Prelude
-import Test.Words
-
-import Data.Either (Either(..))
-import Data.Foldable (fold)
-
+import Test.Words (randomWords)
 
 import Data.String.Common (toLower)
 
--- import Parsing.Chunking
-import Test.Helpers
+import Test.Helpers (diffStringDisp)
 import Test.QuickCheck (withHelp, Result)
 import Test.QuickCheck.Gen (Gen)
 
-import Kwakwala.Parsing.Arabic
-import Kwakwala.Parsing.Grubb
+import Kwakwala.Parsing.Grubb (encodeFromGrubbWordsL)
+import Kwakwala.Parsing.Arabic (encodeFromArabicWords)
 
+import Kwakwala.Output.Grubb (defGrubbOptions, outputGrubbAsciiWords)
 import Kwakwala.Output.Arabic
-import Kwakwala.Output.Grubb
+  ( outputArabicWords
+  , defArabicOptions
+  , ArabicAOption(..)
+  , ArabicEOption(..)
+  , ArabicGOption(..)
+  , ArabicGuOption(..)
+  , ArabicIOption(..)
+  , ArabicLhOption(..)
+  , ArabicOOption(..)
+  , ArabicOptions
+  , ArabicUOption(..)
+  )
 
 testArabicParse1 :: Gen Result
 testArabicParse1 = do
@@ -35,7 +42,6 @@ testArabicParse1 = do
   prs3 <- pure $ encodeFromArabicWords out2
   out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
   pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
-  -- pure $ withHelp (out3 == out1) $ (diffString 0 out1 out3) <> "\nString 1: " <> out1 <> "\nString 2: " <> out3
 
 testArabicParse2 :: Gen Result
 testArabicParse2 = do
@@ -69,8 +75,6 @@ testArabicParse4 = do
   prs3 <- pure $ encodeFromArabicWords out2
   out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
   pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
-
-
 
 altOptions1 :: ArabicOptions
 altOptions1 
