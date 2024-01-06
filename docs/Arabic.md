@@ -50,13 +50,14 @@ most alphabets that use the Arabic Script.
 Like most (all?) alphabets that use the Arabic Script, this
 orthography combines letters in the same word together cursively. 
 This results in most letters having multiple distinct but related
-forms. The four forms are Isolated, Initial, Medial, and Final.
-Since the Arabic Script has no capitalisation, these are the
-only four forms. Also, some letters do not connect to the following
-letter. For these letters, the Medial form is the same as the Final
-form, and the Initial form is the same as the Isolated form. If
-one such letter is the penultimate letter in a word, then the final
-letter will be in its Isolated form.
+forms (this process is automated when using Unicode; letters written
+will automatically have the correct form). The four forms are 
+Isolated, Initial, Medial, and Final. Since the Arabic Script has no 
+capitalisation, these are the only four forms. Also, some letters 
+do not connect to the following letter. For these letters, the Medial 
+form is the same as the Final form, and the Initial form is the same 
+as the Isolated form. If one such letter is the penultimate letter 
+in a word, then the final letter will be in its Isolated form.
 
 ## Chart
 
@@ -126,13 +127,13 @@ letter will be in its Isolated form.
 |Grubb| Isolated       | Initial | Medial | Final |
 |-----|----------------|---------|--------|-------|
 | Le  | &#x644;&#x627; | &#x644;&#x627;&#x640; | &#x640;&#x644;&#x627;&#x640; | &#x640;&#x644;&#x627; |
-| La  | &#x644;&#x627;&#x64e; | &#x644;&#x627;&#x64e;&#x640; | &#x640;&#x644;&#x627;&#x64e;&#x640; | &#x640;&#x644;&#x627;&#x64e; |
-| Leh | &#x644;&#x627;&#x650; | &#x644;&#x627;&#x650;&#x640; | &#x640;&#x644;&#x627;&#x650;&#x640; | &#x640;&#x644;&#x627;&#x650; |
-| Lo  | &#x644;&#x627;&#x64f; | &#x644;&#x627;&#x64f;&#x640; | &#x640;&#x644;&#x627;&#x64f;&#x640; | &#x640;&#x644;&#x627;&#x64f; |
-| 'Le | &#x644;&#x654;&#x627; | &#x644;&#x654;&#x627;&#x640; | &#x640;&#x644;&#x654;&#x627;&#x640; | &#x640;&#x644;&#x654;&#x627; |
-| 'La | &#x644;&#x654;&#x627;&#x64e; | &#x644;&#x654;&#x627;&#x64e;&#x640; | &#x640;&#x644;&#x654;&#x627;&#x64e;&#x640; | &#x640;&#x644;&#x654;&#x627;&#x64e; |
-| 'Leh| &#x644;&#x654;&#x627;&#x650; | &#x644;&#x654;&#x627;&#x650;&#x640; | &#x640;&#x644;&#x654;&#x627;&#x650;&#x640; | &#x640;&#x644;&#x654;&#x627;&#x650; |
-| 'Lo | &#x644;&#x654;&#x627;&#x64f; | &#x644;&#x654;&#x627;&#x64f;&#x640; | &#x640;&#x644;&#x654;&#x627;&#x64f;&#x640; | &#x640;&#x644;&#x654;&#x627;&#x64f; |
+| La  | &#x644;&#x627;&#x64e; | &#x644;&#x627;&#x64e; | &#x640;&#x644;&#x627;&#x64e; | &#x640;&#x644;&#x627;&#x64e; |
+| Leh | &#x644;&#x627;&#x650; | &#x644;&#x627;&#x650; | &#x640;&#x644;&#x627;&#x650; | &#x640;&#x644;&#x627;&#x650; |
+| Lo  | &#x644;&#x627;&#x64f; | &#x644;&#x627;&#x64f; | &#x640;&#x644;&#x627;&#x64f; | &#x640;&#x644;&#x627;&#x64f; |
+| 'Le | &#x644;&#x654;&#x627; | &#x644;&#x654;&#x627; | &#x640;&#x644;&#x654;&#x627; | &#x640;&#x644;&#x654;&#x627; |
+| 'La | &#x644;&#x654;&#x627;&#x64e; | &#x644;&#x654;&#x627;&#x64e; | &#x640;&#x644;&#x654;&#x627;&#x64e; | &#x640;&#x644;&#x654;&#x627;&#x64e; |
+| 'Leh| &#x644;&#x654;&#x627;&#x650; | &#x644;&#x654;&#x627;&#x650; | &#x640;&#x644;&#x654;&#x627;&#x650; | &#x640;&#x644;&#x654;&#x627;&#x650; |
+| 'Lo | &#x644;&#x654;&#x627;&#x64f; | &#x644;&#x654;&#x627;&#x64f; | &#x640;&#x644;&#x654;&#x627;&#x64f; | &#x640;&#x644;&#x654;&#x627;&#x64f; |
 | 'E   | &#x625;        | &#x625;        | &#x640;&#x625; | &#x640;&#x625; |
 | 'A   | &#x625;&#x64e; | &#x625;&#x64e; | &#x640;&#x625;&#x64e; | &#x640;&#x625;&#x64e; |
 | 'EH  | &#x623;&#x650; | &#x623;&#x650; | &#x640;&#x623;&#x650; | &#x640;&#x623;&#x650; |
