@@ -54,7 +54,18 @@ import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
 import Data.CodePoint.Unicode (isAlpha)
 import Data.List.Types (toList)
 
-import Kwakwala.Parsing.Helpers (eqCP, isUpperC, liftP, parsePipe, peekChar)
+import Kwakwala.Parsing.Helpers 
+  ( eqCP
+  , isUpperC
+  , liftP
+  , parsePipe
+  , peekChar
+  , peekChar'
+  , consumeMin
+  , consumeMaj
+  , continueMin
+  , continueMaj
+  )
 import Kwakwala.Types 
   ( CasedChar(..)
   , CasedLetter(..)
@@ -522,13 +533,96 @@ parseGrubbLetter =
            ,parseZ,parseH
            ]
 
+parseGrubbLetterFast :: Parser String CasedLetter
+parseGrubbLetterFast = do
+  c <- peekChar'
+  -- Could speed this up by
+  -- checking whether the character
+  -- is upper or lower first, and
+  -- then going through one of
+  -- two lists.
+  case c of
+    'a' -> consumeMin A
+    'A' -> consumeMaj A
+    'e' -> continueMin parseE'
+    'E' -> continueMaj parseE'
+    'i' -> consumeMin I
+    'I' -> consumeMaj I
+    'o' -> consumeMin O
+    'O' -> consumeMaj O
+    'u' -> consumeMin U
+    'U' -> consumeMaj U
+    'k' -> continueMin parseK'
+    'K' -> continueMaj parseK'
+    'q' -> continueMin parseKH
+    'Q' -> continueMaj parseKH
+    'g' -> continueMin parseG'
+    'G' -> continueMaj parseG'
+    'x' -> continueMin parseX'
+    'X' -> continueMaj parseX'
+    'p' -> continueMin parseP'
+    'P' -> continueMaj parseP'
+    'b' -> consumeMin B
+    'B' -> consumeMaj B
+    't' -> continueMin parseT'
+    'T' -> continueMaj parseT'
+    'c' -> continueMin parseTS
+    'C' -> continueMaj parseTS
+    'd' -> continueMin parseD'
+    'D' -> continueMaj parseD'
+    'z' -> consumeMin DZ
+    'Z' -> consumeMaj DZ
+
+    -- Sonorants
+    'l' -> continueMin parseLonly'
+    'L' -> continueMaj parseLonly'
+    'y' -> consumeMin J
+    'Y' -> consumeMaj J
+    'w' -> consumeMin W
+    'W' -> consumeMaj W
+    'm' -> consumeMin M
+    'M' -> consumeMaj M
+    'n' -> consumeMin N
+    'N' -> consumeMaj N
+
+    -- Others
+    's' -> consumeMin S
+    'S' -> consumeMaj S
+    'h' -> consumeMin H
+    'H' -> consumeMaj H
+    'j' -> consumeMin H
+    'J' -> consumeMaj H
+    
+    -- Apostrophes
+    '\'' -> anyChar *> (peekChar >>= parseY')
+    '7'  -> anyChar *> (peekChar >>= parseY')
+
+    -- 'ǳ' || x == 'Ǳ' || x == 'ǲ'
+    'ǳ' -> consumeMin DZ
+    'Ǳ' -> consumeMaj DZ
+    'ǲ' -> consumeMaj DZ
+    
+    -- TODO: add guards that match for certain
+    -- predicates on the character.
+    _   -> fail "Not a Grubb Character."
+
+
 parseGrubbWord :: Parser String (List CasedLetter)
 parseGrubbWord = parseGrubbLetter >>= parseGrubbWord'
+
+parseGrubbWordFast :: Parser String (List CasedLetter)
+parseGrubbWordFast = parseGrubbLetterFast >>= parseGrubbWordFast'
 
 parseGrubbWord' :: CasedLetter -> Parser String (List CasedLetter)
 parseGrubbWord' ltr
     | (isKwkVow' ltr) = (append ((caseOf ltr Y):ltr:Nil)) <$> many parseGrubbLetter
     | otherwise       = (Cons ltr)                        <$> many parseGrubbLetter
+
+parseGrubbWordFast' :: CasedLetter -> Parser String (List CasedLetter)
+parseGrubbWordFast' ltr
+    | (isKwkVow' ltr) = (append ((caseOf ltr Y):ltr:Nil)) <$> many parseGrubbLetterFast
+    | otherwise       = (Cons ltr)                        <$> many parseGrubbLetterFast
+
 
 -- 
 caseOf :: CasedLetter -> KwakLetter -> CasedLetter

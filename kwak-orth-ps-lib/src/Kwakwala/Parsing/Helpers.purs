@@ -22,6 +22,10 @@ module Kwakwala.Parsing.Helpers
   , peekCode
   , satisfyC
   , satisfyMaybe
+  , consumeMin
+  , consumeMaj
+  , continueMin
+  , continueMaj
   )
   where
 
@@ -39,7 +43,7 @@ import Parsing (Parser, ParserT)
 import Parsing.String (anyChar, satisfy, eof, satisfyCodePoint, anyCodePoint)
 import Parsing.String.Basic as Basic
 
-import Kwakwala.Types (CasedChar(..))
+import Kwakwala.Types (CasedChar(..), CasedLetter(..), KwakLetter)
 
 
 -- | Peek ahead at the next character.
@@ -135,3 +139,34 @@ snocC str c = str <> (singleton c)
 -- | ```
 eqCP :: Char -> CodePoint -> Boolean
 eqCP chr cp = (codePointFromChar chr) == cp
+
+-- Helpers for the new style of choosing a sub-parser.
+-- All of these assume that the user has already run
+-- `peekChar` or `peekChar'` and has found a matching
+-- output/parser.
+
+-- | Consume the next character and output
+-- | a lower-case letter.
+consumeMin :: KwakLetter -> Parser String CasedLetter
+consumeMin kl = anyChar *> (pure $ Min kl)
+
+-- | Consume the next character and output
+-- | a upper-case letter
+consumeMaj :: KwakLetter -> Parser String CasedLetter
+consumeMaj kl = anyChar *> (pure $ Maj kl)
+
+-- | Consume the next character and continue
+-- | with a parser that expects an `isUpper`
+-- | value and a peeked `Char`. This version
+-- | works if the consumed character is
+-- | lower-case.
+continueMin :: (Boolean -> Maybe Char -> Parser String CasedLetter) -> Parser String CasedLetter
+continueMin prsr = anyChar *> (peekChar >>= (prsr false))
+
+-- | Consume the next character and continue
+-- | with a parser that expects an `isUpper`
+-- | value and a peeked `Char`. This version
+-- | works if the consumed character is
+-- | upper-case.
+continueMaj :: (Boolean -> Maybe Char -> Parser String CasedLetter) -> Parser String CasedLetter
+continueMaj prsr = anyChar *> (peekChar >>= (prsr true))
