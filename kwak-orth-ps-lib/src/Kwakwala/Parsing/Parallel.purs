@@ -22,6 +22,7 @@ module Kwakwala.Parsing.Parallel
   , encodeFromBoasWordsParR
   , encodeFromIslandWordsParL
   , encodeFromIslandWordsParR
+  , encodeFromArabicWordsPar
   , encodeFromUmistaWordsParL'
   , encodeFromUmistaWordsParR'
   , encodeFromNapaWordsParL'
@@ -32,6 +33,7 @@ module Kwakwala.Parsing.Parallel
   , encodeFromBoasWordsParR'
   , encodeFromIslandWordsParL'
   , encodeFromIslandWordsParR'
+  , encodeFromArabicWordsPar'
   ) where
 
 import Prelude
@@ -47,6 +49,7 @@ import Kwakwala.Parsing.Grubb  (parseGrubbAscii)
 import Kwakwala.Parsing.Island (parseIsland)
 import Kwakwala.Parsing.Napa   (parseNapa)
 import Kwakwala.Parsing.Umista (parseUmista)
+import Kwakwala.Parsing.Arabic (parseArabicWords)
 
 import Kwakwala.Types (CasedWord, toWordsL, toWordsR)
 
@@ -125,6 +128,11 @@ encodeFromIslandWordsParL txt = map (fromRight Nil) $ runParserChunkPar (chunkif
 encodeFromIslandWordsParR :: forall f m. Parallel f m => Applicative f => Applicative m => String -> m (List (List CasedWord))
 encodeFromIslandWordsParR txt = map (fromRight Nil) $ runParserChunkPar (chunkifyText flSz chkSz txt) (toWordsR <$> parseIsland)
 
+-- | Encode from Arabic using a chunkified
+-- | parser running in parallel.
+encodeFromArabicWordsPar :: forall f m. Parallel f m => Applicative f => Applicative m => String -> m (List (List CasedWord))
+encodeFromArabicWordsPar txt = map (fromRight Nil) $ runParserChunkPar (chunkifyText flSz chkSz txt) parseArabicWords
+
 ----------------------------------------------------------------------
 -- Versions that take a `ChunkifiedString` as input
 
@@ -188,7 +196,8 @@ encodeFromIslandWordsParL' txt = map (fromRight Nil) $ runParserChunkPar txt (to
 encodeFromIslandWordsParR' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
 encodeFromIslandWordsParR' txt = map (fromRight Nil) $ runParserChunkPar txt (toWordsR <$> parseIsland)
 
-
-
-
+-- | Encode from a chunkified Arabic `String`
+-- | with a parser running in parallel.
+encodeFromArabicWordsPar' :: forall f m. Parallel f m => Applicative f => Applicative m => ChunkifiedString -> m (List (List CasedWord))
+encodeFromArabicWordsPar' txt = map (fromRight Nil) $ runParserChunkPar txt parseArabicWords
 

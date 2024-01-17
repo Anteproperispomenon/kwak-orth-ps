@@ -18,6 +18,7 @@ module Kwakwala.Parsing.Helpers
   , parsePipe
   , peek
   , peekChar
+  , peekChar'
   , peekCode
   , satisfyC
   , satisfyMaybe
@@ -49,6 +50,9 @@ peek = (Just <$> lookAhead anyChar) <|> (eof $> Nothing)
 -- | Synonym for `peek`.
 peekChar :: forall m. MonadRec m => ParserT String m (Maybe Char)
 peekChar = peek
+
+peekChar' :: forall m. ParserT String m Char
+peekChar' = lookAhead anyChar
 
 -- | Like `peek`, but returns a `CodePoint`
 -- | rather than a `Char`.

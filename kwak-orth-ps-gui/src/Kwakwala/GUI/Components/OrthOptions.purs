@@ -10,6 +10,7 @@ module Kwakwala.GUI.Components.OrthOptions
 
 import Prelude
 
+import Kwakwala.GUI.Components.ArabicOptions (ArabicQuery(..), ArabicSlot, _arabicOptions, arabicComp)
 import Kwakwala.GUI.Components.GrubbOptions (GrubbQuery(..), GrubbSlot, _grubbOptions, grubbComp)
 import Kwakwala.GUI.Components.IPAOptions (IPAQuery(..), IPASlot, _ipaOptions, ipaComp)
 -- import Kwakwala.GUI.Types (AllOrthOptions, defAllOrthOptions)
@@ -23,6 +24,10 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Query as HQ
 import Halogen.Query.HalogenM as HM
+import Kwakwala.Output.Arabic 
+  ( ArabicOptions
+  , defArabicOptions
+  )
 import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
 import Kwakwala.Output.IPA (IPAOptions, defIPAOptions)
 import Type.Proxy (Proxy(..))
@@ -39,12 +44,14 @@ type OrthSlot x = Hal.Slot OrthQuery OrthOptions x
 type OrthSlots
   = ( grubbOptions :: GrubbSlot Unit
     , ipaOptions :: IPASlot Unit
+    , arabicOptions :: ArabicSlot Unit
     -- , georgianOptions :: GeorgianSlot Unit
     )
 
 data OrthQuery a
   = OrthGetGrubb (GrubbOptions -> a)
   | OrthGetIPA (IPAOptions -> a)
+  | OrthGetArabic (ArabicOptions -> a)
   -- | OrthGetGeorgian (GeorgianOptions -> a)
   -- 
   -- | OrthSetGrubb GrubbOptions a
@@ -61,12 +68,16 @@ orthRaiseGrubb = OrthGrubbOptions >>> OrthRaiseOptions
 orthRaiseIPA :: IPAOptions -> OrthAction
 orthRaiseIPA = OrthIPAOptions >>> OrthRaiseOptions
 
+orthRaiseArabic :: ArabicOptions -> OrthAction
+orthRaiseArabic = OrthArabicOptions >>> OrthRaiseOptions
+
 -- orthRaiseGeorgian :: GeorgianOptions -> OrthAction
 -- orthRaiseGeorgian = OrthGeorgianOptions >>> OrthRaiseOptions
 
 data OrthOptions
   = OrthGrubbOptions GrubbOptions
   | OrthIPAOptions IPAOptions
+  | OrthArabicOptions ArabicOptions
   -- | OrthGeorgianOptions GeorgianOptions
 
 -- | Only has one value, since the orthography
@@ -99,6 +110,8 @@ orthOptionsGUI orst
         , Html.p_ [Html.slot  _grubbOptions unit grubbComp defGrubbOptions orthRaiseGrubb]
         , Html.p_ [Html.text "IPA Options"]
         , Html.p_ [Html.slot  _ipaOptions unit ipaComp defIPAOptions orthRaiseIPA]
+        , Html.p_ [Html.text "Arabic Options"]
+        , Html.p_ [Html.slot  _arabicOptions unit arabicComp defArabicOptions orthRaiseArabic]
         ]
       ]
 
@@ -121,6 +134,9 @@ handleOrthQuery (OrthGetGrubb reply) = do
   pure $ reply <$> rslt
 handleOrthQuery (OrthGetIPA reply) = do
   rslt <- HQ.query _ipaOptions unit (GetIPA (\x -> x))
+  pure $ reply <$> rslt
+handleOrthQuery (OrthGetArabic reply) = do
+  rslt <- HQ.query _arabicOptions unit (GetArabic (\x -> x))
   pure $ reply <$> rslt
 -- handleOrthQuery (OrthGetGeorgian reply) = do
 --   rslt <- HQ.query _georgianOptions unit (GetGeorgian (\x -> x))

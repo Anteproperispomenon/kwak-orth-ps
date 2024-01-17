@@ -67,6 +67,11 @@ radioButtonsO kwk
         [ Html.text "Syllabic (Carrier)"
         , Html.span [HP.class_ tooltiptextC] [Html.text "Experimental syllabic orthography. Based on CAS in general, and Carrier in specific."]
         ]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "arb-out"  , HP.name "ROutput", HP.value "guh6", HE.onClick (\_ -> OutArabic), HP.checked (kwk == OutArabic)]
+      , Html.label [HP.for "arb-out", HP.class_ toolbelowC] 
+        [ Html.text "Arabic"
+        , Html.span [HP.class_ tooltiptextC] [Html.text "Experimental orthography loosely based on various Arabic scripts."]
+        ]
       ]
 
 handleOrthOut :: forall m act slots. KwakOutputType -> Hal.HalogenM KwakOutputType act slots KwakOutputType m Unit -- forall m . (MonadState KwakOutputType m) => KwakOutputType -> m _
