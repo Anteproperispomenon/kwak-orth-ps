@@ -22,6 +22,7 @@ import Prelude
 
 import Data.Maybe (Maybe)
 import Data.MediaType (MediaType)
+import Kwakwala.Output.Arabic (ArabicOptions, defArabicOptions)
 import Kwakwala.Output.Grubb (GrubbOptions, defGrubbOptions)
 import Kwakwala.Output.IPA (IPAOptions, defIPAOptions)
 import Web.HTML.Common (ClassName(..))
@@ -32,6 +33,7 @@ data KwakOutputType
   | OutUmista
   | OutIPA
   | OutSyllabic
+  | OutArabic
 
 derive instance  eqKwakOutType :: Eq  KwakOutputType
 derive instance ordKwakOutType :: Ord KwakOutputType
@@ -42,6 +44,7 @@ instance showKwakOut :: Show KwakOutputType where
   show OutUmista   = "U'mista"
   show OutIPA      = "IPA"
   show OutSyllabic = "Syllabic"
+  show OutArabic   = "Arabic"
 
 data KwakInputType
   = InGrubb
@@ -49,6 +52,7 @@ data KwakInputType
   | InUmista
   | InIsland
   | InBoas
+  | InArabic
 
 derive instance  eqKwakInType :: Eq  KwakInputType
 derive instance ordKwakInType :: Ord KwakInputType
@@ -59,6 +63,7 @@ instance showKwakIn :: Show KwakInputType where
   show InUmista = "U'mista"
   show InBoas   = "Boas"
   show InIsland = "Island"
+  show InArabic = "Arabic"
 
 type FileData
   = { fileStr :: String
@@ -68,6 +73,7 @@ type FileData
 type AllOrthOptions
   = { grubbOrthOptions :: GrubbOptions
     , ipaOrthOptions :: IPAOptions
+    , arabicOrthOptions :: ArabicOptions
     -- , georgianOrthOptions :: GeorgianOptions
     }
 
@@ -75,6 +81,7 @@ defAllOrthOptions :: AllOrthOptions
 defAllOrthOptions
   = { grubbOrthOptions : defGrubbOptions
     , ipaOrthOptions : defIPAOptions
+    , arabicOrthOptions : defArabicOptions
     -- , georgianOrthOptions : defGeorgianOptions
     }
 

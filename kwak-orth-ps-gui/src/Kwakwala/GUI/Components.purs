@@ -36,7 +36,7 @@ import Kwakwala.GUI.Components.InputText
   , inputTextComp
   )
 import Kwakwala.GUI.Components.OutputText  (OutputTextQuery(..), OutputTextSlot, _outputText, outputTextComp)
-import Kwakwala.GUI.Components.InputFile   (InputFileQuery(..) , InputFileSlot , _inputFile , inputFileComp )
+import Kwakwala.GUI.Components.InputFile   (InputFileQuery(..) , InputFileSlot , InputFileRaise(..), _inputFile , inputFileComp )
 import Kwakwala.GUI.Components.OutputFile  (OutputFileQuery(..), OutputFileSlot, _outputFile, outputFileComp)
 import Kwakwala.GUI.Components.OrthOptions (OrthOptions(..), OrthSlot, _orthOptions, orthComp)
 
@@ -51,11 +51,20 @@ import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Console (debug)
 import Effect.Console as Console
 
-import Kwakwala.GUI.Convert (convertOrthographyParL, convertOrthographyWL)
+import Kwakwala.GUI.Convert 
+  ( convertOrthographyWL
+  , convertOrthographyParL'
+  -- , convertOrthographyParL
+  , encodeByTypeParL'
+  , outputByTypePar
+  , CachedParse
+  )
 import Kwakwala.GUI.Types (AllOrthOptions, FileData, KwakInputType(..), KwakOutputType(..), defAllOrthOptions)
 
+import Parsing.Chunking (chunkifyText, numChunks) -- , ChunkifiedString)
+
 -- import Control.Monad.Trans.Class (lift)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), isJust)
 -- import Data.MediaType (MediaType)
 -- import Data.MediaType.Common (textPlain)
 import Halogen as Hal
@@ -97,9 +106,13 @@ type ParentState
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
     -- , inputText  :: String
-    , outputText :: String
-    , parentListener :: Maybe (HS.Listener String)
-    , parentEmitter  :: Maybe (HS.Emitter  String)
+    -- , inputChunks :: Maybe ChunkifiedString
+    , inputParsed :: Maybe CachedParse
+    , outputText  :: String
+    -- , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
+    -- , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
+    , parentListener :: Maybe (HS.Listener (ProgressUpdate CachedParse String))
+    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate CachedParse String))
     , parentSubscription :: Maybe (Hal.SubscriptionId)
     -- , inputFile :: String
     }
@@ -111,6 +124,10 @@ data ParentAction
   | ConvertText    String
   | ConvertPull
   | ConvertedString String
+  -- | ChunksReady ChunkifiedString
+  | FinishedParse CachedParse
+  | ClearParseCache
+  | ParentAlert String
   | ParentInitialize
   | ParentFinalize
 
@@ -120,21 +137,23 @@ defParentState =
   , outputSelect : OutGrubb
   , orthOptions : defAllOrthOptions
   -- , inputText  : ""
-  , outputText : ""
+  -- , inputChunks : Nothing
+  , inputParsed : Nothing
+  , outputText  : ""
   , parentListener : Nothing
   , parentEmitter  : Nothing
   , parentSubscription : Nothing
   -- , inputFile : ""
   }
 
-convertComp :: forall m qr op. (MonadAff m) => HC.Component qr ParentAction op m
-convertComp 
+convertComp :: forall m qr op. (MonadAff m) => Boolean -> HC.Component qr ParentAction op m
+convertComp hiMem
   = Hal.mkComponent
      { initialState : (\_ -> defParentState)
      , render : renderConverter
      , eval : HC.mkEval $ HC.defaultEval
        { receive = Just
-       , handleAction = handleConvertAction
+       , handleAction = handleConvertAction hiMem
        , initialize = Just ParentInitialize
        , finalize   = Just ParentFinalize
        }
@@ -158,14 +177,22 @@ renderConverter st
     ]
 
 handleInputText :: InputTextRaise -> ParentAction
-handleInputText (RaiseInput str) = ConvertText str
+handleInputText (RaiseInput str)  = ConvertText str
+handleInputText InputStringChange = ClearParseCache
 handleInputText PullInput = ConvertPull
 
-handleConvertAction :: forall m ops. (MonadAff m) => ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots ops m Unit
-handleConvertAction x = case x of
+-- handleConverted :: ProgressUpdate ChunkifiedString String -> ParentAction
+handleConverted :: ProgressUpdate CachedParse String -> ParentAction
+handleConverted (Notice  str) = ParentAlert str
+handleConverted (Payload str) = ConvertedString str
+handleConverted (Partway prs) = FinishedParse prs
+-- handleConverted (Partway chk) = ChunksReady chk
+
+handleConvertAction :: forall m ops. (MonadAff m) => Boolean -> ParentAction -> Hal.HalogenM ParentState ParentAction ParentSlots ops m Unit
+handleConvertAction hiMem x = case x of
   ParentInitialize -> do
     emtPair <- Hal.liftEffect HS.create
-    sbsc    <- Hal.subscribe (ConvertedString <$> emtPair.emitter)
+    sbsc    <- Hal.subscribe (handleConverted <$> emtPair.emitter)
       -- Console.debug "Hello?"
       -- pure $ ConvertedString str
     Hal.modify_ $ \st -> st 
@@ -183,15 +210,28 @@ handleConvertAction x = case x of
       (Just sbs) -> Hal.unsubscribe sbs
     -}
   (ChangeOrthIn  kit) -> do
-    old <- Hal.gets _.inputSelect
-    Hal.modify_ (\st -> st {inputSelect  = kit })
+    st <- Hal.get -- s _.inputSelect
+    let old = st.inputSelect
+        st2 = st {inputSelect = kit }
     when (kit == InIsland && old /= InIsland) $ do
       void $ HQ.query _inputText unit (InputSetIsland unit)
-    when (old == InIsland && kit /= InIsland) $ do
+    when (kit == InArabic && old /= InArabic) $ do
+      void $ HQ.query _inputText unit (InputSetArabic unit)
+    when ((old == InIsland || old == InArabic) && (kit /= InIsland || kit /= InArabic)) $ do
       void $ HQ.query _inputText unit (InputSetNonIsland unit)
+    let st3 = if (kit == old) then st2 else (st2 {inputParsed = Nothing})
+    when ((kit /= old) && (isJust st2.inputParsed)) $ liftEffect $ debug "Removed Cached Parse (Orthography Change)"
+    Hal.put st3
     void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOut kot) -> do
-    Hal.modify_ (\st -> st {outputSelect = kot})
+    st <- Hal.get
+    let old = st.outputSelect
+        st2 = st {outputSelect = kot}
+    when (kot == OutArabic && old /= OutArabic) $ do
+      void $ HQ.query _outputText unit (SetOutputStyle "arabic" unit)
+    when (old == OutArabic && kot /= OutArabic) $ do
+      void $ HQ.query _outputText unit (SetOutputStyle "default-out" unit)
+    Hal.put st2
     void $ HQ.query _inputText unit (InputReset unit)
   (ChangeOrthOpts (OrthGrubbOptions gbo)) -> do
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
@@ -199,13 +239,19 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
   -- (ChangeOrthOpts (OrthGeorgianOptions ops)) -> do
   --   Hal.modify_ (\st -> st {orthOptions {georgianOrthOptions = ops}})
+  (ChangeOrthOpts (OrthArabicOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {arabicOrthOptions = ops}})
   (ConvertText str) -> do
-    -- Removing this portion to reduce memory usage.
+    -- Removing this line to reduce memory usage.
     -- stt <- Hal.modify (\st -> st {inputText = str})
     stt <- Hal.get
     case stt.parentListener of
       Nothing      -> liftEffect $ Console.error "Parent Listener not found."
-      (Just lstnr) -> forkConverter lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
+      (Just lstnr) -> case stt.inputParsed of
+        (Just prsd) -> forkConverterC lstnr stt.outputSelect stt.orthOptions prsd
+        Nothing     -> if hiMem 
+          then forkConverterP lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
+          else forkConverter  lstnr stt.inputSelect stt.outputSelect stt.orthOptions str
   (ConvertedString str) -> do
     Hal.modify_ (\st -> st {outputText = str})
     void $ HQ.query _outputText unit (OutputString   str unit)
@@ -228,25 +274,120 @@ handleConvertAction x = case x of
     Hal.modify_ (\st -> st {outputText = newStr})
     void $ HQ.query _outputText unit (OutputString newStr unit)
     void $ HQ.query _inputText  unit (InputSetButtonDone  unit)
+  -- (ChunksReady chk) -> Hal.modify_ $ \st -> st {inputChunks = Just chk}
+  (ParentAlert str) -> liftEffect $ debug str
+  (FinishedParse prs) -> Hal.modify_ $ \st -> st {inputParsed = Just prs}
+  ClearParseCache -> do 
+    st <- Hal.get
+    when (isJust st.inputParsed) $ liftEffect $ debug "Removed Cached Parse (Input Change)"
+    Hal.put $ st {inputParsed = Nothing}
+    
 
 -- type Node r p i = Array (IProp r i) -> Array (HTML p i) -> HTML p i
 
 -- form :: forall i p. Node HTMLform p i
 -- form :: forall i p Array (IProp HTMLform i) -> Array (HTML p i) -> HTML p i
 
+--------------------------------
+-- Joint Operations
+
+-- | A type meant for Subscriptions to be
+-- | able to send feedback partway through
+-- | execution.
+data ProgressUpdate b a
+  = Notice  String
+  | Partway b
+  | Payload a
+
 -- If I keep the type general enough, I may be able to
 -- reuse this function for both Text input and File input.
-forkConverter :: forall m pstate acts slots ops. MonadAff m => HS.Listener String -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
+-- This version doesn't supply the ChunkifiedString to the user.
+forkConverter :: forall m pstate acts slots ops pw. MonadAff m => HS.Listener (ProgressUpdate pw String) -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
 -- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
 forkConverter lstnr kin kout oops str = liftAff $ void $ forkAff $ do
   liftEffect $ debug "Feeding the converter..."
   -- Need to insert a slight delay for the other
   -- parts of the javascript to fire first. Otherwise,
   -- the HTML won't be updated first.
-  delay $ Milliseconds 2.0
-  newStr <- convertOrthographyParL kin kout oops str
+  delay $ Milliseconds 30.0
+  
+  chks <- pure $ chunkifyText 1024 512 str
+
+  liftEffect $ debug $ "String Chunkified: " <> (show (numChunks chks)) <> " chunks."
+  liftEffect $ HS.notify lstnr (Notice "String Chunkified.")
+
+  newStr <- convertOrthographyParL' kin kout oops chks
   liftEffect $ debug "Finished conversion..."
-  liftEffect $ HS.notify lstnr newStr
+  liftEffect $ HS.notify lstnr (Payload newStr)
+
+-- This version *does* send the chunkified string
+-- back to the component.
+{-
+forkConverterX :: forall m pstate acts slots ops. MonadAff m => HS.Listener (ProgressUpdate ChunkifiedString String) -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
+-- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
+forkConverterX lstnr kin kout oops str = liftAff $ void $ forkAff $ do
+  liftEffect $ debug "Feeding the converter..."
+  -- Need to insert a slight delay for the other
+  -- parts of the javascript to fire first. Otherwise,
+  -- the HTML won't be updated first.
+  delay $ Milliseconds 30.0
+
+  chks <- pure $ chunkifyText 1024 512 str
+
+  liftEffect $ debug $ "String Chunkified: " <> (show (numChunks chks)) <> " chunks."
+  liftEffect $ HS.notify lstnr (Notice "String Chunkified.")
+  liftEffect $ HS.notify lstnr (Partway chks)
+
+  newStr <- convertOrthographyParL' kin kout oops chks
+  liftEffect $ debug "Finished conversion..."
+  liftEffect $ HS.notify lstnr (Payload newStr)
+-}
+
+forkConverterP :: forall m pstate acts slots ops. MonadAff m => HS.Listener (ProgressUpdate CachedParse String) -> KwakInputType -> KwakOutputType -> AllOrthOptions -> String -> Hal.HalogenM pstate acts slots ops m Unit
+-- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
+forkConverterP lstnr kin kout oops str = liftAff $ void $ forkAff $ do
+  liftEffect $ debug "Feeding the converter..."
+  -- Need to insert a slight delay for the other
+  -- parts of the javascript to fire first. Otherwise,
+  -- the HTML won't be updated first.
+  delay $ Milliseconds 30.0
+  
+  chks <- pure $ chunkifyText 1024 512 str
+
+  liftEffect $ debug $ "String Chunkified: " <> (show (numChunks chks)) <> " chunks."
+  liftEffect $ HS.notify lstnr (Notice "String Chunkified.")
+  
+  prsdStr <- encodeByTypeParL' kin chks 
+  liftEffect $ HS.notify lstnr (Notice "String Parsed!")
+  liftEffect $ HS.notify lstnr (Partway prsdStr)
+
+  -- newStr <- convertOrthographyParL' kin kout oops chks
+  newStr <- outputByTypePar kout oops prsdStr
+  liftEffect $ debug "Finished conversion..."
+  liftEffect $ HS.notify lstnr (Payload newStr)
+
+-- This version uses the cached Parsed String.
+forkConverterC :: forall m pstate acts slots ops. MonadAff m => HS.Listener (ProgressUpdate CachedParse String) -> KwakOutputType -> AllOrthOptions -> CachedParse -> Hal.HalogenM pstate acts slots ops m Unit
+-- forkConverter lstnr kin kout oops str = void $ Hal.fork $ do
+forkConverterC lstnr kout oops prs = liftAff $ void $ forkAff $ do
+  liftEffect $ debug "Using Cached Parse..."
+  -- Need to insert a slight delay for the other
+  -- parts of the javascript to fire first. Otherwise,
+  -- the HTML won't be updated first.
+  delay $ Milliseconds 10.0
+  
+  -- chks <- pure $ chunkifyText 1024 512 str
+
+  -- liftEffect $ debug $ "String Chunkified: " <> (show (numChunks chks)) <> " chunks."
+  -- liftEffect $ HS.notify lstnr (Notice "String Chunkified.")
+  
+  -- prsdStr <- encodeByTypeParL' kin chks 
+  liftEffect $ HS.notify lstnr (Notice "Outputting String...")
+
+  -- newStr <- convertOrthographyParL' kin kout oops chks
+  newStr <- outputByTypePar kout oops prs
+  liftEffect $ debug "Finished conversion..."
+  liftEffect $ HS.notify lstnr (Payload newStr)
 
 --------------------------------
 -- Parent Component (File)
@@ -273,10 +414,14 @@ type ParentState2
   = { inputSelect  :: KwakInputType
     , outputSelect :: KwakOutputType
     , orthOptions  :: AllOrthOptions
-    , inputFile  :: FileData
+    , inputFile   :: FileData
+    -- , inputChunks :: Maybe ChunkifiedString
     -- , outputText :: String
-    , parentListener :: Maybe (HS.Listener String)
-    , parentEmitter  :: Maybe (HS.Emitter  String)
+    -- , parentListener :: Maybe (HS.Listener (ProgressUpdate ChunkifiedString String))
+    -- , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate ChunkifiedString String))
+    , inputParsed :: Maybe CachedParse
+    , parentListener :: Maybe (HS.Listener (ProgressUpdate CachedParse String))
+    , parentEmitter  :: Maybe (HS.Emitter  (ProgressUpdate CachedParse String))
     , parentSubscription :: Maybe (Hal.SubscriptionId)
     , parentUrlStore :: RecentStoreEff String
     }
@@ -287,6 +432,8 @@ defParentState2 =
   , outputSelect : OutGrubb
   , orthOptions  : defAllOrthOptions
   , inputFile  : { fileStr : "", fileTyp : Nothing}
+  , inputParsed : Nothing
+  -- , inputChunks : Nothing
   -- , outputText : "" -- Unnecessary duplication of state.
   , parentListener : Nothing
   , parentEmitter : Nothing
@@ -300,20 +447,25 @@ data ParentAction2
   = ChangeOrthIn2    KwakInputType
   | ChangeOrthOut2   KwakOutputType
   | ChangeOrthOpts2  OrthOptions
+  | ConvertTextNew2  FileData
   | ConvertText2     FileData
   | ConvertedString2 String
+  -- | ChunksReady2 ChunkifiedString
+  | FinishedParse2 CachedParse
+  | ClearParseCache2
+  | ParentAlert2 String
   | ParentInitialize2
   | ParentFinalize2
 
 -- | The main `Component` for file output.
-convertComp2 :: forall m qr slt. (MonadAff m) => HC.Component qr ParentAction2 slt m
-convertComp2 
+convertComp2 :: forall m qr slt. (MonadAff m) => Boolean -> HC.Component qr ParentAction2 slt m
+convertComp2 hiMem
   = Hal.mkComponent
      { initialState : (\_ -> defParentState2)
      , render : renderConverter2
      , eval : HC.mkEval $ HC.defaultEval
        { receive = Just
-       , handleAction = handleConvertAction2
+       , handleAction = handleConvertAction2 hiMem
        , initialize = Just ParentInitialize2
        , finalize   = Just ParentFinalize2
        }
@@ -329,24 +481,34 @@ renderConverter2 st
     , Html.p_ [Html.text "Output Orthography"]
     , Html.p_ [Html.slot  _outputSelect unit outputComp st.outputSelect ChangeOrthOut2]
     -- , Html.p_ [Html.text "Input File"]
-    , Html.p_ [Html.slot  _inputFile unit inputFileComp st.inputFile.fileStr ConvertText2]
+    , Html.p_ [Html.slot  _inputFile unit inputFileComp st.inputFile.fileStr handleFileInput]
     -- , Html.p_ [Html.text "Output Text"]
     , Html.p_ [Html.slot_ _outputText unit outputTextComp ""] -- st.outputText]
     , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : "" , fileTyp : st.inputFile.fileTyp} ]
     -- , Html.p_ [Html.slot_ _outputFile unit outputFileComp {fileStr : st.outputText , fileTyp : st.inputFile.fileTyp} ]
     ]
 
-handleConvertAction2 :: forall m outp. (MonadAff m) => ParentAction2 -> Hal.HalogenM ParentState2 ParentAction2 ParentSlots2 outp m Unit
-handleConvertAction2 x = case x of
+handleFileInput :: InputFileRaise -> ParentAction2
+handleFileInput (NewFileInput ftyp) = ConvertTextNew2 ftyp
+handleFileInput (OldFileInput ftyp) = ConvertText2    ftyp
+
+handleConvertAction2 :: forall m outp. (MonadAff m) => Boolean -> ParentAction2 -> Hal.HalogenM ParentState2 ParentAction2 ParentSlots2 outp m Unit
+handleConvertAction2 hiMem x = case x of
   -- Change orthography input, with special
   -- handling of Island input.
   (ChangeOrthIn2  kit) -> do
-    old <- Hal.gets _.inputSelect
-    Hal.modify_ (\st -> st {inputSelect  = kit })
+    st <- Hal.get -- s _.inputSelect
+    let old = st.inputSelect
+        st2 = st {inputSelect = kit }
     when (kit == InIsland && old /= InIsland) $ do
       void $ HQ.query _inputFile unit (InputFileIsland unit)
     when (old == InIsland && kit /= InIsland) $ do
       void $ HQ.query _inputFile unit (InputFileNonIsland unit)
+
+    -- let st3 = if (kit == old) then st2 else (st2 {inputParsed = Nothing})
+    -- Hal.put st3
+    Hal.put $ if (kit == old) then st2 else (st2 {inputParsed = Nothing})
+
     void $ HQ.query _inputFile unit (InputFileButtonReset unit)
   -- Change output orthography. Also changes
   -- "convert" button style.
@@ -358,14 +520,26 @@ handleConvertAction2 x = case x of
     Hal.modify_ (\st -> st {orthOptions {grubbOrthOptions = gbo}})
   (ChangeOrthOpts2 (OrthIPAOptions ops)) -> do
     Hal.modify_ (\st -> st {orthOptions {ipaOrthOptions = ops}})
+  (ChangeOrthOpts2 (OrthArabicOptions ops)) -> do
+    Hal.modify_ (\st -> st {orthOptions {arabicOrthOptions = ops}})
   -- Receive text that is to be converted, and
   -- then send it off to be converted. Also
   -- changes the style of the "Convert" button.
   (ConvertText2 fdt) -> do
     stt <- Hal.modify (\st -> st {inputFile = fdt})
+
     case stt.parentListener of
       Nothing      -> liftEffect $ Console.error "Parent Listener not found."
-      (Just lstnr) -> forkConverter lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
+      (Just lstnr) -> case stt.inputParsed of
+        (Just prsd) -> forkConverterC lstnr stt.outputSelect stt.orthOptions prsd
+        Nothing     -> if hiMem 
+          then forkConverterP lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
+          else forkConverter  lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
+  (ConvertTextNew2 fdt) -> do
+    stt <- Hal.modify (\st -> st {inputFile = fdt})
+    case stt.parentListener of
+      Nothing      -> liftEffect $ Console.error "Parent Listener not found."
+      (Just lstnr) -> forkConverterP lstnr stt.inputSelect stt.outputSelect stt.orthOptions fdt.fileStr
   -- Receive the converted text, and then give
   -- it to the child output component to display
   -- it. Also send the file data to the download
@@ -385,12 +559,21 @@ handleConvertAction2 x = case x of
         nstore <- liftEffect $ addElementM url stt.parentUrlStore
         Hal.modify_ $ \st -> st { parentUrlStore = nstore }
 
+  -- (ChunksReady2 chks) -> Hal.modify_ $ \st -> st {inputChunks = Just chks}
+  (ParentAlert2 alrt) -> liftEffect $ debug alrt
+
+  (FinishedParse2 prs) -> do
+    st <- Hal.get
+    liftEffect $ debug "Sending Parsed Output to Cache."
+    Hal.put (st {inputParsed = (Just prs)})
+  ClearParseCache2 -> Hal.modify_ $ \st -> st {inputParsed = Nothing}
+
   -- Initialize the component. It does this by
   -- creating the listener/emitter pair and
   -- storing them in the component's state.
   ParentInitialize2 -> do
     emtPair <- Hal.liftEffect HS.create
-    sbsc    <- Hal.subscribe (ConvertedString2 <$> emtPair.emitter)
+    sbsc    <- Hal.subscribe (handleConverted2 <$> emtPair.emitter)
     Hal.modify_ $ \st -> st 
       { parentListener = Just emtPair.listener 
       , parentEmitter  = Just emtPair.emitter
@@ -402,4 +585,11 @@ handleConvertAction2 x = case x of
     void $ liftEffect $ clearStoreM rs
   -- Fallback
   -- _ -> pure unit
+
+-- handleConverted2 :: ProgressUpdate ChunkifiedString String -> ParentAction2
+handleConverted2 :: ProgressUpdate CachedParse String -> ParentAction2
+handleConverted2 (Notice  str) = ParentAlert2 str
+handleConverted2 (Payload str) = ConvertedString2 str
+handleConverted2 (Partway prs) = FinishedParse2 prs
+-- handleConverted2 (Partway chk) = ChunksReady2 chk
 
