@@ -23,6 +23,8 @@ import Test.Spec.Runner (runSpec, runSpecT)
 import Test.Chunking
 import Test.Chunking.Parsing
 import Test.Parsing.Arabic
+import Test.Parsing.Napa
+import Test.Parsing.Umista
 import Test.QuickCheck.Gen
 import Test.Words
 
@@ -43,8 +45,6 @@ main = launchAff_ $ runSpec [consoleReporter] $ do
           rslt1 <- pure $ encodeFromGrubbWordsL $ fromChunkified chks
           rslt2 <- fold <$> encodeFromGrubbWordsParL' chks
           rslt1 `shouldEqual` rslt2
-        pure unit
-      pure unit
   describe "Parsing Tests" do
     describe "Arabic Tests" do
       it "Grubb -> Arabic -> Grubb (Default)" do
@@ -55,6 +55,20 @@ main = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testArabicParse3
       it "Grubb -> Arabic -> Grubb (Alternative 3)" do
         quickCheck testArabicParse4
+    describe "NAPA Tests" do
+      it "Grubb -> NAPA -> Grubb" do
+        quickCheck testNapaParse1
+      it "Grubb -> NAPA -> Grubb 2" do
+        quickCheck testNapaParse2
+      it "Grubb -> NAPA -> NAPA (Idempotence)" do
+        quickCheck testNapaParse3
+    describe "Umista Tests" do
+      it "Grubb -> Umista -> Grubb" do
+        quickCheck testUmistaParse1
+      it "Grubb -> Umista -> Grubb 2" do
+        quickCheck testUmistaParse2
+      it "Grubb -> Umista -> Umista (Idempotence)" do
+        quickCheck testUmistaParse3
 
 {-
 main :: Effect Unit
