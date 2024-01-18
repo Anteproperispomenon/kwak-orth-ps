@@ -1,9 +1,12 @@
 module Test.Parsing.Grubb
   ( grubbTimer
+  , benchGrubb
   ) where
 
 import Prelude
 import Test.Words (randomWords)
+
+import Benchotron.Core (Benchmark, benchFn, mkBenchmark)
 
 import Control.Monad.Error.Class (class MonadThrow)
 import Control.Monad.Writer (class MonadWriter)
@@ -74,6 +77,19 @@ grubbTimer = do
 diffMS :: Time -> Time -> Milliseconds
 diffMS = diff
 
+benchGrubb :: Benchmark
+benchGrubb = mkBenchmark
+  { slug  : "grubb-time-6"
+  , title : "Comparing Different Grubb Parsers"
+  , sizes : [5,10,20,30,40,50,60,70,80,90,100,150,200,250,300]
+  , sizeInterpretation : "Words"
+  , inputsPerSize : 10
+  , gen : randomWords
+  , functions: [ benchFn "Original Grubb" encodeFromGrubbWordsL
+               , benchFn "New Grubb 1" encodeFromGrubbWordsFastL
+               , benchFn "New Grubb 2" encodeFromGrubbWordsFast2L
+               ]
+  }
 
         -- wrds1 <- liftEffect $ randomSample' 50 (randomWords 150)
         -- chks1 <- pure $ map (chunkifyText 128 128) wrds1

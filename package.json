@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "benchmark": "^2.1.4",
     "esbuild": "^0.19.4"
   }
 }

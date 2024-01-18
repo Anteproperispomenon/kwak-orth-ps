@@ -2,6 +2,7 @@ module Test.Main where
 
 import Prelude
 
+import Benchotron.UI.Console
 import Control.Parallel (class Parallel, parTraverse, parTraverse_)
 import Data.Foldable (fold)
 import Data.Traversable (for, for_)
@@ -29,9 +30,11 @@ import Test.Parsing.Umista
 import Test.QuickCheck.Gen
 import Test.Words
 
-
 main :: Effect Unit
-main = launchAff_ $ runSpec [consoleReporter] $ do
+main = mainTest -- mainBench
+
+mainTest :: Effect Unit
+mainTest = launchAff_ $ runSpec [consoleReporter] $ do
   describe "Chunkifying Tests" do
     describe "Simple Test(s)" do
       it "concat (chunkify str) == str" do
@@ -63,6 +66,8 @@ main = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testNapaParse2
       it "Grubb -> NAPA -> NAPA (Idempotence)" do
         quickCheck testNapaParse3
+      it "New NAPA Parser" do
+        quickCheck testNapaFast1
     describe "Umista Tests" do
       it "Grubb -> Umista -> Grubb" do
         quickCheck testUmistaParse1
@@ -73,6 +78,12 @@ main = launchAff_ $ runSpec [consoleReporter] $ do
     describe "Grubb Tests" do
       it "Comparing Time Taken" grubbTimer
 
+mainBench :: Effect Unit
+mainBench = do
+  -- rslt <- runBenchM' $ runBenchmarkConsole benchGrubb
+  -- benchmarkToStdout benchGrubb
+  runSuite [benchGrubb]
+  pure unit
 
 
 

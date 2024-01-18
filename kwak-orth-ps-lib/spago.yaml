@@ -11,6 +11,7 @@ package:
   name: kwak-orth-ps-lib
   test:
     dependencies:
+      - benchotron
       - datetime
       - now
       - quickcheck

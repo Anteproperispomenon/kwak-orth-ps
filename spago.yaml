@@ -1,4 +1,7 @@
 workspace:
-  extra_packages: {}
+  extra_packages:
+    benchotron:
+      git: https://github.com/Anteproperispomenon/purescript-benchotron
+      ref: 65e7ee2b08faf278df6b19ba222c208b86ac5a3c
   package_set:
     registry: 41.5.0
