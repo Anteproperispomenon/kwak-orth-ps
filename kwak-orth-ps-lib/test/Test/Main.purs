@@ -82,7 +82,7 @@ mainBench :: Effect Unit
 mainBench = do
   -- rslt <- runBenchM' $ runBenchmarkConsole benchGrubb
   -- benchmarkToStdout benchGrubb
-  runSuite [benchGrubb]
+  runSuite [benchGrubb, benchNapa]
   pure unit
 
 

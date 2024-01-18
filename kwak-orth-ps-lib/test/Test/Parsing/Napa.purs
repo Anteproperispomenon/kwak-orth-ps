@@ -3,10 +3,13 @@ module Test.Parsing.Napa
   , testNapaParse2
   , testNapaParse3
   , testNapaFast1
+  , benchNapa
   ) where
 
 import Prelude
 import Test.Words (randomWords)
+
+import Benchotron.Core (Benchmark, benchFn, mkBenchmark)
 
 import Data.String.Common (toLower)
 
@@ -14,7 +17,7 @@ import Test.Helpers (diffStringDisp)
 import Test.QuickCheck (withHelp, Result)
 import Test.QuickCheck.Gen (Gen)
 
-import Kwakwala.Parsing.Grubb (encodeFromGrubbWordsL)
+import Kwakwala.Parsing.Grubb (encodeFromGrubbWordsL, encodeFromGrubbWordsFastL)
 import Kwakwala.Parsing.Napa  (encodeFromNapaWordsL, encodeFromNapaWordsFastL)
 
 import Kwakwala.Output.Grubb (defGrubbOptions, outputGrubbAsciiWords)
@@ -62,4 +65,16 @@ testNapaFast1 = do
   out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
   pure $ withHelp (out3 == out2) $ (diffStringDisp 40 out3 out2)
 
+benchNapa :: Benchmark
+benchNapa = mkBenchmark
+  { slug  : "napa-time-1"
+  , title : "Comparing Different NAPA Parsers"
+  , sizes : [5,10,20,30,40,50,60,70,80,90,100,150,200,250,300]
+  , sizeInterpretation : "Words"
+  , inputsPerSize : 10
+  , gen : (\n -> outputNapaWords <$> encodeFromGrubbWordsFastL <$> randomWords n)
+  , functions: [ benchFn "Original NAPA" encodeFromNapaWordsL
+               , benchFn "New NAPA" encodeFromNapaWordsFastL
+               ]
+  }
 
