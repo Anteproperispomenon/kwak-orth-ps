@@ -237,7 +237,7 @@ parseTS b (Just x)
     | otherwise = pure $ makeCase b TS
 
 parseTL :: Boolean -> Maybe Char -> Parser String CasedLetter
-parseTL b Nothing = pure $ makeCase b TS
+parseTL b Nothing = pure $ makeCase b TL
 parseTL b (Just x)
     | isApost x = anyChar *> (pure $ makeCase b TLY)
     | otherwise = pure $ makeCase b TL
@@ -328,7 +328,7 @@ parseDZ = do
 -- ŁłƚǱǲǳɫɬ
 
 parseD' :: Boolean -> (Maybe Char) -> Parser String CasedLetter
-parseD' b Nothing = pure $ makeCase b T
+parseD' b Nothing = pure $ makeCase b D
 parseD' b (Just x)
 --  | (isApost x)            = anyChar *> peekChar >>= parseTY
     | (x == 'z' || x == 'Z') = anyChar *> (pure $ makeCase b DZ)

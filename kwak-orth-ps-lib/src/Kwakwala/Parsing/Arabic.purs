@@ -201,8 +201,9 @@ parseT' :: Maybe Char -> Parser String KwakLetter
 parseT' Nothing = pure T
 parseT' (Just x)
     -- | isApost x              = anyChar *> peekChar >>= parseTY -- (pure TY)
-    | (x == 's' || x == 'S') = anyChar *> peekChar >>= parseTS
-    | (x == 'l' || x == 'L') = anyChar *> peekChar >>= parseTL
+    | isHamzah' x = anyChar *> (pure TY)
+    -- | (x == 's' || x == 'S') = anyChar *> peekChar >>= parseTS
+    -- | (x == 'l' || x == 'L') = anyChar *> peekChar >>= parseTL
     | otherwise              = pure T
 
 parseTS :: Maybe Char -> Parser String KwakLetter

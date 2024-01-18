@@ -18,17 +18,22 @@ License     : BSD-3
 module Kwakwala.Parsing.Napa 
   ( encodeFromNapa
   , encodeFromNapaOld
+  , encodeFromNapaFast
   , encodeFromNapaChunk
+  , encodeFromNapaChunkFast
   , encodeFromNapaWordsL
   , encodeFromNapaWordsR
+  , encodeFromNapaWordsFastL
+  , encodeFromNapaWordsFastR
   , parseNapa
   , parseNapaOld
+  , parseNapaFast
   , parseNAPA
   , encodeFromNAPA
   ) where
 
 import Prelude
-import Parsing (Parser, runParser) -- , fail)
+import Parsing (Parser, runParser, fail)
 import Parsing.String
   ( char
   -- , string
@@ -60,7 +65,18 @@ import Kwakwala.Types
   , toWordsL
   , toWordsR
   )
-import Kwakwala.Parsing.Helpers (isUpperC, parsePipe, peekChar, peekCode)
+
+import Kwakwala.Parsing.Helpers 
+  ( isUpperC
+  , parsePipe
+  , peekChar
+  , peekChar'
+  , peekCode
+  , consumeMin
+  , consumeMaj
+  , continueMin
+  , continueMaj
+  )
 
 import Parsing.Chunking   (chunkifyText)
 import Parsing.Chunkified (runParserChunk)
@@ -85,6 +101,11 @@ isLabial 'ᵂ' = true
 isLabial 'ʷ' = true
 -- isLabial 'ᵂ' = true -- maybe redundant?
 isLabial  _  = false
+
+isLabial' :: Char -> Boolean
+isLabial'  'ᵂ' = true
+isLabial'  'ʷ' = true
+isLabial'   _  = false
 
 isW :: Char -> Boolean
 isW = isLabial
@@ -217,14 +238,14 @@ parseX' :: Boolean -> (Maybe Char) -> Parser String CasedLetter
 parseX' b Nothing = pure $ makeCase b X
 parseX' b (Just x)
     | isWedge     x = anyChar *> peekChar >>= parseXU b
-    | isW         x = anyChar *> (pure $ makeCase b XW) -- peekChar >>= parseXW b
+    | isLabial'   x = anyChar *> (pure $ makeCase b XW) -- peekChar >>= parseXW b
     | otherwise     = pure $ makeCase b X
 
 parseXU :: Boolean -> Maybe Char -> Parser String CasedLetter
 parseXU b Nothing = pure $ makeCase b XU
 parseXU b (Just x)
-    | isW     x = anyChar *> (pure $ makeCase b XUW)
-    | otherwise = pure $ makeCase b XU
+    | isLabial' x = anyChar *> (pure $ makeCase b XUW)
+    | otherwise   = pure $ makeCase b XU
 
 ---------------------------------------------------------------
 -- Parsing D
@@ -378,6 +399,12 @@ parseLH :: Parser String CasedLetter
 parseLH = ((satisfy (\x -> x == 'ł' || x == 'ƚ' || x == 'ɫ' || x == 'ɬ')) $> Min LH) <|> (char 'Ł' $> Maj LH) <|> (char 'Ɫ' $> Maj LH)
 -- Ɫ == U+2C62 == \x2c62
 
+isLowerLH :: Char -> Boolean
+isLowerLH x = x == 'ł' || x == 'ƚ' || x == 'ɫ' || x == 'ɬ'
+
+isUpperLH :: Char -> Boolean
+isUpperLH x = x == 'Ł' || x == 'Ɫ'
+
 -----------------------
 -- Entry Point
 parseW :: Parser String CasedLetter
@@ -425,8 +452,12 @@ parseY = do
   void $ char 'ʔ'
   b <- tstm isUpper <$> peekCode
   pure $ makeCase b Y
-  where tstm p Nothing  = false
+  where tstm _ Nothing  = false
         tstm p (Just x) = p x
+
+parseY' :: (Maybe Char) -> Parser String CasedLetter
+parseY' Nothing  = pure $ Min Y
+parseY' (Just c) = pure $ makeCase (isUpperC c) Y
 
 -----------------------
 -- Entry Point
@@ -461,6 +492,94 @@ parseU  = (char 'u' $> Min  U) <|> (char 'U' $> Maj  U)
 ---------------------------------------------------------------
 -- The Full Parser
 
+parseNapaLetterFast :: Parser String CasedLetter
+parseNapaLetterFast = do
+  c <- peekChar'
+  -- Could speed this up by
+  -- checking whether the character
+  -- is upper or lower first, and
+  -- then going through one of
+  -- two lists.
+  case c of
+    'a' -> consumeMin A
+    'A' -> consumeMaj A
+    'e' -> consumeMin E
+    'E' -> consumeMaj E
+    'i' -> consumeMin I
+    'I' -> consumeMaj I
+    'o' -> consumeMin O
+    'O' -> consumeMaj O
+    'u' -> consumeMin U
+    'U' -> consumeMaj U
+    'ə' -> consumeMin AU
+    'Ə' -> consumeMaj AU
+    --  (char 'ə' $> Min AU) <|> (char 'Ə' $> Maj AU)
+    'k' -> continueMin parseK'
+    'K' -> continueMaj parseK'
+    'q' -> continueMin parseQ'
+    'Q' -> continueMaj parseQ'
+    'g' -> continueMin parseG'
+    'G' -> continueMaj parseG'
+    -- (\x -> x == 'ǧ' || x == 'Ǧ')
+    'ǧ' -> continueMin parseGU
+    'Ǧ' -> continueMaj parseGU
+    'x' -> continueMin parseX'
+    'X' -> continueMaj parseX'
+    'p' -> continueMin parseP'
+    'P' -> continueMaj parseP'
+    'b' -> consumeMin B
+    'B' -> consumeMaj B
+    't' -> continueMin parseT'
+    'T' -> continueMaj parseT'
+    'c' -> continueMin parseC'
+    'C' -> continueMaj parseC'
+    'd' -> continueMin parseD'
+    'D' -> continueMaj parseD'
+    'z' -> consumeMin DZ
+    'Z' -> consumeMaj DZ
+
+    -- Sonorants
+    'l' -> continueMin parseL'
+    'L' -> continueMaj parseL'
+    'y' -> continueMin parseJ'
+    'Y' -> continueMaj parseJ'
+    'j' -> continueMin parseJ'
+    'J' -> continueMaj parseJ'
+    'w' -> continueMin parseW'
+    'W' -> continueMaj parseW'
+    'm' -> continueMin parseM'
+    'M' -> continueMaj parseM'
+    'n' -> continueMin parseN'
+    'N' -> continueMaj parseN'
+
+    -- Others
+    's' -> consumeMin S
+    'S' -> consumeMaj S
+    'h' -> consumeMin H
+    'H' -> consumeMaj H
+    'ʔ' -> anyChar *> (peekChar >>= parseY')
+    
+    -- Apostrophes
+    -- '\'' -> anyChar *> (peekChar >>= parseY')
+
+    -- 'λ' $> Min DL) <|> (char 'Λ' $> Maj DL)
+    'λ' -> consumeMin DL
+    'Λ' -> consumeMaj DL
+    'ƛ' -> continueMin parseTL'
+
+    -- 'ǳ' || x == 'Ǳ' || x == 'ǲ'
+    'ǳ' -> consumeMin DZ
+    'Ǳ' -> consumeMaj DZ
+    'ǲ' -> consumeMaj DZ
+    
+    x   -> addFastChecks x
+
+addFastChecks :: Char -> Parser String CasedLetter
+addFastChecks c
+  | isLowerLH c = consumeMin LH
+  | isUpperLH c = consumeMaj LH
+  | otherwise = fail "Not a NAPA Character."
+
 parseNapaLetter :: Parser String CasedLetter
 parseNapaLetter = choice 
   [parseA,parseE,parseI,parseO,parseU,parseAU
@@ -485,6 +604,9 @@ parseNapaChar = (Kwak <$> parseNapaLetter) <|> parsePipe <|> (Punct <$> singleto
 parseNapaCharNew :: Parser String CasedChar
 parseNapaCharNew = (Kwak <$> parseNapaLetter) <|> parsePipe <|> parsePuncts <|> (Punct <$> singleton <$> anyCodePoint)
 
+parseNapaCharFast :: Parser String CasedChar
+parseNapaCharFast = (Kwak <$> parseNapaLetterFast) <|> parsePipe <|> parsePuncts <|> (Punct <$> singleton <$> anyCodePoint)
+
 -- | `Parser` for the Southern/NAPA orthography.
 -- |
 -- | Use this function together with functions
@@ -492,6 +614,18 @@ parseNapaCharNew = (Kwak <$> parseNapaLetter) <|> parsePipe <|> parsePuncts <|> 
 -- | Otherwise, just use `encodeFromNapa`.
 parseNapa :: Parser String (List CasedChar)
 parseNapa = toList <$> many1 parseNapaCharNew
+
+-- | `Parser` for the Southern/NAPA orthography.
+-- |
+-- | Use this function together with functions
+-- | like `runParser` if you want error messages.
+-- | Otherwise, just use `encodeFromNapa`.
+-- |
+-- | This is a newer version that should run
+-- | faster than older versions.
+parseNapaFast :: Parser String (List CasedChar)
+parseNapaFast = toList <$> many1 parseNapaCharFast
+
 
 -- | Older version of `parseNapa`.
 parseNapaOld :: Parser String (List CasedChar)
@@ -505,6 +639,18 @@ parseNapaOld = toList <$> many1 parseNapaChar
 -- | with `runParser` or other `Parser` runners.
 encodeFromNapa :: String -> (List CasedChar)
 encodeFromNapa txt = fromRight Nil $ runParser txt parseNapa
+
+-- | Direct encoder for the Southern/NAPA orthography.
+-- | 
+-- | Note that if the parser runs into any errors,
+-- | this just returns an empty list. If you want
+-- | error messages, use `parseNapa` together
+-- | with `runParser` or other `Parser` runners.
+-- |
+-- | This is a newer version that should run
+-- | faster.
+encodeFromNapaFast :: String -> (List CasedChar)
+encodeFromNapaFast txt = fromRight Nil $ runParser txt parseNapaFast
 
 -- | Older version of `encodeFromNapa`.
 encodeFromNapaOld :: String -> (List CasedChar)
@@ -524,6 +670,12 @@ encodeFromNAPA = encodeFromNapa
 encodeFromNapaChunk :: String -> List CasedChar
 encodeFromNapaChunk txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseNapa
 
+-- | Version of `encodeFromNapaFast` that uses
+-- | chunked strings. Hopefully fewer errors
+-- | with larger inputs.
+encodeFromNapaChunkFast :: String -> List CasedChar
+encodeFromNapaChunkFast txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseNapaFast
+
 -- | Version of `encodeFromNapa` that uses
 -- | chunked strings. Also converts the
 -- | `CasedChar`s to `CasedWord`s before
@@ -537,3 +689,18 @@ encodeFromNapaWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 
 -- | recombining the chunks.
 encodeFromNapaWordsR :: String -> List CasedWord
 encodeFromNapaWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <$> parseNapa)
+
+-- | Version of `encodeFromNapaFast` that uses
+-- | chunked strings. Also converts the
+-- | `CasedChar`s to `CasedWord`s before
+-- | recombining the chunks.
+encodeFromNapaWordsFastL :: String -> List CasedWord
+encodeFromNapaWordsFastL txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsL <$> parseNapaFast)
+
+-- | Version of `encodeFromNapaFast` that uses
+-- | chunked strings. Also converts the
+-- | `CasedChar`s to `CasedWord`s before
+-- | recombining the chunks.
+encodeFromNapaWordsFastR :: String -> List CasedWord
+encodeFromNapaWordsFastR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <$> parseNapaFast)
+
