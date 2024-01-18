@@ -11,6 +11,8 @@ package:
   name: kwak-orth-ps-lib
   test:
     dependencies:
+      - datetime
+      - now
       - quickcheck
       - spec
       - spec-quickcheck

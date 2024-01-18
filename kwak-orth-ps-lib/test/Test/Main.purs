@@ -13,7 +13,7 @@ import Effect.Aff.Class
 import Kwakwala.Parsing.Grubb
 import Kwakwala.Parsing.Parallel
 import Parsing.Chunking
-import Test.Spec (pending, describe, it)
+import Test.Spec (pending, describe, it, itOnly)
 import Test.Spec as Spec
 import Test.Spec.Assertions (shouldEqual)
 import Test.Spec.Config (defaultConfig)
@@ -23,6 +23,7 @@ import Test.Spec.Runner (runSpec, runSpecT)
 import Test.Chunking
 import Test.Chunking.Parsing
 import Test.Parsing.Arabic
+import Test.Parsing.Grubb
 import Test.Parsing.Napa
 import Test.Parsing.Umista
 import Test.QuickCheck.Gen
@@ -69,6 +70,11 @@ main = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testUmistaParse2
       it "Grubb -> Umista -> Umista (Idempotence)" do
         quickCheck testUmistaParse3
+    describe "Grubb Tests" do
+      it "Comparing Time Taken" grubbTimer
+
+
+
 
 {-
 main :: Effect Unit

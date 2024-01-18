@@ -28,9 +28,13 @@ module Kwakwala.Parsing.Grubb
     ( encodeFromGrubbAscii
     , encodeFromGrubbAsciiChunk
     , parseGrubbAscii
+    , parseGrubbAsciiFast
+    , parseGrubbAsciiFast2
     -- * With `CasedWord`
     , encodeFromGrubbWordsL
     , encodeFromGrubbWordsR
+    , encodeFromGrubbWordsFastL
+    , encodeFromGrubbWordsFast2L
     -- * Deprecated Parsers
     , encodeFromGrubbAsciiOld
     , parseGrubbAsciiOld
@@ -606,12 +610,107 @@ parseGrubbLetterFast = do
     -- predicates on the character.
     _   -> fail "Not a Grubb Character."
 
+parseGrubbLetterFast2 :: Parser String CasedLetter
+parseGrubbLetterFast2 = do
+  c <- peekChar'
+  if (isUpperC c)
+    then (parseGrubbLetterFastUpper c)
+    else (parseGrubbLetterFastLower c)
+
+parseGrubbLetterFastUpper :: Char -> Parser String CasedLetter
+parseGrubbLetterFastUpper c =
+  case c of
+    'A' -> consumeMaj A
+    'E' -> continueMaj parseE'
+    'I' -> consumeMaj I
+    'O' -> consumeMaj O
+    'U' -> consumeMaj U
+    'K' -> continueMaj parseK'
+    'Q' -> continueMaj parseKH
+    'G' -> continueMaj parseG'
+    'X' -> continueMaj parseX'
+    'P' -> continueMaj parseP'
+    'B' -> consumeMaj B
+    'T' -> continueMaj parseT'
+    'C' -> continueMaj parseTS
+    'D' -> continueMaj parseD'
+    'Z' -> consumeMaj DZ
+
+    -- Sonorants
+    'L' -> continueMaj parseLonly'
+    'Y' -> consumeMaj J
+    'W' -> consumeMaj W
+    'M' -> consumeMaj M
+    'N' -> consumeMaj N
+
+    -- Others
+    'S' -> consumeMaj S
+    'H' -> consumeMaj H
+    'J' -> consumeMaj H
+    
+    -- Apostrophes
+    '\'' -> anyChar *> (peekChar >>= parseY')
+    '7'  -> anyChar *> (peekChar >>= parseY')
+
+    -- 'ǳ' || x == 'Ǳ' || x == 'ǲ'
+    'Ǳ' -> consumeMaj DZ
+    'ǲ' -> consumeMaj DZ
+    
+    -- TODO: add guards that match for certain
+    -- predicates on the character.
+    _   -> fail "Not a Grubb Character."
+
+parseGrubbLetterFastLower :: Char -> Parser String CasedLetter
+parseGrubbLetterFastLower c = 
+  case c of
+    'a' -> consumeMin A
+    'e' -> continueMin parseE'
+    'i' -> consumeMin I
+    'o' -> consumeMin O
+    'u' -> consumeMin U
+    'k' -> continueMin parseK'
+    'q' -> continueMin parseKH
+    'g' -> continueMin parseG'
+    'x' -> continueMin parseX'
+    'p' -> continueMin parseP'
+    'b' -> consumeMin B
+    't' -> continueMin parseT'
+    'c' -> continueMin parseTS
+    'd' -> continueMin parseD'
+    'z' -> consumeMin DZ
+
+    -- Sonorants
+    'l' -> continueMin parseLonly'
+    'y' -> consumeMin J
+    'w' -> consumeMin W
+    'm' -> consumeMin M
+    'n' -> consumeMin N
+
+    -- Others
+    's' -> consumeMin S
+    'h' -> consumeMin H
+    'j' -> consumeMin H
+    
+    -- Apostrophes
+    '\'' -> anyChar *> (peekChar >>= parseY')
+    '7'  -> anyChar *> (peekChar >>= parseY')
+
+    -- 'ǳ' || x == 'Ǳ' || x == 'ǲ'
+    'ǳ' -> consumeMin DZ
+    
+    -- TODO: add guards that match for certain
+    -- predicates on the character.
+    _   -> fail "Not a Grubb Character."
+
 
 parseGrubbWord :: Parser String (List CasedLetter)
 parseGrubbWord = parseGrubbLetter >>= parseGrubbWord'
 
 parseGrubbWordFast :: Parser String (List CasedLetter)
 parseGrubbWordFast = parseGrubbLetterFast >>= parseGrubbWordFast'
+
+parseGrubbWordFast2 :: Parser String (List CasedLetter)
+parseGrubbWordFast2 = parseGrubbLetterFast2 >>= parseGrubbWordFast2'
 
 parseGrubbWord' :: CasedLetter -> Parser String (List CasedLetter)
 parseGrubbWord' ltr
@@ -622,6 +721,11 @@ parseGrubbWordFast' :: CasedLetter -> Parser String (List CasedLetter)
 parseGrubbWordFast' ltr
     | (isKwkVow' ltr) = (append ((caseOf ltr Y):ltr:Nil)) <$> many parseGrubbLetterFast
     | otherwise       = (Cons ltr)                        <$> many parseGrubbLetterFast
+
+parseGrubbWordFast2' :: CasedLetter -> Parser String (List CasedLetter)
+parseGrubbWordFast2' ltr
+    | (isKwkVow' ltr) = (append ((caseOf ltr Y):ltr:Nil)) <$> many parseGrubbLetterFast2
+    | otherwise       = (Cons ltr)                        <$> many parseGrubbLetterFast2
 
 
 -- 
@@ -653,6 +757,12 @@ parseGrubbMain = (map Kwak <$> parseGrubbWord) <|> (List.singleton <$> parsePipe
 parseGrubbMainOld :: Parser String (List CasedChar)
 parseGrubbMainOld = (map Kwak <$> parseGrubbWordOld) <|> (List.singleton <$> parsePipe) <|> (List.singleton <$> parsePuncts) <|> (List.singleton <$> Punct <$> singleton <$> codePointFromChar <$> anyChar)
 
+parseGrubbMainFast :: Parser String (List CasedChar)
+parseGrubbMainFast = (map Kwak <$> parseGrubbWordFast) <|> (List.singleton <$> parsePipe) <|> (List.singleton <$> parsePuncts) <|> (List.singleton <$> Punct <$> singleton <$> codePointFromChar <$> anyChar)
+
+parseGrubbMainFast2 :: Parser String (List CasedChar)
+parseGrubbMainFast2 = (map Kwak <$> parseGrubbWordFast2) <|> (List.singleton <$> parsePipe) <|> (List.singleton <$> parsePuncts) <|> (List.singleton <$> Punct <$> singleton <$> codePointFromChar <$> anyChar)
+
 
 -- | `Parser` for newer Grubb-ASCII variants
 -- |
@@ -665,6 +775,12 @@ parseGrubbMainOld = (map Kwak <$> parseGrubbWordOld) <|> (List.singleton <$> par
 -- | written as "y") is written as "j".
 parseGrubbAscii :: Parser String (List CasedChar)
 parseGrubbAscii = concat <$> toList <$> many1 parseGrubbMain
+
+parseGrubbAsciiFast :: Parser String (List CasedChar)
+parseGrubbAsciiFast = concat <$> toList <$> many1 parseGrubbMainFast
+
+parseGrubbAsciiFast2 :: Parser String (List CasedChar)
+parseGrubbAsciiFast2 = concat <$> toList <$> many1 parseGrubbMainFast2
 
 -- | Direct encoder for newer Grubb-ASCII variants.
 -- | 
@@ -768,4 +884,11 @@ encodeFromGrubbWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 1024 51
 -- | `List`, which should improve space performance.
 encodeFromGrubbWordsR :: String -> List CasedWord
 encodeFromGrubbWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsR <$> parseGrubbAscii)
+
+encodeFromGrubbWordsFastL :: String -> List CasedWord
+encodeFromGrubbWordsFastL txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsL <$> parseGrubbAsciiFast)
+
+encodeFromGrubbWordsFast2L :: String -> List CasedWord
+encodeFromGrubbWordsFast2L txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsL <$> parseGrubbAsciiFast2)
+
 
