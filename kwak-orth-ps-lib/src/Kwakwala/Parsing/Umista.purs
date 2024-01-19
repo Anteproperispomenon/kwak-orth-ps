@@ -16,17 +16,19 @@ module Kwakwala.Parsing.Umista
     -- * Parsers
     ( parseUmista
     , parseUmistaOld
+    , parseUmistaWordsFast
     -- * Direct Encoders
     , encodeFromUmista
     , encodeFromUmistaChunk
     , encodeFromUmistaOld
     , encodeFromUmistaWordsL
     , encodeFromUmistaWordsR
+    , encodeFromUmistaWordsFast
     ) where
 
 
 import Prelude
-import Parsing (Parser, runParser)
+import Parsing (Parser, runParser, fail)
 import Parsing.String
   ( char
   , anyChar
@@ -48,7 +50,18 @@ import Data.String.CodePoints (CodePoint, codePointFromChar, singleton)
 import Data.CodePoint.Unicode (isAlpha)
 import Data.List.Types (toList)
 
-import Kwakwala.Parsing.Helpers (eqCP, isUpperC, parsePipe, peekChar)
+import Kwakwala.Parsing.Helpers 
+  ( eqCP
+  , isUpperC
+  , parsePipe
+  , parsePipeW
+  , peekChar
+  , peekChar'
+  , continueMin
+  , continueMaj
+  , consumeMin
+  , consumeMaj
+  )
 import Kwakwala.Types 
   ( CasedChar(..)
   , CasedLetter(..)
@@ -200,6 +213,12 @@ parseP = do
   case x of
     (Just y) -> if isApost y then (anyChar *> (pure $ makeCase b PY)) else (pure $ makeCase b P)
     _        -> pure $ makeCase b P
+
+parseP' :: Boolean -> Maybe Char -> Parser String CasedLetter
+parseP' b Nothing = pure $ makeCase b P
+parseP' b (Just x)
+  | isApost x = anyChar *> (pure $ makeCase b PY)
+  | otherwise = pure $ makeCase b P
 
 parseT :: Parser String CasedLetter
 parseT = do
@@ -382,6 +401,12 @@ parseS = (char 's' $> Min S) <|> (char 'S' $> Maj S)
 parseLH :: Parser String CasedLetter
 parseLH = ((satisfy (\x -> x == 'ł' || x == 'ƚ' || x == 'ɫ' || x == 'ɬ')) $> Min LH) <|> (char 'Ł' $> Maj LH)
 
+isLowerLH :: Char -> Boolean
+isLowerLH x = x == 'ł' || x == 'ƚ' || x == 'ɫ' || x == 'ɬ'
+
+isUpperLH :: Char -> Boolean
+isUpperLH x = x == 'Ł' || x == '\xa7ad'
+
 parseY :: Parser String CasedLetter
 parseY = satisfy isApost *> peekChar >>= parseY'
 
@@ -408,6 +433,12 @@ parseA = do
 -- a̱
 -- x̱
 
+parseA' :: Boolean -> Maybe Char -> Parser String CasedLetter
+parseA' b Nothing = pure $ makeCase b A
+parseA' b (Just x)
+  | isUnderline x = anyChar *> (pure $ makeCase b AU)
+  | otherwise     = pure $ makeCase b A
+
 -- 'a̱' == '\x0101'
 -- 'Ā' == '\x0100'
 parseAU :: Parser String CasedLetter
@@ -429,6 +460,103 @@ parseU = (char 'u' $> Min U) <|> (char 'U' $> Maj U)
 ------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------
 
+parseUmistaLetterFast :: Parser String CasedLetter
+parseUmistaLetterFast = do
+  c <- peekChar'
+  -- Could speed this up by
+  -- checking whether the character
+  -- is upper or lower first, and
+  -- then going through one of
+  -- two lists.
+  case c of
+    'a' -> continueMin parseA'
+    'A' -> consumeMaj A
+    'e' -> consumeMin E
+    'E' -> consumeMaj E
+    'i' -> consumeMin I
+    'I' -> consumeMaj I
+    'o' -> consumeMin O
+    'O' -> consumeMaj O
+    'u' -> consumeMin U
+    'U' -> consumeMaj U
+    '\x0101' -> consumeMin AU
+    '\x0100' -> consumeMaj AU
+    'k' -> continueMin parseK'
+    'K' -> continueMaj parseK'
+    'q' -> continueMin parseQ
+    'Q' -> continueMaj parseQ
+    -- ḵ Ḵ
+    'ḵ' -> continueMin parseQ
+    'Ḵ' -> continueMaj parseQ
+    'g' -> continueMin parseG'
+    'G' -> continueMaj parseG'
+    'ǥ' -> continueMin parseGU
+    'Ǥ' -> continueMaj parseGU
+    'x' -> continueMin parseX'
+    'X' -> continueMaj parseX'
+    'p' -> continueMin parseP'
+    'P' -> continueMaj parseP'
+    'b' -> consumeMin B
+    'B' -> consumeMaj B
+    't' -> continueMin parseT'
+    'T' -> continueMaj parseT'
+    'c' -> continueMin parseTS
+    'C' -> continueMaj parseTS
+    'd' -> continueMin parseD'
+    'D' -> continueMaj parseD'
+    'z' -> consumeMin DZ
+    'Z' -> consumeMaj DZ
+
+    -- Sonorants
+    'l' -> consumeMin L -- continueMin parseLonly'
+    'L' -> consumeMaj L -- continueMaj parseLonly'
+    'y' -> consumeMin J
+    'Y' -> consumeMaj J
+    'w' -> consumeMin W
+    'W' -> consumeMaj W
+    'm' -> consumeMin M
+    'M' -> consumeMaj M
+    'n' -> consumeMin N
+    'N' -> consumeMaj N
+
+    -- Others
+    's' -> consumeMin S
+    'S' -> consumeMaj S
+    'h' -> consumeMin H
+    'H' -> consumeMaj H
+    'j' -> consumeMin J
+    'J' -> consumeMaj J
+    
+    -- Apostrophes
+    '\'' -> anyChar *> (peekChar >>= parseY')
+    -- '7'  -> anyChar *> (peekChar >>= parseY')
+
+    'ʦ' -> continueMin parseTS
+    -- don't know where the corresponding upper-case letter is.
+
+    -- 'ǳ' || x == 'Ǳ' || x == 'ǲ'
+    'ǳ' -> consumeMin DZ
+    'Ǳ' -> consumeMaj DZ
+    'ǲ' -> consumeMaj DZ
+    
+    x   -> parseUmistaLetterFast' x
+
+parseUmistaLetterFast' :: Char -> Parser String CasedLetter
+parseUmistaLetterFast' c
+  | isLowerLH c = consumeMin LH
+  | isUpperLH c = consumeMin LH
+  | isApost   c = anyChar *> (peekChar >>= parseY')
+  | otherwise = fail "Not an U'mista Character."
+
+parseUmistaLetterFastX :: Parser String CasedLetter
+parseUmistaLetterFastX = parseUmistaLetterFast
+
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+
+
 -- Handles start of words,
 -- where glottal stops aren't notated
 parseUmistaWord :: Parser String (List CasedLetter)
@@ -447,6 +575,14 @@ parseUmistaWordX' ltr
     | (isKwkVow' ltr) = (append ((caseOf ltr Y):ltr:Nil)) <$> many parseUmistaLetterNew
     | otherwise       = (Cons ltr)                        <$> many parseUmistaLetterNew
 
+
+parseUmistaWordFast :: Parser String (List CasedLetter)
+parseUmistaWordFast = parseUmistaLetterFast >>= parseUmistaWordFast'
+
+parseUmistaWordFast' :: CasedLetter -> Parser String (List CasedLetter)
+parseUmistaWordFast' ltr
+    | (isKwkVow' ltr) = (append ((caseOf ltr Y):ltr:Nil)) <$> many parseUmistaLetterFast
+    | otherwise       = (Cons ltr)                        <$> many parseUmistaLetterFast
 
 caseOf ∷ CasedLetter → KwakLetter → CasedLetter
 caseOf (Maj _) x = Maj x
@@ -467,6 +603,15 @@ parseUmistaWordAX' :: CasedLetter -> Parser String CasedWord
 parseUmistaWordAX' ltr
     | (isKwkVow' ltr) = KwakW <$> (append ((caseOf ltr Y):ltr:Nil)) <$> many parseUmistaLetterNew
     | otherwise       = KwakW <$> (Cons ltr)                        <$> many parseUmistaLetterNew
+
+parseUmistaWordFastX :: Parser String CasedWord
+parseUmistaWordFastX = parseUmistaLetterFast >>= parseUmistaWordFastX'
+
+parseUmistaWordFastX' :: CasedLetter -> Parser String CasedWord
+parseUmistaWordFastX' ltr
+    | (isKwkVow' ltr) = KwakW <$> (append ((caseOf ltr Y):ltr:Nil)) <$> many parseUmistaLetterFast
+    | otherwise       = KwakW <$> (Cons ltr)                        <$> many parseUmistaLetterFast
+
 
 parseUmistaLetter :: Parser String CasedLetter
 parseUmistaLetter = choice 
@@ -518,11 +663,18 @@ parseUmistaMain = (map Kwak <$> parseUmistaWord) <|> (List.singleton <$> parsePi
 parseUmistaMainNew :: Parser String (List CasedChar)
 parseUmistaMainNew = (map Kwak <$> parseUmistaWordX) <|> (List.singleton <$> parsePipe) <|> (List.singleton <$> parsePuncts) <|> (List.singleton <$> Punct <$> singleton <$> anyCodePoint)
 
+parseUmistaMainFast :: Parser String (List CasedChar)
+parseUmistaMainFast = (map Kwak <$> parseUmistaWordFast) <|> (List.singleton <$> parsePipe) <|> (List.singleton <$> parsePuncts) <|> (List.singleton <$> Punct <$> singleton <$> anyCodePoint)
+
+
 parseUmistaWords :: Parser String (List CasedWord)
 parseUmistaWords = toList <$> many1 (parseUmistaWordA <|> parsePunctsA <|> (PunctW <$> singleton <$> anyCodePoint))
 
 parseUmistaWordsNew :: Parser String (List CasedWord)
 parseUmistaWordsNew = toList <$> many1 (parseUmistaWordAX <|> parsePunctsA <|> (PunctW <$> singleton <$> anyCodePoint))
+
+parseUmistaWordsFast :: Parser String (List CasedWord)
+parseUmistaWordsFast = toList <$> many1 (parseUmistaWordFastX <|> parsePipeW <|> parsePunctsA <|> (PunctW <$> singleton <$> anyCodePoint))
 
 -- | The main parser for U'mista. Non-U'mista characters
 -- | are parsed with `takeWhile1`, so this version is
@@ -588,3 +740,16 @@ encodeFromUmistaWordsL txt = fromRight Nil $ runParserChunk (chunkifyText 512 25
 -- | improving performance for larger inputs.
 encodeFromUmistaWordsR :: String -> (List CasedWord)
 encodeFromUmistaWordsR txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (toWordsR <$> parseUmista)
+
+-- | Directly convert some U'mista text to a
+-- | list of `CasedWord`s. Note that if the
+-- | parser fails, this just returns an empty
+-- | list. If you want actual error handling,
+-- | use `parseUmistaWordsFast` together with 
+-- | `runParser`.
+-- |
+-- | This chunks the Strings first, hopefully
+-- | improving performance for larger inputs.
+encodeFromUmistaWordsFast :: String -> (List CasedWord)
+encodeFromUmistaWordsFast txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) (parseUmistaWordsFast)
+

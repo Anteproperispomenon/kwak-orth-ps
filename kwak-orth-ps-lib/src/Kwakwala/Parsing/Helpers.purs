@@ -16,6 +16,7 @@ module Kwakwala.Parsing.Helpers
   , isUpperC
   , liftP
   , parsePipe
+  , parsePipeW
   , peek
   , peekChar
   , peekChar'
@@ -43,7 +44,7 @@ import Parsing (Parser, ParserT)
 import Parsing.String (anyChar, satisfy, eof, satisfyCodePoint, anyCodePoint)
 import Parsing.String.Basic as Basic
 
-import Kwakwala.Types (CasedChar(..), CasedLetter(..), KwakLetter)
+import Kwakwala.Types (CasedChar(..), CasedLetter(..), KwakLetter, CasedWord(..))
 
 
 -- | Peek ahead at the next character.
@@ -74,6 +75,12 @@ isUpperC c = Uni.isUpper (codePointFromChar c)
 -- | For Parsing 'Escaped' Text.
 parsePipe :: Parser String CasedChar
 parsePipe = Punct <$> ((codePointC '|') `comb1` (Basic.takeWhile1 (\x -> notEq x pip)) `comb2` (codePointC '|'))
+    where comb1 = lift2 (consC)
+          comb2 = lift2 (snocC)
+          pip = codePointFromChar '|'
+
+parsePipeW :: Parser String CasedWord
+parsePipeW = PunctW <$> ((codePointC '|') `comb1` (Basic.takeWhile1 (\x -> notEq x pip)) `comb2` (codePointC '|'))
     where comb1 = lift2 (consC)
           comb2 = lift2 (snocC)
           pip = codePointFromChar '|'

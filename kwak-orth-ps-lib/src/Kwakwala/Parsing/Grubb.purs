@@ -35,6 +35,8 @@ module Kwakwala.Parsing.Grubb
     , encodeFromGrubbWordsR
     , encodeFromGrubbWordsFastL
     , encodeFromGrubbWordsFast2L
+    , encodeFromGrubbWordsFastR
+    , encodeFromGrubbWordsFast2R
     -- * Deprecated Parsers
     , encodeFromGrubbAsciiOld
     , parseGrubbAsciiOld
@@ -891,4 +893,8 @@ encodeFromGrubbWordsFastL txt = fromRight Nil $ runParserChunk (chunkifyText 102
 encodeFromGrubbWordsFast2L :: String -> List CasedWord
 encodeFromGrubbWordsFast2L txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsL <$> parseGrubbAsciiFast2)
 
+encodeFromGrubbWordsFastR :: String -> List CasedWord
+encodeFromGrubbWordsFastR txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsR <$> parseGrubbAsciiFast)
 
+encodeFromGrubbWordsFast2R :: String -> List CasedWord
+encodeFromGrubbWordsFast2R txt = fromRight Nil $ runParserChunk (chunkifyText 1024 512 txt) (toWordsR <$> parseGrubbAsciiFast2)

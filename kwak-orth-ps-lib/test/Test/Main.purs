@@ -21,6 +21,7 @@ import Test.Spec.Config (defaultConfig)
 import Test.Spec.QuickCheck (quickCheck)
 import Test.Spec.Reporter.Console (consoleReporter)
 import Test.Spec.Runner (runSpec, runSpecT)
+import Test.Benching.Multi (benchMulti, benchMulti2, benchMultiLR, benchUmista)
 import Test.Chunking
 import Test.Chunking.Parsing
 import Test.Parsing.Arabic
@@ -31,7 +32,8 @@ import Test.QuickCheck.Gen
 import Test.Words
 
 main :: Effect Unit
-main = mainTest -- mainBench
+-- main = mainTest
+main = mainBench
 
 mainTest :: Effect Unit
 mainTest = launchAff_ $ runSpec [consoleReporter] $ do
@@ -75,6 +77,8 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testUmistaParse2
       it "Grubb -> Umista -> Umista (Idempotence)" do
         quickCheck testUmistaParse3
+      it "Umista-Old vs. Umista-Fast" do
+        quickCheck testUmistaParse4
     describe "Grubb Tests" do
       it "Comparing Time Taken" grubbTimer
 
@@ -82,7 +86,7 @@ mainBench :: Effect Unit
 mainBench = do
   -- rslt <- runBenchM' $ runBenchmarkConsole benchGrubb
   -- benchmarkToStdout benchGrubb
-  runSuite [benchGrubb, benchNapa]
+  runSuite [benchUmista, benchMulti2, benchMultiLR] -- [benchMulti, benchGrubb, benchNapa]
   pure unit
 
 
