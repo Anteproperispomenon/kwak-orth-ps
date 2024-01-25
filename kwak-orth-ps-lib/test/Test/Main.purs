@@ -28,12 +28,13 @@ import Test.Parsing.Arabic
 import Test.Parsing.Grubb
 import Test.Parsing.Napa
 import Test.Parsing.Umista
+import Test.Parsing.Syllabic
 import Test.QuickCheck.Gen
 import Test.Words
 
 main :: Effect Unit
--- main = mainTest
-main = mainBench
+main = mainTest
+-- main = mainBench
 
 mainTest :: Effect Unit
 mainTest = launchAff_ $ runSpec [consoleReporter] $ do
@@ -81,6 +82,9 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testUmistaParse4
     describe "Grubb Tests" do
       it "Comparing Time Taken" grubbTimer
+    describe "Syllabics Tests" do
+      it "Grubb -> Syllabics -> Grubb" do
+        quickCheck testSyllabicParse1
 
 mainBench :: Effect Unit
 mainBench = do

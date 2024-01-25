@@ -89,6 +89,8 @@ parseSyllabicW1 = parseSyllabicWord <|> parsePipeW <|> parsePunctsW <|> (PunctW 
 ----------------------------------------------------------------
 
 -- | Parse a Syllabic Word.
+-- TODO : handle cases for words that start with
+-- a vowel without a preceding glottal stop.
 parseSyllabicWord :: Parser String CasedWord
 parseSyllabicWord = KwakW <<< foldMap (map Min) <$> (many1 parseTheLetter)
 
@@ -190,7 +192,7 @@ parseTheLetter = do
     'ᘆ' -> consumeSyl N I
     'ᘃ' -> consumeSyl N O
     'ᘂ' -> consumeSyl N U
-    'ᘄ' -> consumeSyl M AU
+    'ᘄ' -> consumeSyl N AU
 
     -- Simple Plosives
     'ᙅ' -> consumeSyl P A
@@ -521,7 +523,7 @@ continueGlot (Just c) = case c of
   'ᘆ' -> consumeSyl NY I
   'ᘃ' -> consumeSyl NY O
   'ᘂ' -> consumeSyl NY U
-  'ᘄ' -> consumeSyl MY AU  
+  'ᘄ' -> consumeSyl NY AU  
 
   -- 'L
   'ᘧ' -> consumeSyl LY A 
