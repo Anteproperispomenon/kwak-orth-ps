@@ -1,6 +1,7 @@
 module Test.Benching.Multi
   ( benchMulti 
   , benchMulti2
+  , benchMulti3
   , benchMultiLR
   , benchUmista
   )
@@ -16,11 +17,13 @@ import Kwakwala.Output.Grubb
 import Kwakwala.Output.Napa
 import Kwakwala.Output.Umista
 import Kwakwala.Output.Arabic
+import Kwakwala.Output.Syllabic
 
 import Kwakwala.Parsing.Grubb
 import Kwakwala.Parsing.Napa
 import Kwakwala.Parsing.Umista
 import Kwakwala.Parsing.Arabic
+import Kwakwala.Parsing.Syllabic
 
 benchMulti :: Benchmark
 benchMulti = mkBenchmark
@@ -60,6 +63,23 @@ benchMulti2 = mkBenchmark
                ]
   }
 
+benchMulti3 :: Benchmark
+benchMulti3 = mkBenchmark
+  { slug  : "multi-orth-time-3"
+  , title : "Comparing Various Parsers"
+  , sizes : [5,10,20,30,50,75,100,150,200]
+  , sizeInterpretation : "Words"
+  , inputsPerSize : 5
+  , gen : randomWordsMult
+  , functions: [ benchFn "Original Grubb"     ( encodeFromGrubbWordsL      <<< _.grubbSentence    )
+               , benchFn "New Grubb 1"        ( encodeFromGrubbWordsFastL  <<< _.grubbSentence    )
+               -- , benchFn "New Grubb 2"        ( encodeFromGrubbWordsFast2L <<< _.grubbSentence  )
+               , benchFn "Syllabic"           ( encodeFromSyllabicW        <<< _.syllabicSentence )
+               , benchFn "Umista Left-Words"  ( encodeFromUmistaWordsL     <<< _.umistaSentence   )
+               -- , benchFn "Umista Right-Words" ( encodeFromUmistaWordsR     <<< _.umistaSentence )
+               , benchFn "Arabic Parser"      ( encodeFromArabicWords      <<< _.arabicSentence   )
+               ]
+  }
 
 benchMultiLR :: Benchmark
 benchMultiLR = mkBenchmark

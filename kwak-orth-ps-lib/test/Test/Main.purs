@@ -21,7 +21,7 @@ import Test.Spec.Config (defaultConfig)
 import Test.Spec.QuickCheck (quickCheck)
 import Test.Spec.Reporter.Console (consoleReporter)
 import Test.Spec.Runner (runSpec, runSpecT)
-import Test.Benching.Multi (benchMulti, benchMulti2, benchMultiLR, benchUmista)
+import Test.Benching.Multi (benchMulti, benchMulti2, benchMulti3, benchMultiLR, benchUmista)
 import Test.Chunking
 import Test.Chunking.Parsing
 import Test.Parsing.Arabic
@@ -90,7 +90,7 @@ mainBench :: Effect Unit
 mainBench = do
   -- rslt <- runBenchM' $ runBenchmarkConsole benchGrubb
   -- benchmarkToStdout benchGrubb
-  runSuite [benchUmista, benchMulti2, benchMultiLR] -- [benchMulti, benchGrubb, benchNapa]
+  runSuite [benchUmista, benchMulti2, benchMulti3, benchMultiLR] -- [benchMulti, benchGrubb, benchNapa]
   pure unit
 
 

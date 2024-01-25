@@ -12,11 +12,13 @@ import Kwakwala.Output.Grubb
 import Kwakwala.Output.Napa
 import Kwakwala.Output.Umista
 import Kwakwala.Output.Arabic
+import Kwakwala.Output.Syllabic
 
 import Kwakwala.Parsing.Grubb
 import Kwakwala.Parsing.Napa
 import Kwakwala.Parsing.Umista
 import Kwakwala.Parsing.Arabic
+import Kwakwala.Parsing.Syllabic
 
 -- | A type to be used to generate the same
 -- | "sentence" in multiple orthographies.
@@ -30,24 +32,27 @@ import Kwakwala.Parsing.Arabic
 -- | the benchmarked function to simply select
 -- | the orthography from the record.
 type MultipleOrths
-  = { grubbSentence  :: String
-    , napaSentence   :: String
-    , umistaSentence :: String
-    , arabicSentence :: String
+  = { grubbSentence    :: String
+    , napaSentence     :: String
+    , umistaSentence   :: String
+    , arabicSentence   :: String
+    , syllabicSentence :: String
     }
 
 randomWordsMult :: Int -> Gen MultipleOrths
 randomWordsMult n = do
   wrds <- randomWords n
-  let grubbParsed = encodeFromGrubbWordsFastL wrds
-      grubbWords  = outputGrubbAsciiWords  defGrubbOptions grubbParsed
-      napaWords   = outputNapaWords   grubbParsed
-      umistaWords = outputUmistaWords grubbParsed
-      arabicWords = outputArabicWords defArabicOptions grubbParsed
+  let grubbParsed   = encodeFromGrubbWordsFastL wrds
+      grubbWords    = outputGrubbAsciiWords  defGrubbOptions grubbParsed
+      napaWords     = outputNapaWords   grubbParsed
+      umistaWords   = outputUmistaWords grubbParsed
+      arabicWords   = outputArabicWords defArabicOptions grubbParsed
+      syllabicWords = outputSyllabicsWords grubbParsed
   pure
-    { grubbSentence  : grubbWords
-    , napaSentence   : napaWords
-    , umistaSentence : umistaWords
-    , arabicSentence : arabicWords
+    { grubbSentence    : grubbWords
+    , napaSentence     : napaWords
+    , umistaSentence   : umistaWords
+    , arabicSentence   : arabicWords
+    , syllabicSentence : syllabicWords
     }
 
