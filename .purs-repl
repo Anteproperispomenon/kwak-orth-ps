@@ -6,6 +6,7 @@ import Kwakwala.Parsing.Grubb
 import Kwakwala.Parsing.Umista
 import Kwakwala.Parsing.Island
 import Kwakwala.Parsing.Arabic
+import Kwakwala.Parsing.Syllabic
 
 import Kwakwala.Output.Napa
 import Kwakwala.Output.Grubb

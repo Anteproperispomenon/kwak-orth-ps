@@ -417,10 +417,10 @@ letterCoda kwc = case kwc of
    QWYc  -> "ᒾᐤ" -- Ejective Labialized Uvular Plosive
               
    -- Velar/Uvular Fricatives
-   Xc    -> "ᐥ"   -- Voiceless (Palatalized) Velar Fricative
-   XWc   -> "ᐥ"  -- Voiceless Labialized Velar Fricative
+   Xc    -> "ᐥ"  -- Voiceless (Palatalized) Velar Fricative
+   XWc   -> "ᐥᐤ" -- Voiceless Labialized Velar Fricative
    XUc   -> "ᐦ"  -- Voiceless Uvular Fricative
-   XUWc  -> "ᐦ" -- Voiceless Labialized Uvular Fricative
+   XUWc  -> "ᐦᐤ" -- Voiceless Labialized Uvular Fricative
               
    -- Labial Sounds
    Wc    -> "ᐞ" -- Voiced Labial-Velar Approximant
