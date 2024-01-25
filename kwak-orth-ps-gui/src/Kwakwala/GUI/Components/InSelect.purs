@@ -68,7 +68,12 @@ radioButtonsI kwk
         [ Html.text "Island"
         , Html.span [HP.class_ tooltiptextC] [Html.text "Variant of NAPA that uses the specific 'Island' Font."]
         ]
-      , Html.input [HP.type_ HP.InputRadio, HP.id "arabic-in", HP.name "RInput", HP.value "uh6", HE.onClick (\_ -> InArabic), HP.checked (kwk == InArabic)]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "syll-in"  , HP.name "ROutput", HP.value "uh6", HE.onClick (\_ -> InSyllabic), HP.checked (kwk == InSyllabic)]
+      , Html.label [HP.for "syll-in", HP.class_ toolaboveC] 
+        [ Html.text "Syllabic (Carrier)"
+        , Html.span [HP.class_ tooltiptextC] [Html.text "Experimental syllabic orthography. Based on CAS in general, and Carrier in specific."]
+        ]
+      , Html.input [HP.type_ HP.InputRadio, HP.id "arabic-in", HP.name "RInput", HP.value "uh7", HE.onClick (\_ -> InArabic), HP.checked (kwk == InArabic)]
       , Html.label [HP.for "arabic-in", HP.class_ toolaboveC] 
         [ Html.text "Arabic"
         , Html.span [HP.class_ tooltiptextC] [Html.text "Experimental orthography loosely based on various Arabic scripts."]

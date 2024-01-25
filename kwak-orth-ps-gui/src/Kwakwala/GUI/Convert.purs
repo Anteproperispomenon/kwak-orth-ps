@@ -38,7 +38,6 @@ import Kwakwala.Output.IPA (outputIPAChars, outputIPAWords) -- , IPAOptions
 import Kwakwala.Output.Napa (outputNapaChars, outputNapaWords)
 import Kwakwala.Output.Syllabic (outputSyllabics, outputSyllabicsWords)
 import Kwakwala.Output.Umista (outputUmistaChars, outputUmistaWords)
-import Kwakwala.Output.Arabic (outputArabicChars, outputArabicWords)
 
 import Kwakwala.Parsing.Boas (encodeFromBoasChunk, encodeFromBoasWordsL, encodeFromBoasWordsR) -- , encodeFromBoas)
 import Kwakwala.Parsing.Grubb (encodeFromGrubbAsciiChunk, encodeFromGrubbWordsL, encodeFromGrubbWordsR) -- , encodeFromGrubbAscii)
@@ -46,6 +45,7 @@ import Kwakwala.Parsing.Island (encodeFromIslandChunk, encodeFromIslandWordsL, e
 import Kwakwala.Parsing.Napa (encodeFromNapaChunk, encodeFromNapaWordsL, encodeFromNapaWordsR) -- , encodeFromNapa
 import Kwakwala.Parsing.Umista (encodeFromUmistaChunk, encodeFromUmistaWordsL, encodeFromUmistaWordsR) -- , encodeFromUmista
 import Kwakwala.Parsing.Arabic (encodeFromArabicWords)
+import Kwakwala.Parsing.Syllabic (encodeFromSyllabicW)
 
 import Kwakwala.Output.Parallel
   ( outputGrubbWordsParC
@@ -67,6 +67,7 @@ import Kwakwala.Parsing.Parallel
   , encodeFromUmistaWordsParL
   , encodeFromUmistaWordsParR
   , encodeFromArabicWordsPar
+  , encodeFromSyllabicWordsPar
   , encodeFromBoasWordsParL'
   , encodeFromBoasWordsParR'
   , encodeFromGrubbWordsParL'
@@ -78,6 +79,7 @@ import Kwakwala.Parsing.Parallel
   , encodeFromUmistaWordsParL'
   , encodeFromUmistaWordsParR'
   , encodeFromArabicWordsPar'
+  , encodeFromSyllabicWordsPar'
   )
 
 import Kwakwala.Types (CasedChar, CasedWord, fromWords)
@@ -190,12 +192,13 @@ convertOrthographyParR' kit kot ops = (encodeByTypeParR' kit) >=> (outputByTypeP
 -- | This simple version doesn't parse the input in parallel.
 encodeByType :: KwakInputType -> String -> List CasedChar
 encodeByType kit str = case kit of
-  InGrubb  -> encodeFromGrubbAsciiChunk str -- encodeFromGrubbAscii str
-  InNapa   -> encodeFromNapaChunk   str -- encodeFromNapa   str
-  InUmista -> encodeFromUmistaChunk str -- encodeFromUmista str
-  InIsland -> encodeFromIslandChunk str -- encodeFromIsland str
-  InBoas   -> encodeFromBoasChunk   str -- encodeFromBoas   str
-  InArabic -> fromWords $ encodeFromArabicWords str
+  InGrubb    -> encodeFromGrubbAsciiChunk str -- encodeFromGrubbAscii str
+  InNapa     -> encodeFromNapaChunk   str -- encodeFromNapa   str
+  InUmista   -> encodeFromUmistaChunk str -- encodeFromUmista str
+  InIsland   -> encodeFromIslandChunk str -- encodeFromIsland str
+  InBoas     -> encodeFromBoasChunk   str -- encodeFromBoas   str
+  InArabic   -> fromWords $ encodeFromArabicWords str
+  InSyllabic -> fromWords $ encodeFromSyllabicW str
 
 -- | Convert a `List` of `CasedChar`s into a `String`
 -- | using the specified Output Orthography options
@@ -216,12 +219,13 @@ outputByType kot ops lst = case kot of
 -- | the outputs into words with a left-fold.
 encodeByTypeWL :: KwakInputType -> String -> List CasedWord
 encodeByTypeWL kit str = case kit of
-  InGrubb  -> encodeFromGrubbWordsL str -- encodeFromGrubbAscii str
-  InNapa   -> encodeFromNapaWordsL   str -- encodeFromNapa   str
-  InUmista -> encodeFromUmistaWordsL str -- encodeFromUmista str
-  InIsland -> encodeFromIslandWordsL str -- encodeFromIsland str
-  InBoas   -> encodeFromBoasWordsL   str -- encodeFromBoas   str
-  InArabic -> encodeFromArabicWords  str
+  InGrubb    -> encodeFromGrubbWordsL str -- encodeFromGrubbAscii str
+  InNapa     -> encodeFromNapaWordsL   str -- encodeFromNapa   str
+  InUmista   -> encodeFromUmistaWordsL str -- encodeFromUmista str
+  InIsland   -> encodeFromIslandWordsL str -- encodeFromIsland str
+  InBoas     -> encodeFromBoasWordsL   str -- encodeFromBoas   str
+  InArabic   -> encodeFromArabicWords  str
+  InSyllabic -> encodeFromSyllabicW str
 
 -- | Parse a `String` into a `List` of `CasedWord`s using the
 -- | input type specified by the `KwakInputType` argument.
@@ -230,12 +234,13 @@ encodeByTypeWL kit str = case kit of
 -- | the outputs into words with a right-fold.
 encodeByTypeWR :: KwakInputType -> String -> List CasedWord
 encodeByTypeWR kit str = case kit of
-  InGrubb  -> encodeFromGrubbWordsR str -- encodeFromGrubbAscii str
-  InNapa   -> encodeFromNapaWordsR   str -- encodeFromNapa   str
-  InUmista -> encodeFromUmistaWordsR str -- encodeFromUmista str
-  InIsland -> encodeFromIslandWordsR str -- encodeFromIsland str
-  InBoas   -> encodeFromBoasWordsR   str -- encodeFromBoas   str
-  InArabic -> encodeFromArabicWords  str
+  InGrubb    -> encodeFromGrubbWordsR  str -- encodeFromGrubbAscii str
+  InNapa     -> encodeFromNapaWordsR   str -- encodeFromNapa   str
+  InUmista   -> encodeFromUmistaWordsR str -- encodeFromUmista str
+  InIsland   -> encodeFromIslandWordsR str -- encodeFromIsland str
+  InBoas     -> encodeFromBoasWordsR   str -- encodeFromBoas   str
+  InArabic   -> encodeFromArabicWords  str
+  InSyllabic -> encodeFromSyllabicW    str
 
 -- | Convert a `List` of `CasedWord`s into a `String`
 -- | using the specified Output Orthography options
@@ -257,12 +262,13 @@ outputByTypeW kot ops lst = case kot of
 -- | a left-fold.
 encodeByTypeParL :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> String -> m (List (List CasedWord))
 encodeByTypeParL kit str = case kit of
-  InGrubb  -> encodeFromGrubbWordsParL str
-  InNapa   -> encodeFromNapaWordsParL str
-  InUmista -> encodeFromUmistaWordsParL str
-  InIsland -> encodeFromIslandWordsParL str
-  InBoas   -> encodeFromBoasWordsParL str
-  InArabic -> encodeFromArabicWordsPar str
+  InGrubb    -> encodeFromGrubbWordsParL str
+  InNapa     -> encodeFromNapaWordsParL str
+  InUmista   -> encodeFromUmistaWordsParL str
+  InIsland   -> encodeFromIslandWordsParL str
+  InBoas     -> encodeFromBoasWordsParL str
+  InArabic   -> encodeFromArabicWordsPar str
+  InSyllabic -> encodeFromSyllabicWordsPar str
 
 -- | Convert a `String` into a `CachedParse` by
 -- | chunkifying it and then parsing it in parallel.
@@ -272,12 +278,13 @@ encodeByTypeParL kit str = case kit of
 -- | a right-fold.
 encodeByTypeParR :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> String -> m (List (List CasedWord))
 encodeByTypeParR kit str = case kit of
-  InGrubb  -> encodeFromGrubbWordsParR str
-  InNapa   -> encodeFromNapaWordsParR str
-  InUmista -> encodeFromUmistaWordsParR str
-  InIsland -> encodeFromIslandWordsParR str
-  InBoas   -> encodeFromBoasWordsParR str
-  InArabic -> encodeFromArabicWordsPar str
+  InGrubb    -> encodeFromGrubbWordsParR str
+  InNapa     -> encodeFromNapaWordsParR str
+  InUmista   -> encodeFromUmistaWordsParR str
+  InIsland   -> encodeFromIslandWordsParR str
+  InBoas     -> encodeFromBoasWordsParR str
+  InArabic   -> encodeFromArabicWordsPar str
+  InSyllabic -> encodeFromSyllabicWordsPar str
 
 -- | Convert a `CachedParse` (i.e. `List (List CasedWord)`)
 -- | into a String using the selected output Orthography. 
@@ -326,12 +333,13 @@ type CachedParse = (List (List CasedWord))
 -- | the output into `CasedWord`s with a left-fold.
 encodeByTypeParL' :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> ChunkifiedString -> m (List (List CasedWord))
 encodeByTypeParL' kit str = case kit of
-  InGrubb  -> encodeFromGrubbWordsParL' str
-  InNapa   -> encodeFromNapaWordsParL' str
-  InUmista -> encodeFromUmistaWordsParL' str
-  InIsland -> encodeFromIslandWordsParL' str
-  InBoas   -> encodeFromBoasWordsParL' str
-  InArabic -> encodeFromArabicWordsPar' str
+  InGrubb    -> encodeFromGrubbWordsParL' str
+  InNapa     -> encodeFromNapaWordsParL' str
+  InUmista   -> encodeFromUmistaWordsParL' str
+  InIsland   -> encodeFromIslandWordsParL' str
+  InBoas     -> encodeFromBoasWordsParL' str
+  InArabic   -> encodeFromArabicWordsPar' str
+  InSyllabic -> encodeFromSyllabicWordsPar' str
   
 -- | Convert a `ChunkifiedString` into a `CachedParse`
 -- | by parsing it in parallel. Works on any input
@@ -340,10 +348,11 @@ encodeByTypeParL' kit str = case kit of
 -- | the output into `CasedWord`s with a right-fold.
 encodeByTypeParR' :: forall f m. Parallel f m => Applicative f => Applicative m => KwakInputType -> ChunkifiedString -> m (List (List CasedWord))
 encodeByTypeParR' kit str = case kit of
-  InGrubb  -> encodeFromGrubbWordsParR' str
-  InNapa   -> encodeFromNapaWordsParR' str
-  InUmista -> encodeFromUmistaWordsParR' str
-  InIsland -> encodeFromIslandWordsParR' str
-  InBoas   -> encodeFromBoasWordsParR' str
-  InArabic -> encodeFromArabicWordsPar' str
+  InGrubb    -> encodeFromGrubbWordsParR' str
+  InNapa     -> encodeFromNapaWordsParR' str
+  InUmista   -> encodeFromUmistaWordsParR' str
+  InIsland   -> encodeFromIslandWordsParR' str
+  InBoas     -> encodeFromBoasWordsParR' str
+  InArabic   -> encodeFromArabicWordsPar' str
+  InSyllabic -> encodeFromSyllabicWordsPar' str
 

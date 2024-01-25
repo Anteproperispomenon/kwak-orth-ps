@@ -53,17 +53,19 @@ data KwakInputType
   | InIsland
   | InBoas
   | InArabic
+  | InSyllabic
 
 derive instance  eqKwakInType :: Eq  KwakInputType
 derive instance ordKwakInType :: Ord KwakInputType
 
 instance showKwakIn :: Show KwakInputType where
-  show InGrubb  = "Grubb"
-  show InNapa   = "NAPA"
-  show InUmista = "U'mista"
-  show InBoas   = "Boas"
-  show InIsland = "Island"
-  show InArabic = "Arabic"
+  show InGrubb    = "Grubb"
+  show InNapa     = "NAPA"
+  show InUmista   = "U'mista"
+  show InBoas     = "Boas"
+  show InIsland   = "Island"
+  show InArabic   = "Arabic"
+  show InSyllabic = "Syllabic"
 
 type FileData
   = { fileStr :: String
