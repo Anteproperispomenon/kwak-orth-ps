@@ -75,6 +75,14 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testNapaFast1
       it "New NAPA Parser Idempotence" do
         quickCheck testNapaFast2
+      it "Lower -> Upper -> Lower 1" do
+        quickCheck testNapaFast3
+      it "Lower -> Upper -> Lower 2" do
+        quickCheck testNapaFast4
+      it "Lower -> Upper -> Lower 3" do
+        quickCheck testNapaFast5
+      it "Lower -> Upper -> Lower 4" do
+        quickCheck testNapaFast6
     describe "Umista Tests" do
       it "Grubb -> Umista -> Grubb" do
         quickCheck testUmistaParse1
@@ -84,6 +92,10 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testUmistaParse3
       it "Umista-Old vs. Umista-Fast" do
         quickCheck testUmistaParse4
+      it "Lower -> Upper -> Lower 1" do
+        quickCheck testUmistaParse5
+      it "Lower -> Upper -> Lower 2" do
+        quickCheck testUmistaParse6
     describe "Grubb Tests" do
       it "Grubb -> Grubb -> Grubb 1" do
         quickCheck testGrubbParse1

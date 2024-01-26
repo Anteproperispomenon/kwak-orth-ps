@@ -470,7 +470,7 @@ parseUmistaLetterFast = do
   -- two lists.
   case c of
     'a' -> continueMin parseA'
-    'A' -> consumeMaj A
+    'A' -> continueMaj parseA'
     'e' -> consumeMin E
     'E' -> consumeMaj E
     'i' -> consumeMin I

@@ -4,6 +4,10 @@ module Test.Parsing.Napa
   , testNapaParse3
   , testNapaFast1
   , testNapaFast2
+  , testNapaFast3
+  , testNapaFast4
+  , testNapaFast5
+  , testNapaFast6
   , benchNapa
   ) where
 
@@ -12,7 +16,7 @@ import Test.Words (randomWords)
 
 import Benchotron.Core (Benchmark, benchFn, mkBenchmark)
 
-import Data.String.Common (toLower)
+import Data.String.Common (toLower, toUpper)
 
 import Test.Helpers (diffStringDisp)
 import Test.QuickCheck (withHelp, Result)
@@ -23,6 +27,8 @@ import Kwakwala.Parsing.Napa  (encodeFromNapaWordsL, encodeFromNapaWordsFastL)
 
 import Kwakwala.Output.Grubb (defGrubbOptions, outputGrubbAsciiWords)
 import Kwakwala.Output.Napa (outputNapaWords)
+
+import Kwakwala.Types (toMinW, toMajW)
 
 testNapaParse1 :: Gen Result
 testNapaParse1 = do
@@ -74,6 +80,52 @@ testNapaFast2 = do
   prs2 <- pure $ encodeFromNapaWordsFastL out1
   out2 <- pure $ outputNapaWords prs2
   pure $ withHelp (out2 == out1) $ (diffStringDisp 40 out1 out2)
+
+testNapaFast3 :: Gen Result
+testNapaFast3 = do
+  wrds <- toLower <$> randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsL wrds
+  out1 <- pure $ outputNapaWords prs1
+  outU <- pure $ toUpper out1
+  prs2 <- pure $ encodeFromNapaWordsFastL outU
+  out2 <- pure $ outputNapaWords prs2
+  outL <- pure $ toLower out2
+  pure $ withHelp (outL == out1) $ (diffStringDisp 40 out1 outL)
+
+testNapaFast4 :: Gen Result
+testNapaFast4 = do
+  wrds <- toLower <$> randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsL wrds
+  out1 <- pure $ outputNapaWords prs1
+  outU <- pure $ toUpper out1
+  prs2 <- pure $ encodeFromNapaWordsFastL outU
+  prsL <- pure $ map toMinW prs2
+  out2 <- pure $ outputNapaWords prsL
+  pure $ withHelp (out2 == out1) $ (diffStringDisp 40 out1 out2)
+
+testNapaFast5 :: Gen Result
+testNapaFast5 = do
+  wrds <- toLower <$> randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsFastL wrds
+  out1 <- pure $ outputGrubbAsciiWords defGrubbOptions prs1
+  prs2 <- pure $ map toMajW $ encodeFromGrubbWordsFastL wrds
+  out2 <- pure $ outputNapaWords prs2
+  prs3 <- pure $ encodeFromNapaWordsFastL out2
+  prsL <- pure $ map toMinW prs3
+  outL <- pure $ outputGrubbAsciiWords defGrubbOptions prsL
+  pure $ withHelp (outL == out1) $ (diffStringDisp 40 out1 outL)
+
+testNapaFast6 :: Gen Result
+testNapaFast6 = do
+  wrds <- toLower <$> randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsFastL wrds
+  out1 <- pure $ outputGrubbAsciiWords defGrubbOptions prs1
+  prs2 <- pure $ map toMajW $ encodeFromGrubbWordsFastL wrds
+  out2 <- pure $ outputNapaWords prs2
+  prs3 <- pure $ encodeFromNapaWordsFastL out2
+  out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
+  outL <- pure $ toLower out3
+  pure $ withHelp (outL == out1) $ (diffStringDisp 40 out1 outL)
 
 
 benchNapa :: Benchmark
