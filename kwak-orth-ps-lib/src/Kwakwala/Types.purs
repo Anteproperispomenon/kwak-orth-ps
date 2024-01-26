@@ -30,6 +30,12 @@ module Kwakwala.Types
     , mapCase
     , isMaj
     , isMin
+    , toMin
+    , toMaj
+    , toMin'
+    , toMaj'
+    , toMinW
+    , toMajW
     -- ** Mapping Functions
     , mapChar
     , mapChar2
@@ -293,6 +299,36 @@ isMaj (Min _) = false
 isMin :: CasedLetter -> Boolean
 isMin (Min _) = true
 isMin (Maj _) = false
+
+-- | Like `toLower` but for `CasedLetter`.
+toMin :: CasedLetter -> CasedLetter
+toMin (Min x) = (Min x)
+toMin (Maj x) = (Min x)
+
+-- | Like `toUpper` but for `CasedLetter`.
+toMaj :: CasedLetter -> CasedLetter
+toMaj (Min x) = (Maj x)
+toMaj (Maj x) = (Maj x)
+
+-- | Like `toLower`/`toMin` but for `CasedChar`.
+toMin' :: CasedChar -> CasedChar
+toMin' (Kwak x) = Kwak $ toMin x
+toMin' z = z
+
+-- | Like `toUpper`/`toMaj` but for `CasedChar`.
+toMaj' :: CasedChar -> CasedChar
+toMaj' (Kwak x) = Kwak $ toMaj x
+toMaj' z = z
+
+-- | Like `toLower`/`toMin` but for `CasedWord`.
+toMinW :: CasedWord -> CasedWord
+toMinW (KwakW x) = KwakW $ map toMin x
+toMinW z = z
+
+-- | Like `toUpper`/`toMaj` but for `CasedWord`.
+toMajW :: CasedWord -> CasedWord
+toMajW (KwakW x) = KwakW $ map toMaj x
+toMajW z = z
 
 -- | Check whether a `KwakLetter` is a vowel.
 isKwkVow :: KwakLetter -> Boolean

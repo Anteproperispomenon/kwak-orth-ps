@@ -3,6 +3,8 @@ module Test.Parsing.Grubb
   , benchGrubb
   , testGrubbParse1
   , testGrubbParse2
+  , testGrubbParse3
+  , testGrubbParse4
   ) where
 
 import Prelude
@@ -18,6 +20,7 @@ import Data.Traversable (for, for_)
 
 import Data.Time (diff, Time)
 import Data.Time.Duration (Milliseconds)
+import Data.String.Common (toUpper, toLower)
 import Effect (Effect)
 import Effect.Class (liftEffect, class MonadEffect)
 import Effect.Now (nowTime)
@@ -36,6 +39,8 @@ import Test.Spec.Assertions (shouldEqual)
 import Kwakwala.Parsing.Grubb (encodeFromGrubbWordsL, encodeFromGrubbWordsFastL, encodeFromGrubbWordsFast2L)
 
 import Kwakwala.Output.Grubb (defGrubbOptions, outputGrubbAsciiWords)
+
+import Kwakwala.Types (toMinW)
 
 
 -- grubbTimer :: forall t arg g. Example t arg g => t
@@ -114,6 +119,34 @@ testGrubbParse2 = do
   prs3 <- pure $ encodeFromGrubbWordsFastL out2
   out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
   pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
+
+-- | Upper-case testing
+testGrubbParse3 :: Gen Result
+testGrubbParse3 = do
+  wrds <- toLower <$> randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsFastL wrds
+  out1 <- pure $ outputGrubbAsciiWords defGrubbOptions prs1
+  outU <- pure $ toUpper out1
+  -- Parse the Upper-case
+  prs2 <- pure $ encodeFromGrubbWordsFastL outU
+  out2 <- pure $ outputGrubbAsciiWords defGrubbOptions prs2
+  -- lower the upper-case
+  outL <- pure $ toLower out2
+  pure $ withHelp (outL == out1) $ (diffStringDisp 40 out1 outL)
+
+testGrubbParse4 :: Gen Result
+testGrubbParse4 = do
+  wrds <- toLower <$> randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsFastL wrds
+  out1 <- pure $ outputGrubbAsciiWords defGrubbOptions prs1
+  outU <- pure $ toUpper out1
+  -- Parse the Upper-case
+  prs2 <- pure $ encodeFromGrubbWordsFastL outU
+  prsL <- pure $ map toMinW prs2
+  out2 <- pure $ outputGrubbAsciiWords defGrubbOptions prsL
+  -- lower the upper-case
+  pure $ withHelp (out2 == out1) $ (diffStringDisp 40 out1 out2)
+
 
 
 {-

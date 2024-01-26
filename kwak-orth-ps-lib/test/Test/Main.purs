@@ -88,7 +88,11 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
       it "Grubb -> Grubb -> Grubb 1" do
         quickCheck testGrubbParse1
       it "Grubb -> Grubb -> Grubb 2" do
-        quickCheck testGrubbParse1
+        quickCheck testGrubbParse2
+      it "Lower -> Upper -> Lower 1" do
+        quickCheck testGrubbParse3
+      it "Lower -> Upper -> Lower 2" do
+        quickCheck testGrubbParse4
       it "Started Comparing Time Taken" do
         pure unit
       it "Compared Time Taken" grubbTimer
