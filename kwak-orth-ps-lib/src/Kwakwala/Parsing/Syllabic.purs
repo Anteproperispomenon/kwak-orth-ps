@@ -1,50 +1,43 @@
 module Kwakwala.Parsing.Syllabic
   ( parseSyllabicW
   , encodeFromSyllabicW
+  , encodeFromSyllabicChunkW
   ) where
 
 import Prelude
 import Parsing (Parser, runParser, fail)
-import Parsing.String (char, anyChar, satisfy, anyCodePoint)
+import Parsing.String (anyChar, anyCodePoint)
 import Parsing.String.Basic (takeWhile1)
-import Parsing.Combinators (many1, choice, many, try)
+import Parsing.Combinators (many1, many)
 
 import Control.Alt ((<|>))
 
-import Data.List (List(Nil, Cons), (:), concat, singleton)
-import Data.List as List
-import Data.List.NonEmpty (toList)
+import Data.List (List(Nil), (:))
+-- import Data.List as List
+-- import Data.List.NonEmpty (toList)
 import Data.Either (fromRight)
-import Data.Foldable (fold, foldMap)
+import Data.Foldable (foldMap) -- , fold)
 import Data.Maybe (Maybe(..))
 
 import Data.String.CodePoints (CodePoint, codePointFromChar)
 import Data.String.CodePoints as CP
-import Data.String as String
-import Data.CodePoint.Unicode (isAlpha)
+-- import Data.String as String
+-- import Data.CodePoint.Unicode (isAlpha)
 -- import Data.List.Types (toList)
 
 import Kwakwala.Parsing.Helpers 
-  ( isUpperC
-  , parsePipe
-  , parsePipeW
+  -- ( isUpperC
+  -- , parsePipe
+  ( parsePipeW
   , peekChar
   , peekChar'
-  , peekCode
-  , consumeMin
-  , consumeMaj
-  , continueMin
-  , continueMaj
+  -- , peekCode
   )
 import Kwakwala.Types 
   ( CasedChar(..)
   , CasedLetter(..)
   , CasedWord(..)
   , KwakLetter(..)
-  , isKwkVow'
-  , makeCase
-  , toWordsL
-  , toWordsR
   )
 
 import Parsing.Chunking   (chunkifyText)
@@ -64,6 +57,9 @@ import Parsing.Chunkified (runParserChunk)
 -- | together with `runParser`.
 encodeFromSyllabicW :: String -> List CasedWord
 encodeFromSyllabicW str = fromRight Nil $ runParser str parseSyllabicW
+
+encodeFromSyllabicChunkW :: String -> List CasedWord
+encodeFromSyllabicChunkW txt = fromRight Nil $ runParserChunk (chunkifyText 512 256 txt) parseSyllabicW
 
 -- | A parser for converting from the 
 -- | experimental Syllabic orthography.
@@ -195,13 +191,14 @@ parseTheLetter = do
     'ᘄ' -> consumeSyl N AU -- U+1604
 
     -- Simple Plosives
+    -- P ^ Voiceless Bilabial Plosive
     'ᙅ' -> consumeSyl P A  -- U+1645
     'ᙃ' -> consumeSyl P E  -- U+1643
     'ᙄ' -> consumeSyl P I  -- U+1644
     'ᙁ' -> consumeSyl P O  -- U+1641
     'ᙀ' -> consumeSyl P U  -- U+1640
     'ᙂ' -> consumeSyl P AU -- U+1642
-    -- T
+    -- T ^ Voiceless Alveolar Plosive
     'ᗡ' -> consumeSyl T A  -- U+15E1
     'ᗟ' -> consumeSyl T E  -- U+15DF
     'ᗠ' -> consumeSyl T I  -- U+15E0
@@ -305,13 +302,6 @@ parseTheLetter = do
     'ᘣ' -> consumeSyl L O  -- U+1623
     'ᘢ' -> consumeSyl L U  -- U+1622
     'ᘤ' -> consumeSyl L AU -- U+1624
-   -- LYc -> case vwl of -- ^ Glottalized Voiced Alveolar Approximant
-   --   Av  -> "ᐧᘧ"
-   --   Ev  -> "ᐧᘥ"
-   --   Iv  -> "ᐧᘦ"
-   --   Ov  -> "ᐧᘣ"
-   --   Uv  -> "ᐧᘢ"
-   --   AUv -> "ᐧᘤ"
    -- Jc  -> case vwl of -- ^ Voiced Palatal Approximant
     'ᘓ' -> consumeSyl J A  -- U+1613
     'ᘑ' -> consumeSyl J E  -- U+1611
@@ -319,119 +309,70 @@ parseTheLetter = do
     'ᘏ' -> consumeSyl J O  -- U+160F
     'ᘎ' -> consumeSyl J U  -- U+160E
     'ᘐ' -> consumeSyl J AU -- U+1610
-   -- JYc -> case vwl of -- ^ Glottalized Voiced Palatal Approximant
-   --   Av  -> "ᐧᘓ"
-   --   Ev  -> "ᐧᘑ"
-   --   Iv  -> "ᐧᘒ"
-   --   Ov  -> "ᐧᘏ"
-   --   Uv  -> "ᐧᘎ"
-   --   AUv -> "ᐧᘐ"
               
     -- Velar Plosives
-    -- Kc   -> case vwl of -- ^ Voiceless (Palatalized) Velar Plosive
+    -- Kc   -> case vwl of -- ^ Voiceless Palatalized/Labialized Velar Plosive
     'ᗺ' -> consumeLab K KW A  -- U+15FA
     'ᗸ' -> consumeLab K KW E  -- U+15F8
     'ᗹ' -> consumeLab K KW I  -- U+15F9
     'ᗶ' -> consumeLab K KW O  -- U+15F6
     'ᗵ' -> consumeLab K KW U  -- U+15F5
     'ᗷ' -> consumeLab K KW AU -- U+15F7
-    -- Gc   -> case vwl of -- ^ Voiced (Palatalized) Velar Plosive
+    -- Gc   -> case vwl of -- ^ Voiced Palatalized/Labialized Velar Plosive
     'ᗴ' -> consumeLab G GW A  -- U+15F4
     'ᗲ' -> consumeLab G GW E  -- U+15F2
     'ᗳ' -> consumeLab G GW I  -- U+15F3
     'ᗰ' -> consumeLab G GW O  -- U+15F0
     'ᗯ' -> consumeLab G GW U  -- U+15EF
     'ᗱ' -> consumeLab G GW AU -- U+15F1
-    -- KYc  -> case vwl of -- ^ Ejective (Palatalized) Velar Plosive
+    -- KYc  -> case vwl of -- ^ Ejective Palatalized/Labialized Velar Plosive
     'ᘀ' -> consumeLab KY KWY A  -- U+1600
     'ᗾ' -> consumeLab KY KWY E  -- U+15FE
     'ᗿ' -> consumeLab KY KWY I  -- U+15FF
     'ᗼ' -> consumeLab KY KWY O  -- U+15FC
     'ᗻ' -> consumeLab KY KWY U  -- U+15FB
     'ᗽ' -> consumeLab KY KWY AU -- U+15FD
-   -- KWYc -> case vwl of -- ^ Ejective Labialized Velar Plosive
-   --   Av  -> "ᘀᐤ" -- "ᘁᗕ"
-   --   Ev  -> "ᗾᐤ" -- "ᘁᗓ"
-   --   Iv  -> "ᗿᐤ" -- "ᘁᗔ"
-   --   Ov  -> "ᗼᐤ" -- "ᘁᗑ"
-   --   Uv  -> "ᗻᐤ" -- "ᘁᗐ"
-   --   AUv -> "ᗽᐤ" -- "ᘁᗒ"
               
    -- Uvular Plosives
    -- Note: Substituting J for Q
-   -- Qc   -> case vwl of -- ^ Voiceless Uvular Plosive
+   -- Qc   -> case vwl of -- ^ Voiceless [Labialized] Uvular Plosive
     'ᘛ' -> consumeLab Q QW A  -- U+161B
     'ᘘ' -> consumeLab Q QW E  -- U+1618
     'ᘙ' -> consumeLab Q QW I  -- U+1619
     'ᘖ' -> consumeLab Q QW O  -- U+1616
     'ᘔ' -> consumeLab Q QW U  -- U+1614
     'ᘗ' -> consumeLab Q QW AU -- U+1617
-   -- QWc  -> case vwl of -- ^ Voiveless Labialized Uvular Plosive
-   --   Av  -> "ᘛᐤ" -- "ᒽᗕ"
-   --   Ev  -> "ᘘᐤ" -- "ᒽᗓ"
-   --   Iv  -> "ᘙᐤ" -- "ᒽᗔ"
-   --   Ov  -> "ᘖᐤ" -- "ᒽᗑ"
-   --   Uv  -> "ᘔᐤ" -- "ᒽᗐ"
-   --   AUv -> "ᘗᐤ" -- "ᒽᗒ"
-   -- GUc  -> case vwl of -- ^ Voiced Uvular Plosive
+   -- GUc  -> case vwl of -- ^ Voiced [Labialized] Uvular Plosive
     'ᗏ' -> consumeLab GU GUW A  -- U+15CF
     'ᗍ' -> consumeLab GU GUW E  -- U+15CD
     'ᗎ' -> consumeLab GU GUW I  -- U+15CE
     'ᗋ' -> consumeLab GU GUW O  -- U+15CB
     'ᗊ' -> consumeLab GU GUW U  -- U+15CA
     'ᗌ' -> consumeLab GU GUW AU -- U+15CC
-   -- GUWc -> case vwl of -- ^ Voiced Labialized Uvular Plosive
-   --   Av  -> "ᗏᐤ"
-   --   Ev  -> "ᗍᐤ"
-   --   Iv  -> "ᗎᐤ"
-   --   Ov  -> "ᗋᐤ"
-   --   Uv  -> "ᗊᐤ"
-   --   AUv -> "ᗌᐤ"
-   -- QYc  -> case vwl of -- ^ Ejective Uvular Plosive
+   -- QYc  -> case vwl of -- ^ Ejective [Labialized] Uvular Plosive
     'ᘡ' -> consumeLab QY QWY A  -- U+1621
     'ᘟ' -> consumeLab QY QWY E  -- U+161F
     'ᘠ' -> consumeLab QY QWY I  -- U+1620
     'ᘝ' -> consumeLab QY QWY O  -- U+161D
     'ᘜ' -> consumeLab QY QWY U  -- U+161C
     'ᘞ' -> consumeLab QY QWY AU -- U+161E
-   -- QWYc -> case vwl of -- ^ Ejective Labialized Uvular Plosive
-   --   Av  -> "ᘡᐤ"
-   --   Ev  -> "ᘟᐤ"
-   --   Iv  -> "ᘠᐤ"
-   --   Ov  -> "ᘝᐤ"
-   --   Uv  -> "ᘜᐤ"
-   --   AUv -> "ᘞᐤ"
               
    -- Velar/Uvular Fricatives
    -- ᗄ ᗅ ᗆ ᗇ ᗈ ᗉ
-   -- Xc   -> case vwl of -- ^ Voiceless (Palatalized) Velar Fricative
+   -- Xc   -> case vwl of -- ^ Voiceless Palatalized/Labialized Velar Fricative
     'ᗉ' -> consumeLab X XW A  -- U+15C9
     'ᗇ' -> consumeLab X XW E  -- U+15C7
     'ᗈ' -> consumeLab X XW I  -- U+15C8
     'ᗅ' -> consumeLab X XW O  -- U+15C5
     'ᗄ' -> consumeLab X XW U  -- U+15C4
     'ᗆ' -> consumeLab X XW AU -- U+15C6
-   -- XWc  -> case vwl of -- ^ Voiceless Labialized Velar Fricative
-   --   Av  -> "ᗉᐤ"
-   --   Ev  -> "ᗇᐤ"
-   --   Iv  -> "ᗈᐤ"
-   --   Ov  -> "ᗅᐤ"
-   --   Uv  -> "ᗄᐤ"
-   --   AUv -> "ᗆᐤ"
-   -- XUc  -> case vwl of -- ^ Voiceless Uvular Fricative
+   -- XUc  -> case vwl of -- ^ Voiceless [Labialized] Uvular Fricative
     'ᗛ' -> consumeLab XU XUW A  -- U+15DB
     'ᗙ' -> consumeLab XU XUW E  -- U+15D9
     'ᗚ' -> consumeLab XU XUW I  -- U+15DA
     'ᗗ' -> consumeLab XU XUW O  -- U+15D7
     'ᗖ' -> consumeLab XU XUW U  -- U+15D6
     'ᗘ' -> consumeLab XU XUW AU -- U+15D8
-   -- XUWc -> case vwl of -- ^ Voiceless Labialized Uvular Fricative
-   --   Av  -> "ᗛᐤ"
-   --   Ev  -> "ᗙᐤ"
-   --   Iv  -> "ᗚᐤ"
-   --   Ov  -> "ᗗᐤ"
-   --   Uv  -> "ᗖᐤ"
-   --   AUv -> "ᗘᐤ"
               
     -- Labial Sounds
     -- Wc  -> case vwl of -- ^ Voiced Labial-Velar Approximant
@@ -441,13 +382,6 @@ parseTheLetter = do
     'ᗑ' -> consumeSyl W O  -- U+15D1
     'ᗐ' -> consumeSyl W U  -- U+15D0
     'ᗒ' -> consumeSyl W AU -- U+15D2
-    -- WYc -> case vwl of -- ^ Glottalized Voiced Labial-Velar Approximant
-    --   Av  -> "ᐧᗕ"
-    --   Ev  -> "ᐧᗓ"
-    --   Iv  -> "ᐧᗔ"
-    --   Ov  -> "ᐧᗑ"
-    --   Uv  -> "ᐧᗐ"
-    --   AUv -> "ᐧᗒ"
     -- Hc -> case vwl of -- ^ Voiceless Glottal Fricative
     'ᐸ' -> consumeSyl H A  -- U+1438
     'ᐶ' -> consumeSyl H E  -- U+1436
@@ -493,15 +427,6 @@ parseTheLetter = do
     'ᐦ' -> consumeCoda2 'ᐤ' XU XUW -- U+1426
 
     'ᑋ' -> consumeCoda H -- U+144B
-
-    -- Glottal Sounds
-    -- Yc -> case vwl of -- ^ Voiceless Glottal Plosive
-    --   Av  -> "ᐧᐊ"
-    --   Ev  -> "ᐧᐈ"
-    --   Iv  -> "ᐧᐉ"
-    --   Ov  -> "ᐧᐃ"
-    --   Uv  -> "ᐧᐁ"
-    --   AUv -> "ᐧᐅ"
 
     _ -> fail "Not a syllabic character."
 
