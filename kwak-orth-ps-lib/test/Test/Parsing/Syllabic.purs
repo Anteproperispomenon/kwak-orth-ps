@@ -1,6 +1,6 @@
 module Test.Parsing.Syllabic
   ( testSyllabicParse1
-  -- , testSyllabicParse2
+  , testSyllabicParse2
   -- , testSyllabicParse3
   ) where
 
@@ -32,6 +32,17 @@ testSyllabicParse1 = do
   out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
   pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
 
+
+testSyllabicParse2 :: Gen Result
+testSyllabicParse2 = do
+  wrds <- randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsL wrds
+  out1 <- pure $ outputSyllabicsWords prs1
+  prs2 <- pure $ encodeFromSyllabicW out1
+  out2 <- pure $ outputSyllabicsWords prs2
+  pure $ withHelp (out2 == out1) $ (diffStringDisp 40 out1 out2)
+
+
 {-
 testSyllabicParse2 :: Gen Result
 testSyllabicParse2 = do
@@ -45,13 +56,4 @@ testSyllabicParse2 = do
   pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
 -}
 
-{-
-testNapaParse3 :: Gen Result
-testNapaParse3 = do
-  wrds <- randomWords 30
-  prs1 <- pure $ encodeFromGrubbWordsL wrds
-  out1 <- pure $ outputNapaWords prs1
-  prs2 <- pure $ encodeFromNapaWordsL out1
-  out2 <- pure $ outputNapaWords prs2
-  pure $ withHelp (out2 == out1) $ (diffStringDisp 40 out1 out2)
--}
+

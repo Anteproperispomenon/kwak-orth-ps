@@ -62,6 +62,8 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testArabicParse3
       it "Grubb -> Arabic -> Grubb (Alternative 3)" do
         quickCheck testArabicParse4
+      it "Grubb -> Arabic -> Arabic (Idempotence)" do
+        quickCheck testArabicParse5
     describe "NAPA Tests" do
       it "Grubb -> NAPA -> Grubb" do
         quickCheck testNapaParse1
@@ -71,6 +73,8 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
         quickCheck testNapaParse3
       it "New NAPA Parser" do
         quickCheck testNapaFast1
+      it "New NAPA Parser Idempotence" do
+        quickCheck testNapaFast2
     describe "Umista Tests" do
       it "Grubb -> Umista -> Grubb" do
         quickCheck testUmistaParse1
@@ -81,10 +85,18 @@ mainTest = launchAff_ $ runSpec [consoleReporter] $ do
       it "Umista-Old vs. Umista-Fast" do
         quickCheck testUmistaParse4
     describe "Grubb Tests" do
-      it "Comparing Time Taken" grubbTimer
+      it "Grubb -> Grubb -> Grubb 1" do
+        quickCheck testGrubbParse1
+      it "Grubb -> Grubb -> Grubb 2" do
+        quickCheck testGrubbParse1
+      it "Started Comparing Time Taken" do
+        pure unit
+      it "Compared Time Taken" grubbTimer
     describe "Syllabics Tests" do
       it "Grubb -> Syllabics -> Grubb" do
         quickCheck testSyllabicParse1
+      it "Grubb -> Syllabics -> Syllabics (Idempotence)" do
+        quickCheck testSyllabicParse2
 
 mainBench :: Effect Unit
 mainBench = do

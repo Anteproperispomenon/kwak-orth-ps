@@ -3,6 +3,7 @@ module Test.Parsing.Napa
   , testNapaParse2
   , testNapaParse3
   , testNapaFast1
+  , testNapaFast2
   , benchNapa
   ) where
 
@@ -64,6 +65,16 @@ testNapaFast1 = do
   prs3 <- pure $ encodeFromNapaWordsFastL out1
   out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
   pure $ withHelp (out3 == out2) $ (diffStringDisp 40 out3 out2)
+
+testNapaFast2 :: Gen Result
+testNapaFast2 = do
+  wrds <- randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsL wrds
+  out1 <- pure $ outputNapaWords prs1
+  prs2 <- pure $ encodeFromNapaWordsFastL out1
+  out2 <- pure $ outputNapaWords prs2
+  pure $ withHelp (out2 == out1) $ (diffStringDisp 40 out1 out2)
+
 
 benchNapa :: Benchmark
 benchNapa = mkBenchmark

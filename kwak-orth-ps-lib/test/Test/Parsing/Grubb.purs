@@ -1,6 +1,8 @@
 module Test.Parsing.Grubb
   ( grubbTimer
   , benchGrubb
+  , testGrubbParse1
+  , testGrubbParse2
   ) where
 
 import Prelude
@@ -90,6 +92,40 @@ benchGrubb = mkBenchmark
                , benchFn "New Grubb 2" encodeFromGrubbWordsFast2L
                ]
   }
+
+testGrubbParse1 :: Gen Result
+testGrubbParse1 = do
+  wrds <- randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsL wrds
+  out1 <- pure $ outputGrubbAsciiWords defGrubbOptions prs1
+  prs2 <- pure $ encodeFromGrubbWordsFastL out1
+  out2 <- pure $ outputGrubbAsciiWords {grbUseJ : true, grbUse' : true, grbUse7 : true} prs2
+  prs3 <- pure $ encodeFromGrubbWordsFastL out2
+  out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
+  pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
+
+testGrubbParse2 :: Gen Result
+testGrubbParse2 = do
+  wrds <- randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsL wrds
+  out1 <- pure $ outputGrubbAsciiWords defGrubbOptions prs1
+  prs2 <- pure $ encodeFromGrubbWordsFastL out1
+  out2 <- pure $ outputGrubbAsciiWords {grbUseJ : false, grbUse' : false, grbUse7 : false} prs2
+  prs3 <- pure $ encodeFromGrubbWordsFastL out2
+  out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
+  pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
+
+
+{-
+type GrubbOptions
+  = { grbUseJ :: Boolean
+    , grbUse' :: Boolean -- Keep apostrophes at start of words
+    , grbUse7 :: Boolean
+    }
+-}
+
+
+
 
         -- wrds1 <- liftEffect $ randomSample' 50 (randomWords 150)
         -- chks1 <- pure $ map (chunkifyText 128 128) wrds1

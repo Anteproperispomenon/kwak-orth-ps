@@ -3,6 +3,7 @@ module Test.Parsing.Arabic
   , testArabicParse2
   , testArabicParse3
   , testArabicParse4
+  , testArabicParse5
   ) where
 
 import Prelude
@@ -75,6 +76,18 @@ testArabicParse4 = do
   prs3 <- pure $ encodeFromArabicWords out2
   out3 <- pure $ outputGrubbAsciiWords defGrubbOptions prs3
   pure $ withHelp (out3 == out1) $ (diffStringDisp 40 out1 out3)
+
+testArabicParse5 :: Gen Result
+testArabicParse5 = do
+  wrds <- randomWords 30
+  prs1 <- pure $ encodeFromGrubbWordsL wrds
+  out1 <- pure $ toLower $ outputGrubbAsciiWords defGrubbOptions prs1
+  prs2 <- pure $ encodeFromGrubbWordsL out1
+  out2 <- pure $ outputArabicWords defArabicOptions prs2
+  prs3 <- pure $ encodeFromArabicWords out2
+  out3 <- pure $ outputArabicWords defArabicOptions prs3
+  pure $ withHelp (out3 == out2) $ (diffStringDisp 40 out2 out3)
+
 
 altOptions1 :: ArabicOptions
 altOptions1 
