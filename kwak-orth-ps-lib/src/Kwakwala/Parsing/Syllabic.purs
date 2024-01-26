@@ -178,133 +178,133 @@ parseTheLetter = do
   c <- peekChar'
   case c of
     -- Glottal Sound
-    'ᐧ' -> anyChar *> (peekChar >>= continueGlot)
+    'ᐧ' -> anyChar *> (peekChar >>= continueGlot) -- U+1427
     -- Nasal Sounds
-    'ᘍ' -> consumeSyl M A
-    'ᘋ' -> consumeSyl M E
-    'ᘌ' -> consumeSyl M I
-    'ᘉ' -> consumeSyl M O
-    'ᘈ' -> consumeSyl M U
-    'ᘊ' -> consumeSyl M AU
+    'ᘍ' -> consumeSyl M A  -- U+160D
+    'ᘋ' -> consumeSyl M E  -- U+160B
+    'ᘌ' -> consumeSyl M I  -- U+160C
+    'ᘉ' -> consumeSyl M O  -- U+1609
+    'ᘈ' -> consumeSyl M U  -- U+1608
+    'ᘊ' -> consumeSyl M AU -- U+160A
     -- N
-    'ᘇ' -> consumeSyl N A
-    'ᘅ' -> consumeSyl N E
-    'ᘆ' -> consumeSyl N I
-    'ᘃ' -> consumeSyl N O
-    'ᘂ' -> consumeSyl N U
-    'ᘄ' -> consumeSyl N AU
+    'ᘇ' -> consumeSyl N A  -- U+1607
+    'ᘅ' -> consumeSyl N E  -- U+1605
+    'ᘆ' -> consumeSyl N I  -- U+1606
+    'ᘃ' -> consumeSyl N O  -- U+1603
+    'ᘂ' -> consumeSyl N U  -- U+1602
+    'ᘄ' -> consumeSyl N AU -- U+1604
 
     -- Simple Plosives
-    'ᙅ' -> consumeSyl P A
-    'ᙃ' -> consumeSyl P E
-    'ᙄ' -> consumeSyl P I
-    'ᙁ' -> consumeSyl P O
-    'ᙀ' -> consumeSyl P U
-    'ᙂ' -> consumeSyl P AU
+    'ᙅ' -> consumeSyl P A  -- U+1645
+    'ᙃ' -> consumeSyl P E  -- U+1643
+    'ᙄ' -> consumeSyl P I  -- U+1644
+    'ᙁ' -> consumeSyl P O  -- U+1641
+    'ᙀ' -> consumeSyl P U  -- U+1640
+    'ᙂ' -> consumeSyl P AU -- U+1642
     -- T
-    'ᗡ' -> consumeSyl T A
-    'ᗟ' -> consumeSyl T E
-    'ᗠ' -> consumeSyl T I
-    'ᗝ' -> consumeSyl T O
-    'ᗜ' -> consumeSyl T U
-    'ᗞ' -> consumeSyl T AU
+    'ᗡ' -> consumeSyl T A  -- U+15E1
+    'ᗟ' -> consumeSyl T E  -- U+15DF
+    'ᗠ' -> consumeSyl T I  -- U+15E0
+    'ᗝ' -> consumeSyl T O  -- U+15DD
+    'ᗜ' -> consumeSyl T U  -- U+15DC
+    'ᗞ' -> consumeSyl T AU -- U+15DE
     -- Bc  -> case vwl of  -- ^ Voiced Bilabial Plosive
-    'ᗭ' -> consumeSyl B A
-    'ᗫ' -> consumeSyl B E
-    'ᗬ' -> consumeSyl B I
-    'ᗩ' -> consumeSyl B O
-    'ᗨ' -> consumeSyl B U
-    'ᗪ' -> consumeSyl B AU
+    'ᗭ' -> consumeSyl B A  -- U+15ED
+    'ᗫ' -> consumeSyl B E  -- U+15EB
+    'ᗬ' -> consumeSyl B I  -- U+15EC
+    'ᗩ' -> consumeSyl B O  -- U+15E9
+    'ᗨ' -> consumeSyl B U  -- U+15E8
+    'ᗪ' -> consumeSyl B AU -- U+15EA
     -- Dc  -> case vwl of  -- ^ Voiced Alveolar Plosive
-    'ᑕ' -> consumeSyl D A
-    'ᑓ' -> consumeSyl D E
-    'ᑔ' -> consumeSyl D I
-    'ᑎ' -> consumeSyl D O
-    'ᑌ' -> consumeSyl D U
-    'ᑐ' -> consumeSyl D AU
+    'ᑕ' -> consumeSyl D A  -- U+1455
+    'ᑓ' -> consumeSyl D E  -- U+1453
+    'ᑔ' -> consumeSyl D I  -- U+1454
+    'ᑎ' -> consumeSyl D O  -- U+144E
+    'ᑌ' -> consumeSyl D U  -- U+144C
+    'ᑐ' -> consumeSyl D AU -- U+1450
     -- PYc -> case vwl of  -- ^ Ejective Bilabial Plosive
-    'ᙍ' -> consumeSyl PY A -- "ᙠ"
-    'ᙋ' -> consumeSyl PY E -- "ᙞ"
-    'ᙌ' -> consumeSyl PY I -- "ᙟ"
-    'ᙉ' -> consumeSyl PY O -- "ᙜ"
-    'ᙈ' -> consumeSyl PY U -- "ᙛ"
-    'ᙊ' -> consumeSyl PY AU -- "ᙝ"
+    'ᙍ' -> consumeSyl PY A  -- U+164D -- "ᙠ"
+    'ᙋ' -> consumeSyl PY E  -- U+164B -- "ᙞ"
+    'ᙌ' -> consumeSyl PY I  -- U+164C -- "ᙟ"
+    'ᙉ' -> consumeSyl PY O  -- U+1649 -- "ᙜ"
+    'ᙈ' -> consumeSyl PY U  -- U+1648 -- "ᙛ"
+    'ᙊ' -> consumeSyl PY AU -- U+164A -- "ᙝ"
     -- TYc -> case vwl of  -- ^ Ejective Alveolar Plosive
-    'ᗧ' -> consumeSyl TY A 
-    'ᗥ' -> consumeSyl TY E 
-    'ᗦ' -> consumeSyl TY I 
-    'ᗣ' -> consumeSyl TY O 
-    'ᗢ' -> consumeSyl TY U 
-    'ᗤ' -> consumeSyl TY AU
+    'ᗧ' -> consumeSyl TY A  -- U+15E7
+    'ᗥ' -> consumeSyl TY E  -- U+15E5
+    'ᗦ' -> consumeSyl TY I  -- U+15E6
+    'ᗣ' -> consumeSyl TY O  -- U+15E3
+    'ᗢ' -> consumeSyl TY U  -- U+15E2
+    'ᗤ' -> consumeSyl TY AU -- U+15E4
               
     -- Affricates
     -- TSc  -> case vwl of -- ^ Voiceless Alveolar Affricate
-    'ᙦ' -> consumeSyl TS A 
-    'ᙤ' -> consumeSyl TS E 
-    'ᙥ' -> consumeSyl TS I 
-    'ᙢ' -> consumeSyl TS O 
-    'ᙡ' -> consumeSyl TS U 
-    'ᙣ' -> consumeSyl TS AU
+    'ᙦ' -> consumeSyl TS A  -- U+1666
+    'ᙤ' -> consumeSyl TS E  -- U+1664
+    'ᙥ' -> consumeSyl TS I  -- U+1665
+    'ᙢ' -> consumeSyl TS O  -- U+1662
+    'ᙡ' -> consumeSyl TS U  -- U+1661
+    'ᙣ' -> consumeSyl TS AU -- U+1663
     -- TLc  -> case vwl of -- ^ Voiceless Alveolar Lateral Affricate
-    'ᘹ' -> consumeSyl TL A 
-    'ᘷ' -> consumeSyl TL E 
-    'ᘸ' -> consumeSyl TL I 
-    'ᘵ' -> consumeSyl TL O 
-    'ᘴ' -> consumeSyl TL U 
-    'ᘶ' -> consumeSyl TL AU
+    'ᘹ' -> consumeSyl TL A  -- U+1639
+    'ᘷ' -> consumeSyl TL E  -- U+1637
+    'ᘸ' -> consumeSyl TL I  -- U+1638
+    'ᘵ' -> consumeSyl TL O  -- U+1635
+    'ᘴ' -> consumeSyl TL U  -- U+1634
+    'ᘶ' -> consumeSyl TL AU -- U+1636
     -- DZc  -> case vwl of -- ^ Voiced Alveolar Affricate
-    'ᙙ' -> consumeSyl DZ A  -- "ᙍ"
-    'ᙗ' -> consumeSyl DZ E  -- "ᙋ"
-    'ᙘ' -> consumeSyl DZ I  -- "ᙌ"
-    'ᙕ' -> consumeSyl DZ O  -- "ᙉ"
-    'ᙔ' -> consumeSyl DZ U  -- "ᙈ"
-    'ᙖ' -> consumeSyl DZ AU -- "ᙊ"
+    'ᙙ' -> consumeSyl DZ A  -- U+1659 -- "ᙍ"
+    'ᙗ' -> consumeSyl DZ E  -- U+1657 -- "ᙋ"
+    'ᙘ' -> consumeSyl DZ I  -- U+1658 -- "ᙌ"
+    'ᙕ' -> consumeSyl DZ O  -- U+1655 -- "ᙉ"
+    'ᙔ' -> consumeSyl DZ U  -- U+1654 -- "ᙈ"
+    'ᙖ' -> consumeSyl DZ AU -- U+1656 -- "ᙊ"
     -- DLc  -> case vwl of -- ^ Voiced Alveolar Lateral Affricate
-    'ᘭ' -> consumeSyl DL A 
-    'ᘫ' -> consumeSyl DL E 
-    'ᘬ' -> consumeSyl DL I 
-    'ᘩ' -> consumeSyl DL O 
-    'ᘨ' -> consumeSyl DL U 
-    'ᘪ' -> consumeSyl DL AU
+    'ᘭ' -> consumeSyl DL A  -- U+162D
+    'ᘫ' -> consumeSyl DL E  -- U+162B
+    'ᘬ' -> consumeSyl DL I  -- U+162C
+    'ᘩ' -> consumeSyl DL O  -- U+1629
+    'ᘨ' -> consumeSyl DL U  -- U+1628
+    'ᘪ' -> consumeSyl DL AU -- U+162A
     -- TSYc -> case vwl of -- ^ Ejective Alveolar Affricate
-    'ᙬ' -> consumeSyl TSY A 
-    'ᙪ' -> consumeSyl TSY E 
-    'ᙫ' -> consumeSyl TSY I 
-    'ᙨ' -> consumeSyl TSY O 
-    'ᙧ' -> consumeSyl TSY U 
-    'ᙩ' -> consumeSyl TSY AU
+    'ᙬ' -> consumeSyl TSY A  -- U+166C
+    'ᙪ' -> consumeSyl TSY E  -- U+166A
+    'ᙫ' -> consumeSyl TSY I  -- U+166B
+    'ᙨ' -> consumeSyl TSY O  -- U+1668
+    'ᙧ' -> consumeSyl TSY U  -- U+1667
+    'ᙩ' -> consumeSyl TSY AU -- U+1669
     -- TLYc -> case vwl of -- ^ Ejective Alveolar Lateral Affricate
-    'ᘿ' -> consumeSyl TLY A 
-    'ᘽ' -> consumeSyl TLY E 
-    'ᘾ' -> consumeSyl TLY I 
-    'ᘻ' -> consumeSyl TLY O 
-    'ᘺ' -> consumeSyl TLY U 
-    'ᘼ' -> consumeSyl TLY AU
+    'ᘿ' -> consumeSyl TLY A  -- U+163F
+    'ᘽ' -> consumeSyl TLY E  -- U+163D
+    'ᘾ' -> consumeSyl TLY I  -- U+163E
+    'ᘻ' -> consumeSyl TLY O  -- U+163B
+    'ᘺ' -> consumeSyl TLY U  -- U+163A
+    'ᘼ' -> consumeSyl TLY AU -- U+163C
               
     -- Voiceless Fricatives
     -- Sc  -> case vwl of -- ^ Voiceless Alveolar (Sibilant) Fricative
-    'ᙓ' -> consumeSyl S A 
-    'ᙑ' -> consumeSyl S E 
-    'ᙒ' -> consumeSyl S I 
-    'ᙏ' -> consumeSyl S O 
-    'ᙎ' -> consumeSyl S U 
-    'ᙐ' -> consumeSyl S AU
+    'ᙓ' -> consumeSyl S A  -- U+1653
+    'ᙑ' -> consumeSyl S E  -- U+1651
+    'ᙒ' -> consumeSyl S I  -- U+1652
+    'ᙏ' -> consumeSyl S O  -- U+164F
+    'ᙎ' -> consumeSyl S U  -- U+164E
+    'ᙐ' -> consumeSyl S AU -- U+1650
     -- LHc -> case vwl of -- ^ Voiceless Alveolar Lateral Fricative
-    'ᘳ' -> consumeSyl LH A 
-    'ᘱ' -> consumeSyl LH E 
-    'ᘲ' -> consumeSyl LH I 
-    'ᘯ' -> consumeSyl LH O 
-    'ᘮ' -> consumeSyl LH U 
-    'ᘰ' -> consumeSyl LH AU
+    'ᘳ' -> consumeSyl LH A  -- U+1633
+    'ᘱ' -> consumeSyl LH E  -- U+1631
+    'ᘲ' -> consumeSyl LH I  -- U+1632
+    'ᘯ' -> consumeSyl LH O  -- U+162F
+    'ᘮ' -> consumeSyl LH U  -- U+162E
+    'ᘰ' -> consumeSyl LH AU -- U+1630
               
    -- Approximants
    -- Lc  -> case vwl of -- ^ Voiced Alveolar Approximant
-    'ᘧ' -> consumeSyl L A 
-    'ᘥ' -> consumeSyl L E 
-    'ᘦ' -> consumeSyl L I 
-    'ᘣ' -> consumeSyl L O 
-    'ᘢ' -> consumeSyl L U 
-    'ᘤ' -> consumeSyl L AU
+    'ᘧ' -> consumeSyl L A  -- U+1627
+    'ᘥ' -> consumeSyl L E  -- U+1625
+    'ᘦ' -> consumeSyl L I  -- U+1626
+    'ᘣ' -> consumeSyl L O  -- U+1623
+    'ᘢ' -> consumeSyl L U  -- U+1622
+    'ᘤ' -> consumeSyl L AU -- U+1624
    -- LYc -> case vwl of -- ^ Glottalized Voiced Alveolar Approximant
    --   Av  -> "ᐧᘧ"
    --   Ev  -> "ᐧᘥ"
@@ -313,12 +313,12 @@ parseTheLetter = do
    --   Uv  -> "ᐧᘢ"
    --   AUv -> "ᐧᘤ"
    -- Jc  -> case vwl of -- ^ Voiced Palatal Approximant
-    'ᘓ' -> consumeSyl J A 
-    'ᘑ' -> consumeSyl J E 
-    'ᘒ' -> consumeSyl J I 
-    'ᘏ' -> consumeSyl J O 
-    'ᘎ' -> consumeSyl J U 
-    'ᘐ' -> consumeSyl J AU
+    'ᘓ' -> consumeSyl J A  -- U+1613
+    'ᘑ' -> consumeSyl J E  -- U+1611
+    'ᘒ' -> consumeSyl J I  -- U+1612
+    'ᘏ' -> consumeSyl J O  -- U+160F
+    'ᘎ' -> consumeSyl J U  -- U+160E
+    'ᘐ' -> consumeSyl J AU -- U+1610
    -- JYc -> case vwl of -- ^ Glottalized Voiced Palatal Approximant
    --   Av  -> "ᐧᘓ"
    --   Ev  -> "ᐧᘑ"
@@ -329,26 +329,26 @@ parseTheLetter = do
               
     -- Velar Plosives
     -- Kc   -> case vwl of -- ^ Voiceless (Palatalized) Velar Plosive
-    'ᗺ' -> consumeLab K KW A 
-    'ᗸ' -> consumeLab K KW E 
-    'ᗹ' -> consumeLab K KW I 
-    'ᗶ' -> consumeLab K KW O 
-    'ᗵ' -> consumeLab K KW U 
-    'ᗷ' -> consumeLab K KW AU
+    'ᗺ' -> consumeLab K KW A  -- U+15FA
+    'ᗸ' -> consumeLab K KW E  -- U+15F8
+    'ᗹ' -> consumeLab K KW I  -- U+15F9
+    'ᗶ' -> consumeLab K KW O  -- U+15F6
+    'ᗵ' -> consumeLab K KW U  -- U+15F5
+    'ᗷ' -> consumeLab K KW AU -- U+15F7
     -- Gc   -> case vwl of -- ^ Voiced (Palatalized) Velar Plosive
-    'ᗴ' -> consumeLab G GW A 
-    'ᗲ' -> consumeLab G GW E 
-    'ᗳ' -> consumeLab G GW I 
-    'ᗰ' -> consumeLab G GW O 
-    'ᗯ' -> consumeLab G GW U 
-    'ᗱ' -> consumeLab G GW AU
+    'ᗴ' -> consumeLab G GW A  -- U+15F4
+    'ᗲ' -> consumeLab G GW E  -- U+15F2
+    'ᗳ' -> consumeLab G GW I  -- U+15F3
+    'ᗰ' -> consumeLab G GW O  -- U+15F0
+    'ᗯ' -> consumeLab G GW U  -- U+15EF
+    'ᗱ' -> consumeLab G GW AU -- U+15F1
     -- KYc  -> case vwl of -- ^ Ejective (Palatalized) Velar Plosive
-    'ᘀ' -> consumeLab KY KWY A 
-    'ᗾ' -> consumeLab KY KWY E 
-    'ᗿ' -> consumeLab KY KWY I 
-    'ᗼ' -> consumeLab KY KWY O 
-    'ᗻ' -> consumeLab KY KWY U 
-    'ᗽ' -> consumeLab KY KWY AU
+    'ᘀ' -> consumeLab KY KWY A  -- U+1600
+    'ᗾ' -> consumeLab KY KWY E  -- U+15FE
+    'ᗿ' -> consumeLab KY KWY I  -- U+15FF
+    'ᗼ' -> consumeLab KY KWY O  -- U+15FC
+    'ᗻ' -> consumeLab KY KWY U  -- U+15FB
+    'ᗽ' -> consumeLab KY KWY AU -- U+15FD
    -- KWYc -> case vwl of -- ^ Ejective Labialized Velar Plosive
    --   Av  -> "ᘀᐤ" -- "ᘁᗕ"
    --   Ev  -> "ᗾᐤ" -- "ᘁᗓ"
@@ -360,12 +360,12 @@ parseTheLetter = do
    -- Uvular Plosives
    -- Note: Substituting J for Q
    -- Qc   -> case vwl of -- ^ Voiceless Uvular Plosive
-    'ᘛ' -> consumeLab Q QW A 
-    'ᘘ' -> consumeLab Q QW E 
-    'ᘙ' -> consumeLab Q QW I 
-    'ᘖ' -> consumeLab Q QW O 
-    'ᘔ' -> consumeLab Q QW U 
-    'ᘗ' -> consumeLab Q QW AU
+    'ᘛ' -> consumeLab Q QW A  -- U+161B
+    'ᘘ' -> consumeLab Q QW E  -- U+1618
+    'ᘙ' -> consumeLab Q QW I  -- U+1619
+    'ᘖ' -> consumeLab Q QW O  -- U+1616
+    'ᘔ' -> consumeLab Q QW U  -- U+1614
+    'ᘗ' -> consumeLab Q QW AU -- U+1617
    -- QWc  -> case vwl of -- ^ Voiveless Labialized Uvular Plosive
    --   Av  -> "ᘛᐤ" -- "ᒽᗕ"
    --   Ev  -> "ᘘᐤ" -- "ᒽᗓ"
@@ -374,12 +374,12 @@ parseTheLetter = do
    --   Uv  -> "ᘔᐤ" -- "ᒽᗐ"
    --   AUv -> "ᘗᐤ" -- "ᒽᗒ"
    -- GUc  -> case vwl of -- ^ Voiced Uvular Plosive
-    'ᗏ' -> consumeLab GU GUW A 
-    'ᗍ' -> consumeLab GU GUW E 
-    'ᗎ' -> consumeLab GU GUW I 
-    'ᗋ' -> consumeLab GU GUW O 
-    'ᗊ' -> consumeLab GU GUW U 
-    'ᗌ' -> consumeLab GU GUW AU
+    'ᗏ' -> consumeLab GU GUW A  -- U+15CF
+    'ᗍ' -> consumeLab GU GUW E  -- U+15CD
+    'ᗎ' -> consumeLab GU GUW I  -- U+15CE
+    'ᗋ' -> consumeLab GU GUW O  -- U+15CB
+    'ᗊ' -> consumeLab GU GUW U  -- U+15CA
+    'ᗌ' -> consumeLab GU GUW AU -- U+15CC
    -- GUWc -> case vwl of -- ^ Voiced Labialized Uvular Plosive
    --   Av  -> "ᗏᐤ"
    --   Ev  -> "ᗍᐤ"
@@ -388,12 +388,12 @@ parseTheLetter = do
    --   Uv  -> "ᗊᐤ"
    --   AUv -> "ᗌᐤ"
    -- QYc  -> case vwl of -- ^ Ejective Uvular Plosive
-    'ᘡ' -> consumeLab QY QWY A 
-    'ᘟ' -> consumeLab QY QWY E 
-    'ᘠ' -> consumeLab QY QWY I 
-    'ᘝ' -> consumeLab QY QWY O 
-    'ᘜ' -> consumeLab QY QWY U 
-    'ᘞ' -> consumeLab QY QWY AU
+    'ᘡ' -> consumeLab QY QWY A  -- U+1621
+    'ᘟ' -> consumeLab QY QWY E  -- U+161F
+    'ᘠ' -> consumeLab QY QWY I  -- U+1620
+    'ᘝ' -> consumeLab QY QWY O  -- U+161D
+    'ᘜ' -> consumeLab QY QWY U  -- U+161C
+    'ᘞ' -> consumeLab QY QWY AU -- U+161E
    -- QWYc -> case vwl of -- ^ Ejective Labialized Uvular Plosive
    --   Av  -> "ᘡᐤ"
    --   Ev  -> "ᘟᐤ"
@@ -405,12 +405,12 @@ parseTheLetter = do
    -- Velar/Uvular Fricatives
    -- ᗄ ᗅ ᗆ ᗇ ᗈ ᗉ
    -- Xc   -> case vwl of -- ^ Voiceless (Palatalized) Velar Fricative
-    'ᗉ' -> consumeLab X XW A 
-    'ᗇ' -> consumeLab X XW E 
-    'ᗈ' -> consumeLab X XW I 
-    'ᗅ' -> consumeLab X XW O 
-    'ᗄ' -> consumeLab X XW U 
-    'ᗆ' -> consumeLab X XW AU
+    'ᗉ' -> consumeLab X XW A  -- U+15C9
+    'ᗇ' -> consumeLab X XW E  -- U+15C7
+    'ᗈ' -> consumeLab X XW I  -- U+15C8
+    'ᗅ' -> consumeLab X XW O  -- U+15C5
+    'ᗄ' -> consumeLab X XW U  -- U+15C4
+    'ᗆ' -> consumeLab X XW AU -- U+15C6
    -- XWc  -> case vwl of -- ^ Voiceless Labialized Velar Fricative
    --   Av  -> "ᗉᐤ"
    --   Ev  -> "ᗇᐤ"
@@ -419,12 +419,12 @@ parseTheLetter = do
    --   Uv  -> "ᗄᐤ"
    --   AUv -> "ᗆᐤ"
    -- XUc  -> case vwl of -- ^ Voiceless Uvular Fricative
-    'ᗛ' -> consumeLab XU XUW A 
-    'ᗙ' -> consumeLab XU XUW E 
-    'ᗚ' -> consumeLab XU XUW I 
-    'ᗗ' -> consumeLab XU XUW O 
-    'ᗖ' -> consumeLab XU XUW U 
-    'ᗘ' -> consumeLab XU XUW AU
+    'ᗛ' -> consumeLab XU XUW A  -- U+15DB
+    'ᗙ' -> consumeLab XU XUW E  -- U+15D9
+    'ᗚ' -> consumeLab XU XUW I  -- U+15DA
+    'ᗗ' -> consumeLab XU XUW O  -- U+15D7
+    'ᗖ' -> consumeLab XU XUW U  -- U+15D6
+    'ᗘ' -> consumeLab XU XUW AU -- U+15D8
    -- XUWc -> case vwl of -- ^ Voiceless Labialized Uvular Fricative
    --   Av  -> "ᗛᐤ"
    --   Ev  -> "ᗙᐤ"
@@ -435,12 +435,12 @@ parseTheLetter = do
               
     -- Labial Sounds
     -- Wc  -> case vwl of -- ^ Voiced Labial-Velar Approximant
-    'ᗕ' -> consumeSyl W A 
-    'ᗓ' -> consumeSyl W E 
-    'ᗔ' -> consumeSyl W I 
-    'ᗑ' -> consumeSyl W O 
-    'ᗐ' -> consumeSyl W U 
-    'ᗒ' -> consumeSyl W AU
+    'ᗕ' -> consumeSyl W A  -- U+15D5
+    'ᗓ' -> consumeSyl W E  -- U+15D3
+    'ᗔ' -> consumeSyl W I  -- U+15D4
+    'ᗑ' -> consumeSyl W O  -- U+15D1
+    'ᗐ' -> consumeSyl W U  -- U+15D0
+    'ᗒ' -> consumeSyl W AU -- U+15D2
     -- WYc -> case vwl of -- ^ Glottalized Voiced Labial-Velar Approximant
     --   Av  -> "ᐧᗕ"
     --   Ev  -> "ᐧᗓ"
@@ -449,50 +449,50 @@ parseTheLetter = do
     --   Uv  -> "ᐧᗐ"
     --   AUv -> "ᐧᗒ"
     -- Hc -> case vwl of -- ^ Voiceless Glottal Fricative
-    'ᐸ' -> consumeSyl H A 
-    'ᐶ' -> consumeSyl H E 
-    'ᐷ' -> consumeSyl H I 
-    'ᐱ' -> consumeSyl H O 
-    'ᐯ' -> consumeSyl H U 
-    'ᐳ' -> consumeSyl H AU
+    'ᐸ' -> consumeSyl H A  -- U+1438
+    'ᐶ' -> consumeSyl H E  -- U+1436
+    'ᐷ' -> consumeSyl H I  -- U+1437
+    'ᐱ' -> consumeSyl H O  -- U+1431
+    'ᐯ' -> consumeSyl H U  -- U+142F
+    'ᐳ' -> consumeSyl H AU -- U+1433
     -- Vowels
-    'ᐊ' -> anyChar *> (pure $ A  : Nil)
-    'ᐈ' -> anyChar *> (pure $ E  : Nil)
-    'ᐉ' -> anyChar *> (pure $ I  : Nil)
-    'ᐃ' -> anyChar *> (pure $ O  : Nil)
-    'ᐁ' -> anyChar *> (pure $ U  : Nil)
-    'ᐅ' -> anyChar *> (pure $ AU : Nil)
+    'ᐊ' -> anyChar *> (pure $ A  : Nil) -- U+140A
+    'ᐈ' -> anyChar *> (pure $ E  : Nil) -- U+1408
+    'ᐉ' -> anyChar *> (pure $ I  : Nil) -- U+1409
+    'ᐃ' -> anyChar *> (pure $ O  : Nil) -- U+1403
+    'ᐁ' -> anyChar *> (pure $ U  : Nil) -- U+1401
+    'ᐅ' -> anyChar *> (pure $ AU : Nil) -- U+1405
     
-    'ᑦ' -> consumeCoda M
-    'ᐣ' -> consumeCoda N
-    'ᗮ' -> consumeCoda2 'ᗮ' B P
-    'ᐪ' -> consumeCoda2 'ᐪ' D T
-    'ᐩ' -> consumeCoda PY
-    'ᙾ' -> consumeCoda TY
+    'ᑦ' -> consumeCoda M        -- U+1466
+    'ᐣ' -> consumeCoda N        -- U+1423
+    'ᗮ' -> consumeCoda2 'ᗮ' B P -- U+15EE
+    'ᐪ' -> consumeCoda2 'ᐪ' D T -- U+142A
+    'ᐩ' -> consumeCoda PY       -- U+1429
+    'ᙾ' -> consumeCoda TY       -- U+167E
 
-    'ᙆ' -> consumeCoda2 'ᙆ' DZ TS
-    'ᔾ' -> consumeCoda TL
-    'ᕐ' -> consumeCoda DL
-    'ᙇ' -> consumeCoda TSY
-    'ᓫ' -> consumeCoda TLY
+    'ᙆ' -> consumeCoda2 'ᙆ' DZ TS -- U+1646
+    'ᔾ' -> consumeCoda TL         -- U+153E
+    'ᕐ' -> consumeCoda DL         -- U+1550
+    'ᙇ' -> consumeCoda TSY        -- U+1647
+    'ᓫ' -> consumeCoda TLY        -- U+14EB
 
-    'ᔆ' -> consumeCoda S
-    'ᒡ' -> consumeCoda LH
-    'ᑊ' -> consumeCoda L
-    'ᕪ' -> consumeCoda J
-    'ᐞ' -> consumeCoda W
+    'ᔆ' -> consumeCoda S  -- U+1506
+    'ᒡ' -> consumeCoda LH -- U+14A1
+    'ᑊ' -> consumeCoda L  -- U+144A
+    'ᕪ' -> consumeCoda J  -- U+156A
+    'ᐞ' -> consumeCoda W  -- U+141E
 
-    'ᐠ' -> consumeCoda2 'ᐤ' K KW
-    'ᐜ' -> consumeCoda2 'ᐤ' G GW
-    'ᘁ' -> consumeCoda2 'ᐤ' KY KWY
-    'ᒽ' -> consumeCoda2 'ᐤ' Q QW
-    'ᐟ' -> consumeCoda2 'ᐤ' GU GUW
-    'ᒾ' -> consumeCoda2 'ᐤ' QY QWY
-    'ᐥ' -> consumeCoda2 'ᐤ' X XW
-    'ᐦ' -> consumeCoda2 'ᐤ' XU XUW
+    -- 'ᐤ' -- U+1424
+    'ᐠ' -> consumeCoda2 'ᐤ' K  KW  -- U+1420
+    'ᐜ' -> consumeCoda2 'ᐤ' G  GW  -- U+141C
+    'ᘁ' -> consumeCoda2 'ᐤ' KY KWY -- U+1601
+    'ᒽ' -> consumeCoda2 'ᐤ' Q  QW  -- U+14BD
+    'ᐟ' -> consumeCoda2 'ᐤ' GU GUW -- U+141F
+    'ᒾ' -> consumeCoda2 'ᐤ' QY QWY -- U+14BE
+    'ᐥ' -> consumeCoda2 'ᐤ' X  XW  -- U+1425
+    'ᐦ' -> consumeCoda2 'ᐤ' XU XUW -- U+1426
 
-    'ᑋ' -> consumeCoda H
-
+    'ᑋ' -> consumeCoda H -- U+144B
 
     -- Glottal Sounds
     -- Yc -> case vwl of -- ^ Voiceless Glottal Plosive
@@ -502,8 +502,6 @@ parseTheLetter = do
     --   Ov  -> "ᐧᐃ"
     --   Uv  -> "ᐧᐁ"
     --   AUv -> "ᐧᐅ"
- 
-    -- Need to handle codas
 
     _ -> fail "Not a syllabic character."
 
@@ -511,49 +509,49 @@ continueGlot :: (Maybe Char) -> Parser String (List KwakLetter)
 continueGlot Nothing = pure $ (Y : Nil)
 continueGlot (Just c) = case c of
   -- 'M
-  'ᘍ' -> consumeSyl MY A
-  'ᘋ' -> consumeSyl MY E
-  'ᘌ' -> consumeSyl MY I
-  'ᘉ' -> consumeSyl MY O
-  'ᘈ' -> consumeSyl MY U
-  'ᘊ' -> consumeSyl MY AU
+  'ᘍ' -> consumeSyl MY A  -- U+160D
+  'ᘋ' -> consumeSyl MY E  -- U+160B
+  'ᘌ' -> consumeSyl MY I  -- U+160C
+  'ᘉ' -> consumeSyl MY O  -- U+1609
+  'ᘈ' -> consumeSyl MY U  -- U+1608
+  'ᘊ' -> consumeSyl MY AU -- U+160A
   -- 'N
-  'ᘇ' -> consumeSyl NY A
-  'ᘅ' -> consumeSyl NY E
-  'ᘆ' -> consumeSyl NY I
-  'ᘃ' -> consumeSyl NY O
-  'ᘂ' -> consumeSyl NY U
-  'ᘄ' -> consumeSyl NY AU  
+  'ᘇ' -> consumeSyl NY A  -- U+1607
+  'ᘅ' -> consumeSyl NY E  -- U+1605
+  'ᘆ' -> consumeSyl NY I  -- U+1606
+  'ᘃ' -> consumeSyl NY O  -- U+1603
+  'ᘂ' -> consumeSyl NY U  -- U+1602
+  'ᘄ' -> consumeSyl NY AU -- U+1604  
 
   -- 'L
-  'ᘧ' -> consumeSyl LY A 
-  'ᘥ' -> consumeSyl LY E 
-  'ᘦ' -> consumeSyl LY I 
-  'ᘣ' -> consumeSyl LY O 
-  'ᘢ' -> consumeSyl LY U 
-  'ᘤ' -> consumeSyl LY AU
+  'ᘧ' -> consumeSyl LY A  -- U+1627
+  'ᘥ' -> consumeSyl LY E  -- U+1625
+  'ᘦ' -> consumeSyl LY I  -- U+1626
+  'ᘣ' -> consumeSyl LY O  -- U+1623
+  'ᘢ' -> consumeSyl LY U  -- U+1622
+  'ᘤ' -> consumeSyl LY AU -- U+1624
   -- 'J
-  'ᘓ' -> consumeSyl JY A 
-  'ᘑ' -> consumeSyl JY E 
-  'ᘒ' -> consumeSyl JY I 
-  'ᘏ' -> consumeSyl JY O 
-  'ᘎ' -> consumeSyl JY U 
-  'ᘐ' -> consumeSyl JY AU
+  'ᘓ' -> consumeSyl JY A   -- U+1613
+  'ᘑ' -> consumeSyl JY E   -- U+1611
+  'ᘒ' -> consumeSyl JY I   -- U+1612
+  'ᘏ' -> consumeSyl JY O   -- U+160F
+  'ᘎ' -> consumeSyl JY U   -- U+160E
+  'ᘐ' -> consumeSyl JY AU  -- U+1610
 
   -- 'W
-  'ᗕ' -> consumeSyl WY A 
-  'ᗓ' -> consumeSyl WY E 
-  'ᗔ' -> consumeSyl WY I 
-  'ᗑ' -> consumeSyl WY O 
-  'ᗐ' -> consumeSyl WY U 
-  'ᗒ' -> consumeSyl WY AU
+  'ᗕ' -> consumeSyl WY A   -- U+15D5
+  'ᗓ' -> consumeSyl WY E   -- U+15D3
+  'ᗔ' -> consumeSyl WY I   -- U+15D4
+  'ᗑ' -> consumeSyl WY O   -- U+15D1
+  'ᗐ' -> consumeSyl WY U   -- U+15D0
+  'ᗒ' -> consumeSyl WY AU  -- U+15D2
 
   -- Glottalised Codas
-  'ᑦ' -> consumeCoda MY
-  'ᐣ' -> consumeCoda NY
-  'ᑊ' -> consumeCoda LY
-  'ᕪ' -> consumeCoda JY
-  'ᐞ' -> consumeCoda WY
+  'ᑦ' -> consumeCoda MY -- U+1466
+  'ᐣ' -> consumeCoda NY -- U+1423
+  'ᑊ' -> consumeCoda LY -- U+144A
+  'ᕪ' -> consumeCoda JY -- U+156A
+  'ᐞ' -> consumeCoda WY -- U+141E
 
   _ -> pure (Y : Nil)
 
