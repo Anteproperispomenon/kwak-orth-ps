@@ -2,9 +2,14 @@ module Kwakwala.Custom.Types
   ( class CasableHolder
   , selectMaj
   , selectMin
+  , simplifyKey
   , Monocase(..)
   , Duocase(..)
   , AugLetter(..)
+  , OrthographyKey
+  , OrthographyKeyP
+  , takePhone
+  , takePhone'
   ) where
 
 import Prelude
@@ -13,6 +18,13 @@ import Kwakwala.Types
 
 import Data.List.Types
 import Data.String.NonEmpty
+
+import Data.Maybe
+
+import Data.List.NonEmpty (uncons)
+
+import Data.List as List
+import Data.Tuple
 
 -- | Since some alphabets are cased and
 -- | other's aren't, this reduces the
@@ -49,6 +61,23 @@ type OrthographyKey f
   = { charSeq :: NonEmptyList (f Char)
     , phonSeq :: NonEmptyList AugLetter
     }
+
+type OrthographyKeyP f
+  = { charSeq :: NonEmptyList (f Char)
+    , phonSeq :: List AugLetter
+    }
+
+simplifyKey :: forall f. OrthographyKey f -> OrthographyKeyP f
+simplifyKey x = { charSeq : x.charSeq, phonSeq : toList x.phonSeq }
+
+takePhone :: forall f. OrthographyKey f -> (Tuple AugLetter (OrthographyKeyP f))
+takePhone x = Tuple y.head ({charSeq : x.charSeq, phonSeq : y.tail})
+  where y = uncons x.phonSeq
+
+takePhone' :: forall f. OrthographyKeyP f -> (Tuple (Maybe AugLetter) (OrthographyKeyP f))
+takePhone' x = case (List.uncons x.phonSeq) of
+  Nothing  -> Tuple Nothing x
+  (Just y) -> Tuple (Just y.head) ({charSeq : x.charSeq, phonSeq : y.tail})
 
 -- | A variant of `KwakLetter` that
 -- | has been augmented with matches
