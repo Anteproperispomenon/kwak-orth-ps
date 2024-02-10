@@ -45,8 +45,8 @@ instance monoCasable :: CasableHolder Monocase where
   selectMin (Monocase x) = x
 
 instance duoCasable  :: CasableHolder Duocase  where
-  selectMaj (Duocase x _) = x
-  selectMin (Duocase _ y) = y
+  selectMaj (Duocase _ y) = y
+  selectMin (Duocase x _) = x
 
 instance showMonocase :: Show a => Show (Monocase a) where
   show (Monocase x) = show x
@@ -60,6 +60,14 @@ instance eqMonocase :: Eq a => Eq (Monocase a) where
 instance eqDuocase  :: Eq a => Eq (Duocase  a) where
   eq (Duocase x1 y1) (Duocase x2 y2) = (x1 == x2) && (y1 == y2)
 
+instance ordMonocase :: (Ord a) => Ord (Monocase a) where
+  compare (Monocase x) (Monocase y) = compare x y
+
+instance ordDuocase  :: (Ord a) => Ord (Duocase  a) where
+  compare (Duocase x1 y1) (Duocase x2 y2) = case (compare x1 x2) of
+    EQ -> compare y1 y2
+    z  -> z
+
 instance functorMonocase :: Functor Monocase where
   map f (Monocase x) = Monocase (f x)
 
@@ -67,17 +75,17 @@ instance functorDuocase  :: Functor Duocase where
   map f (Duocase x y) = Duocase (f x) (f y)
 
 type OrthographyKey f
-  = { charSeq :: NonEmptyList (f AugChar)
+  = { charSeq :: NonEmptyList (AugChar f)
     , phonSeq :: NonEmptyList AugLetter
     }
 
 type OrthographyKeyC f
-  = { charSeq :: List (f AugChar)
+  = { charSeq :: List (AugChar f)
     , phonSeq :: NonEmptyList AugLetter
     }
 
 type OrthographyKeyP f
-  = { charSeq :: NonEmptyList (f AugChar)
+  = { charSeq :: NonEmptyList (AugChar f)
     , phonSeq :: List AugLetter
     }
 
@@ -93,11 +101,11 @@ takePhone' x = case (List.uncons x.phonSeq) of
   Nothing  -> Tuple Nothing x
   (Just y) -> Tuple (Just y.head) ({charSeq : x.charSeq, phonSeq : y.tail})
 
-takeChar :: forall f. OrthographyKey f -> (Tuple (f AugChar) (OrthographyKeyC f))
+takeChar :: forall f. OrthographyKey f -> (Tuple (AugChar f) (OrthographyKeyC f))
 takeChar x = Tuple y.head ({charSeq : y.tail, phonSeq : x.phonSeq})
   where y = uncons x.charSeq
 
-takeChar' :: forall f. OrthographyKeyC f -> (Tuple (Maybe (f AugChar)) (OrthographyKeyC f))
+takeChar' :: forall f. OrthographyKeyC f -> (Tuple (Maybe (AugChar f)) (OrthographyKeyC f))
 takeChar' x = case (List.uncons x.charSeq) of
   Nothing  -> Tuple Nothing x
   (Just y) -> Tuple (Just y.head) ({charSeq : y.tail, phonSeq : x.phonSeq})
@@ -142,26 +150,26 @@ instance ordAugLetter :: Ord AugLetter where
 
 -- | For writing patterns on the
 -- | input side.
-data AugChar 
-  = PlainChar Char
+data AugChar f
+  = PlainChar (f Char)
   | CharStart
   | CharEnd
   | NotCharEnd
 
-instance showAugChar :: Show AugChar where
+instance showAugChar :: Show (f Char) => Show (AugChar f) where
   show (PlainChar x) = show x
   show CharStart = "^"
   show CharEnd = "$"
   show NotCharEnd = "..."
 
-instance eqAugChar :: Eq AugChar where
+instance eqAugChar :: Eq (f Char) => Eq (AugChar f) where
   eq (PlainChar x) (PlainChar y) = x == y
   eq CharStart  CharStart  = true
   eq CharEnd    CharEnd    = true
   eq NotCharEnd NotCharEnd = true
   eq _ _ = false
 
-instance ordAugChar :: Ord AugChar where
+instance ordAugChar :: Ord (f Char) => Ord (AugChar f) where
   compare (PlainChar x) (PlainChar y) = compare x y
   compare CharStart CharStart = EQ
   compare CharStart _ = LT
