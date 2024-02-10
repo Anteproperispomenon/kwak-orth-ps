@@ -6,10 +6,13 @@ module Kwakwala.Custom.Types
   , Monocase(..)
   , Duocase(..)
   , AugLetter(..)
+  , AugChar(..)
   , OrthographyKey
   , OrthographyKeyP
   , takePhone
   , takePhone'
+  , takeChar
+  , takeChar'
   ) where
 
 import Prelude
@@ -57,13 +60,24 @@ instance eqMonocase :: Eq a => Eq (Monocase a) where
 instance eqDuocase  :: Eq a => Eq (Duocase  a) where
   eq (Duocase x1 y1) (Duocase x2 y2) = (x1 == x2) && (y1 == y2)
 
+instance functorMonocase :: Functor Monocase where
+  map f (Monocase x) = Monocase (f x)
+
+instance functorDuocase  :: Functor Duocase where
+  map f (Duocase x y) = Duocase (f x) (f y)
+
 type OrthographyKey f
-  = { charSeq :: NonEmptyList (f Char)
+  = { charSeq :: NonEmptyList (f AugChar)
+    , phonSeq :: NonEmptyList AugLetter
+    }
+
+type OrthographyKeyC f
+  = { charSeq :: List (f AugChar)
     , phonSeq :: NonEmptyList AugLetter
     }
 
 type OrthographyKeyP f
-  = { charSeq :: NonEmptyList (f Char)
+  = { charSeq :: NonEmptyList (f AugChar)
     , phonSeq :: List AugLetter
     }
 
@@ -78,6 +92,15 @@ takePhone' :: forall f. OrthographyKeyP f -> (Tuple (Maybe AugLetter) (Orthograp
 takePhone' x = case (List.uncons x.phonSeq) of
   Nothing  -> Tuple Nothing x
   (Just y) -> Tuple (Just y.head) ({charSeq : x.charSeq, phonSeq : y.tail})
+
+takeChar :: forall f. OrthographyKey f -> (Tuple (f AugChar) (OrthographyKeyC f))
+takeChar x = Tuple y.head ({charSeq : y.tail, phonSeq : x.phonSeq})
+  where y = uncons x.charSeq
+
+takeChar' :: forall f. OrthographyKeyC f -> (Tuple (Maybe (f AugChar)) (OrthographyKeyC f))
+takeChar' x = case (List.uncons x.charSeq) of
+  Nothing  -> Tuple Nothing x
+  (Just y) -> Tuple (Just y.head) ({charSeq : y.tail, phonSeq : x.phonSeq})
 
 -- | A variant of `KwakLetter` that
 -- | has been augmented with matches
@@ -116,4 +139,41 @@ instance ordAugLetter :: Ord AugLetter where
   compare NotWordEnd NotWordEnd = EQ
   compare NotWordEnd _ = GT
   compare _ NotWordEnd = LT
+
+-- | For writing patterns on the
+-- | input side.
+data AugChar 
+  = PlainChar Char
+  | CharStart
+  | CharEnd
+  | NotCharEnd
+
+instance showAugChar :: Show AugChar where
+  show (PlainChar x) = show x
+  show CharStart = "^"
+  show CharEnd = "$"
+  show NotCharEnd = "..."
+
+instance eqAugChar :: Eq AugChar where
+  eq (PlainChar x) (PlainChar y) = x == y
+  eq CharStart  CharStart  = true
+  eq CharEnd    CharEnd    = true
+  eq NotCharEnd NotCharEnd = true
+  eq _ _ = false
+
+instance ordAugChar :: Ord AugChar where
+  compare (PlainChar x) (PlainChar y) = compare x y
+  compare CharStart CharStart = EQ
+  compare CharStart _ = LT
+  compare _ CharStart = GT
+
+  compare CharEnd CharEnd = EQ
+  compare CharEnd _ = GT
+  compare _ CharEnd = LT
+
+  -- Ones involving CharEnd are already covered.
+  compare NotCharEnd NotCharEnd = EQ
+  compare NotCharEnd _ = GT
+  compare _ NotCharEnd = LT
+
 
